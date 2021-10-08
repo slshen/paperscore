@@ -17,5 +17,5 @@ world
 
 func TestFirstWord(t *testing.T) {
 	assert := assert.New(t)
-	assert.Equal("AthelticsMercado", firstWord("Athletics Mercado Walling", 20))
+	assert.Equal("AthleticsMercado", firstWord("Athletics Mercado Walling", 20))
 }

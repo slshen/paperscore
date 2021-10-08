@@ -15,5 +15,4 @@ func TestTable(t *testing.T) {
 	}
 	fmt.Print(tab.Header())
 	fmt.Printf(tab.Format(), "world", 1, 2)
-	t.Fail()
 }

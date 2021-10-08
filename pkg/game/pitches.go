@@ -40,7 +40,17 @@ func (ps Pitches) Balls() (count int) {
 func (ps Pitches) Strikes() (count int) {
 	for _, p := range ps {
 		code := pitchCodes[p]
-		if code.strike || code.foul {
+		if code.strike {
+			count++
+		}
+	}
+	return
+}
+
+func (ps Pitches) StrikesThrown() (count int) {
+	for _, p := range ps {
+		code := pitchCodes[p]
+		if code.strike || code.foul || p == 'X' || p == 'Y' {
 			count++
 		}
 	}

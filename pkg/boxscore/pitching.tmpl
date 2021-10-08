@@ -2,3 +2,5 @@
 HP - {{.PitcherHPs}}{{end}}
 {{- if .PitcherWPs}}
 WP - {{.PitcherWPs}}{{end}}
+Pitches-Strikes - {{range .PitchingData}}{{.Player.NameOrNumber}}({{.Pitches}}-{{.Strikes}}) {{end}}
+Batters Faced - {{range .PitchingData}}{{.Player.NameOrNumber}}({{.BattersFaced}}) {{end}}

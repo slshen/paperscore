@@ -9,7 +9,7 @@ type eventCodeParser struct {
 	eventCode    string
 	eventMatches []string
 	advancesCode string
-	modifiers    []string
+	modifiers    Modifiers
 }
 
 var eventCodeRegexps = map[string]*regexp.Regexp{}

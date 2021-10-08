@@ -67,7 +67,7 @@ func boxCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var out io.Writer
 			if pdfFormat {
-				paps := exec.Command("paps", "--format=pdf", "--font=Monospace 10")
+				paps := exec.Command("paps", "--format=pdf", "--font=Andale Mono 11")
 				w, err := paps.StdinPipe()
 				paps.Stdout = os.Stdout
 				paps.Stderr = os.Stderr
@@ -101,10 +101,8 @@ func boxCommand() *cobra.Command {
 					if _, err := out.Write(dat); err != nil {
 						return err
 					}
-				} else {
-					if err := box.Render(out); err != nil {
-						return err
-					}
+				} else if err := box.Render(out); err != nil {
+					return err
 				}
 				if i != len(files)-1 {
 					if _, err := out.Write([]byte{'\f'}); err != nil {
