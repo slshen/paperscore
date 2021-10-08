@@ -77,6 +77,9 @@ func (m *gameMachine) run() error {
 		}
 		m.state.Pitches = Pitches(m.getPlayField(1))
 		m.state.EventCode = m.getPlayField(2)
+		if m.state.EventCode == "" {
+			return fmt.Errorf("empty event code in %s", m.playCode)
+		}
 		m.state.Comment = m.getPlayField(3)
 		m.state.Play = m.parseEvent(m.state.EventCode)
 		if err := m.handleEvent(); err != nil {
@@ -97,7 +100,7 @@ func (m *gameMachine) run() error {
 		if m.state.Complete {
 			if !strings.HasSuffix(string(m.state.Pitches), "X") &&
 				m.state.Play.BallInPlay() {
-				m.state.Pitches = m.state.Pitches + "X"
+				m.state.Pitches += "X"
 			}
 			m.state.Modifiers = Modifiers(m.modifiers)
 			if m.state.Top() {
@@ -149,7 +152,7 @@ func (m *gameMachine) handleSpecial() error {
 		}
 		score, err := strconv.Atoi(m.getPlayField(2))
 		if err != nil || runs != score {
-			return fmt.Errorf("# of runs %d in inning %d is not %s", runs, m.state.InningNumber, m.getPlayField(2))
+			return fmt.Errorf("# of at inning %d is %d not %s", m.state.InningNumber, runs, m.getPlayField(2))
 		}
 	default:
 		return fmt.Errorf("unknown special play %s", m.playCode)
@@ -236,29 +239,66 @@ func (m *gameMachine) handleEvent() error {
 		// outs are in the advance, if any
 		m.impliedAdvances = append(m.impliedAdvances, "B-1")
 	case m.eventIs("$$(%)$"):
+		if !m.modifiers.Contains("GDP") {
+			return fmt.Errorf("play should contain GDP modifier in %s", m.playCode)
+		}
 		// should pass fielders to record out to do assists
 		m.state.recordOut()
 		m.state.recordOut()
+		return m.eraseRunner(m.eventMatches[2])
+	case m.eventIs("$(B)$(%)"):
+		if !m.state.Modifiers.Contains("LDP") {
+			return fmt.Errorf("play should contain LDP modifier in %s", m.playCode)
+		}
+		m.state.recordOut()
+		m.state.recordOut()
+		return m.eraseRunner(m.eventMatches[2])
 	case m.eventIs("CS%($$)"):
 		m.state.recordOut()
-		return m.eraseRunner(m.eventMatches[1])
+		return m.eraseAdvancingRunner(m.eventMatches[1])
+	case m.eventIs("NP"):
+		// no play
 	default:
 		return fmt.Errorf("unknown event %s in %s", m.eventCode, m.playCode)
 	}
 	return nil
 }
 
-func (m *gameMachine) eraseRunner(base string) error {
+func (m *gameMachine) eraseAdvancingRunner(base string) error {
+	var index int
 	switch base {
 	case "2":
-		m.state.Runners[0] = ""
+		index = 0
 	case "3":
-		m.state.Runners[1] = ""
+		index = 1
 	case "H":
-		m.state.Runners[2] = ""
+		index = 2
 	default:
-		return fmt.Errorf("unknown base in %s", m.playCode)
+		return fmt.Errorf("unknown base %s in %s", base, m.playCode)
 	}
+	if m.state.Runners[index] == "" {
+		return fmt.Errorf("no runner on %s to erase in %s", base, m.playCode)
+	}
+	m.state.Runners[index] = ""
+	return nil
+}
+
+func (m *gameMachine) eraseRunner(base string) error {
+	var index int
+	switch base {
+	case "1":
+		index = 0
+	case "2":
+		index = 1
+	case "3":
+		index = 2
+	default:
+		return fmt.Errorf("unknown base %s in %s", base, m.playCode)
+	}
+	if m.state.Runners[index] == "" {
+		return fmt.Errorf("no runner on %s to erase in %s", base, m.playCode)
+	}
+	m.state.Runners[index] = ""
 	return nil
 }
 

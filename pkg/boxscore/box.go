@@ -7,8 +7,6 @@ import (
 	"strings"
 	"text/template"
 
-	_ "embed"
-
 	"github.com/slshen/sb/pkg/game"
 	"github.com/slshen/sb/pkg/table"
 )
@@ -98,7 +96,7 @@ func (box *BoxScore) run() error {
 			}
 			if state.Complete {
 				// Check - credit LOB only if the batter makes the out
-				data := lineup.getData(state.Batter)
+				data := lineup.getBatterData(state.Batter)
 				data.LOB += lob
 			}
 			lineup.Total.LOB += lob

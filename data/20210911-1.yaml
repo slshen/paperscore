@@ -1,0 +1,67 @@
+date: 9/11/21
+game: 1
+visitor: Pride 14u 07
+visitorid: pride-fall-2021
+home: Bidwell Bombers
+start: "?"
+timelimit: 75m
+final:
+  visitor: 1
+  home: 5
+visitorplays:
+  - pitcher,28
+  - mf17,SFFX,S8/L8
+  - aw6,B,SB2
+  - aw6,BFFB,6/P6
+  - mj18,CB,WP.2-3
+  - mj18,CBX,S8/G8.B-1;3-H
+  - bj00,BFB,WP.1-2
+  - bj00,BFBBCB,W.B-1
+  - kg2,BCFFB,HP.B-1;1-2;2-3
+  - ms11,CBSC,K
+  - as7,X,6/L6
+  - inn,2,1
+  - rv10,FCBBFFX,8/F8
+  - cm22,BCBBCX,8/F78
+  - ss16,FX,63/G
+  - inn,3,1
+  - le13,X,E6/G6(TH).B-1
+  - sk12,X,8/G.1-2
+  - kn21,FFBX,9/F9
+  - mf17,BCFBBFX,9/F9.2-3(E9)
+  - aw6,X,6/P6
+  - inn,4,1
+  - mj18,BBX,7/F7
+  - bj00,FCFBFX,S9/L9
+  - kg2,BCX,54(1)3/GDP
+homeplays:
+  - pitcher,ms11
+  - 11,CBBBB,W.B-1
+  - 13,CX,23/B.1-3(E4/TH)
+  - 9,BX,8/F78/SH.3-H
+  - 28,BSBBCB,W.B-1
+  - 12,FB,WP.1-2
+  - 12,FBCS,K
+  - inn,2,1
+  - 25,BX,S8/G6
+  - 10,BBCBB,W.B-1;1-2
+  - 27,BBBB,W.B-1;1-2;2-3
+  - pitcher,bj00
+  - 5,CCX,12/G
+  - 11,X,FC4.B-1;1-2(E4/TH);2-3;3-H
+  - 13,SSX,FC1.B-1;1-2;2-3;3XH(12)
+  - 9,BCSFS,K
+  - inn,3,2
+  - 28,CBBBCFC,K
+  - 12,SBSX,E4/G4.B-1
+  - 25,FSFX,S8/F8.B-1;1-2
+  - 10,CBBCFS,K
+  - 27,CCBBFBB,W.B-1;1-2;2-3
+  - 5,X,S8/L8.B-1;1-3;2-H;3-H
+  - 11,X,43/G
+  - inn,4,4
+  - 13,BSX,43/G
+  - 9,BBX,D9/F9.B-2
+  - 28,CX,S9/L9.B-1;2-H
+  - 12,BBF,NP,time expired
+

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 	"text/template"
+
+	"github.com/mitchellh/go-wordwrap"
 )
 
 var ordinalDictionary = map[int]string{
@@ -49,7 +51,10 @@ func paste(c1, c2 string, widths ...int) string {
 			leftLen = widths[1]
 		}
 	}
-	if leftLen == 0 {
+	if leftLen > 0 {
+		c1 = wordwrap.WrapString(c1, uint(leftLen))
+		c2 = wordwrap.WrapString(c2, uint(leftLen))
+	} else {
 		leftLen = lineLength(c1)
 	}
 	scan1 := bufio.NewScanner(strings.NewReader(c1))
