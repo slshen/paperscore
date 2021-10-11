@@ -8,7 +8,9 @@ HR - {{.HRs}}{{end}}
 SB - {{.SBs}}{{end}}
 {{- if .Walks}}
 BB - {{.Walks}}{{end}}
-{{- if (gt .Total.LOB 0)}}
-LOB - {{.Total.LOB}}{{end}}
+{{- if (gt .TotalLOB 0)}}
+LOB - {{.TotalLOB}}{{end}}
+{{- if .CaughtStealings}}
+CS - {{.CaughtStealings}}{{end}}
 {{- if .ErrorsList}}
 Errors -{{.ErrorsList}}{{end}}

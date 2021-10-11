@@ -17,11 +17,15 @@ func (p Play) Triple() bool {
 	return p[0] == 'T'
 }
 func (p Play) HomeRun() bool {
-	return p[0] == 'H'
+	return p == "H"
 }
 
 func (p Play) StrikeOut() bool {
 	return p[0] == 'K'
+}
+
+func (p Play) CaughtStealing() bool {
+	return strings.HasPrefix(string(p), "CS")
 }
 
 func (p Play) HitByPitch() bool {
