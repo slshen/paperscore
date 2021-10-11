@@ -22,7 +22,7 @@ type State struct {
 	OutsOnPlay int `yaml:",omitempty"`
 	Pitcher    PlayerID
 	PlateAppearance
-	Advances       []Advance  `yaml:",omitempty"`
+	Advances       Advances   `yaml:",omitempty"`
 	ScoringRunners []PlayerID `yaml:",flow,omitempty"`
 	Runners        []PlayerID `yaml:",flow"`
 	Comment        string     `yaml:",omitempty"`
@@ -34,26 +34,14 @@ type PlateAppearance struct {
 	Play
 	Batter PlayerID
 	Pitches
-	Complete   bool `yaml:",omitempty"`
-	Incomplete bool `yaml:",omitempty"`
-	Modifiers  `yaml:",omitempty,flow"`
+	NotOutOnPlay bool `yaml:",omitempty"` // not out on CS, POCS due to error
+	Complete     bool `yaml:",omitempty"`
+	Incomplete   bool `yaml:",omitempty"`
+	Modifiers    `yaml:",omitempty,flow"`
 }
 
-func (state *State) copy() *State {
-	n := *state
-	n.Complete = false
-	n.Incomplete = false
-	n.Comment = ""
-	n.ScoringRunners = nil
-	n.Advances = nil
-	n.OutsOnPlay = 0
-	if len(state.Runners) > 0 {
-		n.Runners = make([]PlayerID, 3)
-		for i := range state.Runners {
-			n.Runners[i] = state.Runners[i]
-		}
-	}
-	return &n
+func (state *State) init() {
+	state.Runners = make([]PlayerID, 3)
 }
 
 func (state *State) Top() bool {

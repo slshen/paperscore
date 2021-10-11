@@ -3,7 +3,7 @@ package game
 import (
 	"fmt"
 	"regexp"
-	"sort"
+	"strings"
 )
 
 type Advance struct {
@@ -15,7 +15,23 @@ type Advance struct {
 	*FieldingError     `yaml:",omitempty"`
 }
 
+type Advances map[string]*Advance
+
 var advanceRegexp = regexp.MustCompile(`^([B123])([X-])([123H])(?:\(([^)]+)\))?$`)
+var BaseNumber = map[string]int{
+	"1": 0,
+	"2": 1,
+	"3": 2,
+}
+var PreviousBase = map[string]string{
+	"H": "3",
+	"3": "2",
+	"2": "1",
+}
+
+func (a *Advance) GoString() string {
+	return a.Code
+}
 
 func parseAdvance(s string) (*Advance, error) {
 	m := advanceRegexp.FindStringSubmatch(s)
@@ -53,26 +69,20 @@ func parseAdvance(s string) (*Advance, error) {
 	return a, nil
 }
 
-func baseNumber(b string) int {
-	switch b {
-	case "B":
-		return -1
-	case "1":
-		return 0
-	case "2":
-		return 1
-	case "3":
-		return 2
-	case "H":
-		return 3
+func parseAdvances(advancesCode string) (advances Advances, err error) {
+	advances = make(Advances)
+	if len(advancesCode) > 0 {
+		for _, as := range strings.Split(advancesCode, ";") {
+			var advance *Advance
+			advance, err = parseAdvance(as)
+			if err != nil {
+				return
+			}
+			if advances[advance.From] != nil {
+				err = fmt.Errorf("cannot advance %s twice in %s", advance.From, advancesCode)
+			}
+			advances[advance.From] = advance
+		}
 	}
-	return -2
-}
-
-func sortAdvances(advances []Advance) {
-	sort.Slice(advances, func(i, j int) bool {
-		bi := baseNumber(advances[i].From)
-		bj := baseNumber(advances[j].To)
-		return bi < bj
-	})
+	return
 }

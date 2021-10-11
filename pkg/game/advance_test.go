@@ -23,4 +23,8 @@ func TestAdvance(t *testing.T) {
 			assert.Equal(2, a.FieldingError.Fielder)
 		}
 	}
+	as, err := parseAdvances("B-1;1-2;2-3")
+	assert.NoError(err)
+	assert.Equal(3, len(as))
+	assert.NotNil(as["B"])
 }

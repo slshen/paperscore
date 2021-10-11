@@ -54,34 +54,3 @@ func (p *eventCodeParser) eventIs(pattern string) bool {
 	}
 	return m != nil
 }
-
-func (p *eventCodeParser) parseAdvances(impliedAdvances []string) ([]Advance, error) {
-	var advances []Advance
-	if len(p.advancesCode) > 0 {
-		for _, as := range strings.Split(p.advancesCode, ";") {
-			a, err := parseAdvance(as)
-			if err != nil {
-				return nil, err
-			}
-			advances = append(advances, *a)
-		}
-	}
-	for _, code := range impliedAdvances {
-		a, err := parseAdvance(code)
-		if err != nil {
-			panic(err)
-		}
-		var present bool
-		for _, advance := range advances {
-			if advance.From == a.From {
-				present = true
-				break
-			}
-		}
-		if !present {
-			advances = append(advances, *a)
-		}
-	}
-	sortAdvances(advances)
-	return advances, nil
-}

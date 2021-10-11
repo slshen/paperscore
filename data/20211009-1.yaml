@@ -1,0 +1,103 @@
+date: 10/9/2019
+game: 1
+visitor: Pride 14u 07
+visitorid: pride-fall-2021
+home: Castro Valley Synergy
+venue: Castro Valley Community Center
+start: 10:04
+timelimit: 2h
+final:
+  visitor: 5
+  home: 5
+comments:
+  - Scrimmage
+visitorplays:
+  - pitcher,13
+  - as7,CSBX,63/G6
+  - cm22,SBFBFBX,S8/G8.B-1
+  - ss16,B,CS2(26)
+  - ss16,BBBB,W.B-1
+  - le13,BSCX,53/G5
+  - inn,2,0
+  - rv10,CSX,S8/G56.B-1
+  - ac14,CX,E5/G5.B-1;1-2
+  - kn21,SCX,3/G3.1-2;2-3
+  - aw6,BFFBBX,S7/G56.B-2(E7);2-3;3-H
+  - ms11,CX,FC1/B.B-1;2-3;3-H
+  - kg2,B,SB2
+  - kg2,BCBBCX,63/G6.2-3;3-H
+  - as7,BBBCX,S8/F8S.B-1;3-H
+  - cm22,CFX,D7/L78.B-2;1-H
+  - ss16,B,WP.2-3
+  - ss16,BBSFS,K23
+  - inn,3,5
+  - pitcher,4
+  - le13,SBBFC,K
+  - rv10,BFBX,S8/G56
+  - ac14,B,WP.1-2
+  - ac14,BX,6(B)6(2)/LDP
+  - inn,4,5
+  - kn21,SBBSX,53/G5
+  - aw6,BFX,E9/F89.B-2,nearly thrown out
+  - ms11,BX,53/G5
+  - kg2,CBBCS,K23
+  - inn,5,5
+  - pitcher,17
+  - as7,SBX,13/G
+  - cm22,SX,4/P4
+  - ss16,BFBSX,53/G
+  - inn,6,5
+  - le13,X,63/G
+  - rv10,X,6/P6
+  - ac14,FFX,E3/G3.B-1
+  - kn21,X,1/P1
+homeplays:
+  - pitcher,cm22
+  - 23,BBBB,W.B-1
+  - 27,C,SB2
+  - 27,CCS,K
+  - 11,X,3/P45
+  - 17,CB,SB3
+  - 17,CBFBBFX,7/F7
+  - inn,2,0
+  - 13,FX,S7/G5.B-1
+  - 12,X,FC1/B.B-1;1-2,should have thrown 1
+  - 22,CBX,HP.B-1;1-2;2-3
+  - 8,FX,4/P4
+  - 00,SCBBS,K
+  - 20,SSS,K
+  - inn,3,0
+  - pitcher,kg2
+  - 4,BBCBB,W.B-1
+  - 7,B,SB2
+  - 7,BCBBB,W.B-1
+  - 23,BB,CS3(25).1-2
+  - 23,BBBCB,W.B-1
+  - 27,BS,SB3.1-2
+  - 27,BSCX,8/F8/SF.2-3;3-H
+  - 11,X,HP
+  - 17,CB,SB2.1-2;3-H
+  - 17,CBSX,S9/L9.B-1;2-H
+  - 13,CX,E7/F7.B-1;1-2
+  - 12,B,WP.2-3;1-2
+  - 12,BCX,E5/G5/TH.B-1;2-3;3-H
+  - 22,X,HP.B-1;1-2
+  - 8,B,CSH(15).3-H(E1/TH);1-2;2-3
+  - 8,BBCCBC,K
+  - inn,4,5
+  - 00,SX,S8/L5.B-1
+  - 20,SBFBX,S4/P45.B-1;1-2
+  - 4,CSX,3/P3
+  - "33,CSBBBS,K,batter #7 skipped"
+  - 27,X,3/L3
+  - inn,5,5
+  - pitcher,ss16
+  - 11,SBCBFBFFX,6/P6
+  - 17,BX,563/G,deflected off 5
+  - 13,FBX,43/G,nice play ball deflected off rubber
+  - inn,6,5
+  - 12,X,S2/B.B-1
+  - 22,CFB,SB2
+  - 22,CFBBFS,K
+  - 8,BX,8/F8
+  - 00,X,53/G

@@ -47,20 +47,11 @@ func (ps Pitches) Strikes() (count int) {
 	return
 }
 
-func (ps Pitches) StrikesThrown() (count int) {
-	for _, p := range ps {
-		code := pitchCodes[p]
-		if code.strike || code.foul || p == 'X' || p == 'Y' {
-			count++
-		}
-	}
-	return
-}
-
+// Return the number of swings, not including the ball in play
 func (ps Pitches) Swings() (count int) {
 	for _, p := range ps {
 		code := pitchCodes[p]
-		if code.foul || (code.strike && p != 'C') || p == 'X' || p == 'Y' {
+		if code.foul || (code.strike && p != 'C') {
 			count++
 		}
 	}
@@ -74,6 +65,13 @@ func (ps Pitches) Misses() (count int) {
 		}
 	}
 	return
+}
+
+func (ps Pitches) Last() string {
+	if l := len(ps); l > 0 {
+		return string(ps[l-1])
+	}
+	return ""
 }
 
 func (ps Pitches) Count() string {

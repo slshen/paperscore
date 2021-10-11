@@ -80,43 +80,12 @@ func (box *BoxScore) run() error {
 		}
 		lineup.insertBatter(state.Batter)
 		defense.insertPitcher(state.Pitcher)
-		if lastState != nil {
-			box.handleSB(state, lastState, lineup)
-		}
 		box.handleAdvances(state, lineup, defense)
-		lineup.recordOffensePA(state)
-		defense.recordDefensePA(state)
+		lineup.recordOffense(state, lastState)
+		defense.recordDefense(state)
 		defense.recordPitching(state, lastState)
-		if state.Outs == 3 {
-			lob := 0
-			for _, runner := range state.Runners {
-				if runner != "" {
-					lob++
-				}
-			}
-			if state.Complete {
-				// Check - credit LOB only if the batter makes the out
-				data := lineup.getBatterData(state.Batter)
-				data.LOB += lob
-			}
-			lineup.Total.LOB += lob
-		}
 	}
 	return nil
-}
-
-func (box *BoxScore) handleSB(state, lastState *game.State, lineup *Lineup) {
-	if second, third, home := state.Play.StolenBase(); second || third || home {
-		if second {
-			lineup.recordSteal(lastState.Runners[0])
-		}
-		if third {
-			lineup.recordSteal(lastState.Runners[1])
-		}
-		if home {
-			lineup.recordSteal(lastState.Runners[2])
-		}
-	}
 }
 
 func (box *BoxScore) handleAdvances(state *game.State, lineup, defense *Lineup) {
@@ -132,9 +101,6 @@ func (box *BoxScore) handleAdvances(state *game.State, lineup, defense *Lineup) 
 				score.Home++
 			}
 		}
-	}
-	for _, runner := range state.ScoringRunners {
-		lineup.recordRunScored(runner)
 	}
 }
 
@@ -164,10 +130,10 @@ func (box *BoxScore) InningScoreTable() string {
 		argsV = append(argsV, score.Visitor)
 		argsH = append(argsH, score.Home)
 	}
-	argsV = append(argsV, "--", box.Score.Visitor, box.VisitorLineup.Total.Hits,
-		box.VisitorLineup.Total.Errors)
-	argsH = append(argsH, "--", box.Score.Home, box.HomeLineup.Total.Hits,
-		box.HomeLineup.Total.Errors)
+	argsV = append(argsV, "--", box.Score.Visitor, box.VisitorLineup.TotalHits(),
+		box.VisitorLineup.Errors)
+	argsH = append(argsH, "--", box.Score.Home, box.HomeLineup.TotalHits(),
+		box.HomeLineup.Errors)
 	fmt.Fprintf(s, tab.Format(), argsV...)
 	fmt.Fprintf(s, tab.Format(), argsH...)
 	return s.String()

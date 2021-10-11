@@ -23,4 +23,5 @@ func TestPitches(t *testing.T) {
 		assert.Equal(tc.s, ps.Strikes())
 		assert.Equal(tc.count, ps.Count())
 	}
+	assert.Equal("X", Pitches("CX").Last())
 }

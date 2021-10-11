@@ -25,6 +25,7 @@ type Game struct {
 	VisitorID             string   `yaml:"visitorid"`
 	HomeTeam, VisitorTeam *Team
 	Comments              []string
+	Venue                 string
 	states                []*State
 }
 
