@@ -28,9 +28,6 @@ func (gen *Generator) Generate(w io.Writer) error {
 	for _, state := range states {
 		if !gen.ScoringOnly && (gen.lastState == nil || gen.lastState.Half != state.Half ||
 			gen.lastState.InningNumber != state.InningNumber) {
-			if gen.lastState != nil {
-				fmt.Fprintln(w)
-			}
 			fmt.Fprintf(w, "%s of %s\n", state.Half, text.Ordinal(state.InningNumber))
 		}
 		var battingTeam, fieldingTeam *game.Team
@@ -56,19 +53,18 @@ func (gen *Generator) Generate(w io.Writer) error {
 		line := &strings.Builder{}
 		if batterPlay := batterPlayDescription(state); batterPlay != "" {
 			batter := battingTeam.GetPlayer(state.Batter)
-			fmt.Fprintf(line, "%s %s", batter.NameOrNumber(), batterPlay)
+			fmt.Fprintf(line, "%s %s %s", batter.NameOrNumber(), countDescription(state.Pitches), batterPlay)
 		} else if runnerPlay := runningPlayDescription(battingTeam, state, gen.lastState); runnerPlay != "" {
 			fmt.Fprint(line, runnerPlay)
 		}
 		if len(state.Advances) > 0 {
-			if line.Len() > 0 {
-				line.WriteString(". ")
-			}
 			i := 0
 			for _, advance := range state.Advances {
-				if advance.To == "H" && !advance.Out {
-					// will be noted in scoring runners
+				if advance.Implied {
 					continue
+				}
+				if i == 0 && line.Len() > 0 {
+					line.WriteString(". ")
 				}
 				var runnerID game.PlayerID
 				if advance.From == "B" {
@@ -84,26 +80,22 @@ func (gen *Generator) Generate(w io.Writer) error {
 				if advance.Out {
 					fmt.Fprintf(line, "%s is out advancing to %s", runner.NameOrNumber(), advance.To)
 				} else {
-					fmt.Fprintf(line, "%s advances to %s", runner.NameOrNumber(), advance.To)
+					if advance.To == "H" {
+						fmt.Fprintf(line, "%s scores", runner.NameOrNumber())
+					} else {
+						fmt.Fprintf(line, "%s advances to %s", runner.NameOrNumber(), advance.To)
+					}
 					if advance.FieldingError != nil {
 						fmt.Fprintf(line, " on an E%d", advance.FieldingError.Fielder)
 					}
 				}
 			}
+			if len(state.ScoringRunners) > 0 {
+				fmt.Fprintf(line, ". %d %s, %d %s", state.Score.Visitor, gen.Game.Visitor, state.Score.Home, gen.Game.Home)
+			}
 		}
-		if len(state.ScoringRunners) > 0 {
-			if line.Len() > 0 {
-				line.WriteString(". ")
-			}
-			for i, runnerID := range state.ScoringRunners {
-				if i > 0 {
-					fmt.Fprint(line, ", ")
-				}
-				runner := battingTeam.GetPlayer(runnerID)
-				fmt.Fprintf(line, "%s scores", runner.NameOrNumber())
-			}
-			fmt.Fprintf(line, ". %d %s, %d %s.", state.Score.Visitor, gen.Game.Visitor,
-				state.Score.Home, gen.Game.Home)
+		if state.Comment != "" {
+			fmt.Fprintf(line, " (%s)", state.Comment)
 		}
 		if line.Len() > 0 {
 			if gen.ScoringOnly && len(state.ScoringRunners) > 0 {
@@ -126,7 +118,8 @@ func (gen *Generator) Generate(w io.Writer) error {
 				}
 			}
 			if !gen.ScoringOnly || len(state.ScoringRunners) > 0 {
-				fmt.Fprint(w, text.WrapIndent(line.String(), 75, "  "))
+				fmt.Fprintf(line, ". %s", state.EventCode)
+				fmt.Fprint(w, text.WrapIndent(line.String(), 80, "  "))
 				fmt.Fprintln(w)
 				fmt.Fprintln(w)
 			}
@@ -136,6 +129,13 @@ func (gen *Generator) Generate(w io.Writer) error {
 	return nil
 }
 
+func countDescription(pitches game.Pitches) string {
+	if pitches == "X" {
+		return "on the first pitch"
+	}
+	return fmt.Sprintf("with the count %s", pitches.Count())
+}
+
 func positionName(fielder int) string {
 	switch fielder {
 	case 1:
@@ -143,11 +143,11 @@ func positionName(fielder int) string {
 	case 2:
 		return "catcher"
 	case 3:
-		return "1B infielder"
+		return "first base"
 	case 4:
-		return "2B infielder"
+		return "second base"
 	case 5:
-		return "3B infielder"
+		return "third base"
 	case 6:
 		return "shortstop"
 	case 7:
@@ -160,12 +160,19 @@ func positionName(fielder int) string {
 	return fmt.Sprintf("unknwn fielder %d", fielder)
 }
 
-func hitTrajectory(state *game.State, hit string) string {
+func hitTrajectory(state *game.State, hit string, fielders []int) string {
+	s := &strings.Builder{}
+	s.WriteString(hit)
 	trajectory := trajectoryDescription(state.Modifiers.Trajectory())
 	if trajectory != "" {
-		return fmt.Sprintf("%s on a %s", hit, trajectory)
+		fmt.Fprintf(s, " on a %s", trajectory)
 	}
-	return hit
+	if len(fielders) > 0 {
+		for _, fielder := range fielders {
+			fmt.Fprintf(s, " to %s", positionName(fielder))
+		}
+	}
+	return s.String()
 }
 
 func trajectoryDescription(trajectory game.Trajectory) string {
@@ -187,54 +194,49 @@ func trajectoryDescription(trajectory game.Trajectory) string {
 
 func batterPlayDescription(state *game.State) string {
 	play := state.Play
-	switch {
-	case play.Single():
-		return hitTrajectory(state, "singles")
-	case play.Double():
-		return hitTrajectory(state, "doubles")
-	case play.Triple():
-		return hitTrajectory(state, "triples")
-	case play.Walk():
+	switch play.Type {
+	case game.Single:
+		return hitTrajectory(state, "singles", play.Fielders)
+	case game.Double:
+		return hitTrajectory(state, "doubles", play.Fielders)
+	case game.Triple:
+		return hitTrajectory(state, "triples", play.Fielders)
+	case game.Walk:
 		return "walks"
-	case play.HomeRun():
-		return hitTrajectory(state, "hits a home run")
-	case play.HitByPitch():
+	case game.HomeRun:
+		return hitTrajectory(state, "hits a home run", nil)
+	case game.HitByPitch:
 		return "is hit by pitch"
-	case play.CatcherInterference():
+	case game.CatcherInterference:
 		return "reaches on catcher's interference"
-	case play.ReachedOnError():
-		fe, err := play.FieldingError()
-		if err != nil {
-			panic(err)
-		}
+	case game.ReachedOnError:
 		var throwing string
-		if fe.Contains("TH") {
+		if play.FieldingError.Modifiers.Contains("TH") {
 			throwing = "a throwing "
 		}
-		return fmt.Sprintf("reaches on %serror by the %s", throwing, positionName(fe.Fielder))
-	case play.FieldersChoice():
+		return fmt.Sprintf("reaches on %serror by %s", throwing, positionName(play.FieldingError.Fielder))
+	case game.FieldersChoice:
 		return "reaches on a fielder's choice"
-	case play.StrikeOut() && play.WildPitch():
+	case game.StrikeOutWildPitch:
 		return "reaches on a strikeout wild pitch"
-	case play.StrikeOut() && play.PassedBall():
+	case game.StrikeOutPassedBall:
 		return "reaches on a striekout passed ball"
-	case play.StrikeOut():
+	case game.StrikeOut:
 		return "strikes out"
-	case play.GroundOut():
-		verb := "grounds out"
+	case game.GroundOut:
+		verb := "is out"
 		if state.Modifiers.Trajectory() == game.Bunt {
 			verb = "bunts out"
 		}
-		return fmt.Sprintf("%s (%s)", verb, play)
-	case play.FlyOut():
-		verb := "flys out"
-		switch state.Modifiers.Trajectory() {
-		case game.PopUp:
-			verb = "pops out"
-		case game.LineDrive:
-			verb = "lines out"
+		return hitTrajectory(state, verb, play.Fielders)
+	case game.FlyOut:
+		return hitTrajectory(state, "is out", play.Fielders)
+	case game.DoublePlay:
+		verb := "grounds"
+		if state.Modifiers.Trajectory() == game.LineDrive {
+			verb = "lines"
 		}
-		return fmt.Sprintf("%s (%s)", verb, play)
+		return fmt.Sprintf("%s into a double play", verb)
 	default:
 		return ""
 	}
@@ -242,10 +244,10 @@ func batterPlayDescription(state *game.State) string {
 
 func runningPlayDescription(team *game.Team, state, lastState *game.State) string {
 	play := state.Play
-	switch {
-	case play.StolenBase():
+	switch state.Play.Type {
+	case game.StolenBase:
 		var sb []string
-		for _, base := range play.StolenBases() {
+		for _, base := range play.StolenBases {
 			var runner game.PlayerID
 			switch base {
 			case "2":
@@ -262,10 +264,8 @@ func runningPlayDescription(team *game.Team, state, lastState *game.State) strin
 				fmt.Sprintf("%s steals %s", team.GetPlayer(runner).NameOrNumber(), base))
 		}
 		return strings.Join(sb, ", ")
-	case play.CaughtStealing():
-		base := string(play)[2:3]
-		runner := lastState.Runners[game.BaseNumber[game.PreviousBase[base]]]
-		return fmt.Sprintf("%s is caught stealing %s", team.GetPlayer(runner).NameOrNumber(), base)
+	case game.CaughtStealing:
+		return fmt.Sprintf("%s is caught stealing %s", team.GetPlayer(play.Runners[0]).NameOrNumber(), play.Base)
 	default:
 		return ""
 	}

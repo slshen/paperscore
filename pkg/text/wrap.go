@@ -1,9 +1,14 @@
 package text
 
-import krtext "github.com/kr/text"
+import (
+	krtext "github.com/kr/text"
+	"github.com/mitchellh/go-wordwrap"
+)
 
-var Wrap = krtext.Wrap
+func Wrap(s string, width int) string {
+	return wordwrap.WrapString(s, uint(width))
+}
 
 func WrapIndent(s string, width int, indent string) string {
-	return krtext.Indent(krtext.Wrap(s, width), indent)
+	return krtext.Indent(Wrap(s, width), indent)
 }

@@ -31,7 +31,7 @@ type State struct {
 type PlateAppearance struct {
 	Number    int
 	EventCode string
-	Play
+	*Play
 	Batter PlayerID
 	Pitches
 	NotOutOnPlay bool `yaml:",omitempty"` // not out on CS, POCS due to error

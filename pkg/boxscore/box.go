@@ -35,6 +35,7 @@ type BoxScore struct {
 	Comments      []Comment
 
 	IncludeScoringPlays bool
+	IncludePlays        bool
 }
 
 func NewBoxScore(g *game.Game) (*BoxScore, error) {
@@ -147,7 +148,7 @@ func (box *BoxScore) InningScoreTable() string {
 func (box *BoxScore) ScoringPlays() (string, error) {
 	gen := playbyplay.Generator{
 		Game:        box.Game,
-		ScoringOnly: true,
+		ScoringOnly: box.IncludeScoringPlays,
 	}
 	s := &strings.Builder{}
 	err := gen.Generate(s)

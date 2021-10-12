@@ -69,6 +69,15 @@ func (lineup *Lineup) TotalRunsScored() int {
 func (lineup *Lineup) TotalStrikeOuts() int {
 	return lineup.battingSum(func(b *stats.Batting) int { return b.StrikeOuts })
 }
+func (lineup *Lineup) TotalWalks() int {
+	return lineup.battingSum(func(b *stats.Batting) int { return b.Walks })
+}
+func (lineup *Lineup) TotalGroundOuts() int {
+	return lineup.battingSum(func(b *stats.Batting) int { return b.GroundOuts })
+}
+func (lineup *Lineup) TotalLineDrives() int {
+	return lineup.battingSum(func(b *stats.Batting) int { return b.LineDrives })
+}
 
 func (lineup *Lineup) BattingTable() string {
 	s := &strings.Builder{}
@@ -78,19 +87,22 @@ func (lineup *Lineup) BattingTable() string {
 			{Header: firstWord(lineup.TeamName, 20), Width: 20, Left: true},
 			{Header: "AB", Width: 2},
 			{Header: " H", Width: 2},
-			{Header: " R", Width: 2},
 			{Header: " K", Width: 2},
+			{Header: "BB", Width: 2},
+			{Header: " L", Width: 2},
+			{Header: "GO", Width: 2},
 		},
 	}
 	s.WriteString(tab.Header())
 	for _, player := range lineup.Order {
 		data := lineup.Stats.GetBatting(player)
 		fmt.Fprintf(s, tab.Format(), data.Player.Number, data.Player.NameOrQ(), data.AB, data.Hits,
-			data.RunsScored, data.StrikeOuts)
+			data.StrikeOuts, data.Walks, data.LineDrives, data.GroundOuts)
 	}
-	fmt.Fprintf(s, tab.Format(), "", "", "--", "--", "--", "--")
+	fmt.Fprintf(s, tab.Format(), "", "", "--", "--", "--", "--", "--", "--")
 	fmt.Fprintf(s, tab.Format(), "", "",
-		lineup.TotalAB(), lineup.TotalHits(), lineup.TotalRunsScored(), lineup.TotalStrikeOuts())
+		lineup.TotalAB(), lineup.TotalHits(), lineup.TotalStrikeOuts(),
+		lineup.TotalWalks(), lineup.TotalLineDrives(), lineup.TotalGroundOuts())
 	return strings.TrimRight(s.String(), "\n")
 }
 
@@ -100,9 +112,12 @@ func (lineup *Lineup) PitchingTable() string {
 		Columns: []text.Column{
 			{Header: " #", Width: 2},
 			{Header: "  IP", Width: 4},
+			{Header: "BF", Width: 2},
 			{Header: " H", Width: 2},
 			{Header: "BB", Width: 2},
 			{Header: " K", Width: 2},
+			{Header: "GO", Width: 2},
+			{Header: "FO", Width: 2},
 			{Header: "XBH", Width: 3},
 			{Header: "WHFF", Width: 4},
 			{Header: "SWST", Width: 4},
@@ -112,8 +127,9 @@ func (lineup *Lineup) PitchingTable() string {
 	for _, pitcher := range lineup.Pitchers {
 		data := lineup.Stats.GetPitching(pitcher)
 		ip := fmt.Sprintf("%d.%d", data.Outs/3, data.Outs%3)
-		fmt.Fprintf(s, tab.Format(), data.Player.Number, ip,
-			data.Hits, data.Walks, data.StrikeOuts, data.Doubles+data.Triples+data.HRs,
+		fmt.Fprintf(s, tab.Format(), data.Player.Number, ip, data.BattersFaced,
+			data.Hits, data.Walks, data.StrikeOuts, data.GroundOuts, data.FlyOuts,
+			data.Doubles+data.Triples+data.HRs,
 			data.Whiff(), data.SwStr())
 	}
 	return strings.TrimRight(s.String(), "\n")
@@ -225,22 +241,14 @@ func (lineup *Lineup) recordError(e *game.FieldingError) {
 func (lineup *Lineup) recordOffense(state, lastState *game.State) {
 	data := lineup.Stats.GetBatting(state.Batter)
 	lineup.TeamLOB += data.Record(state)
-	if state.Play.StolenBase() {
-		for _, base := range state.Play.StolenBases() {
-			switch base {
-			case "2":
-				lineup.recordSteal(lastState.Runners[0])
-			case "3":
-				lineup.recordSteal(lastState.Runners[1])
-			case "H":
-				lineup.recordSteal(lastState.Runners[2])
-			}
+	switch state.Play.Type {
+	case game.StolenBase:
+		for _, runner := range state.Play.Runners {
+			lineup.recordSteal(runner)
 		}
-	}
-	if state.Play.CaughtStealing() {
+	case game.CaughtStealing:
 		if !state.NotOutOnPlay {
-			base := game.PreviousBase[string(state.Play)[2:3]]
-			runner := lastState.Runners[game.BaseNumber[base]]
+			runner := state.Play.Runners[0]
 			runnerData := lineup.Stats.GetBatting(runner)
 			runnerData.CaughtStealing++
 		}
@@ -251,12 +259,8 @@ func (lineup *Lineup) recordDefense(state *game.State) error {
 	if !state.Complete {
 		return nil
 	}
-	if state.Play.ReachedOnError() {
-		fe, err := state.Play.FieldingError()
-		if err != nil {
-			return err
-		}
-		lineup.recordError(fe)
+	if state.Play.Type == game.ReachedOnError {
+		lineup.recordError(state.Play.FieldingError)
 	}
 	return nil
 }

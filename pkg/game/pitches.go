@@ -75,5 +75,5 @@ func (ps Pitches) Last() string {
 }
 
 func (ps Pitches) Count() string {
-	return fmt.Sprintf("%d%d", ps.Balls(), ps.Strikes())
+	return fmt.Sprintf("%d-%d", ps.Balls(), ps.Strikes())
 }

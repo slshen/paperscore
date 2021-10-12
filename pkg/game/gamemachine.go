@@ -92,9 +92,13 @@ func (m *gameMachine) run() error {
 		}
 		m.state.Comment = m.getPlayField(3)
 		m.basePutOuts = nil
-		m.state.Play = m.parseEvent(m.state.EventCode)
+		m.parseEvent(m.state.EventCode)
 		var err error
-		m.state.Advances, err = parseAdvances(m.advancesCode)
+		var runners []PlayerID
+		if m.lastState != nil {
+			runners = m.lastState.Runners
+		}
+		m.state.Advances, err = parseAdvances(m.advancesCode, m.state.Batter, runners)
 		if err != nil {
 			return err
 		}
@@ -192,74 +196,164 @@ func (m *gameMachine) impliedAdvance(code string) {
 	if m.state.Advances[advance.From] == nil {
 		m.state.Advances[advance.From] = advance
 	}
+	if m.state.Advances[advance.From].To == advance.To {
+		m.state.Advances[advance.From].Implied = true
+	}
 }
 
 func (m *gameMachine) handleEvent() error {
 	switch {
 	case m.eventIs("$"):
-		fallthrough
+		m.state.Play = &Play{
+			Type:     FlyOut,
+			Fielders: []int{fielderNumber[m.eventMatches[0]]},
+		}
+		m.state.recordOut()
+		m.state.Complete = true
 	case m.eventIs("$$"):
 		fallthrough
 	case m.eventIs("$$$"):
+		m.state.Play = &Play{
+			Type: GroundOut,
+		}
+		for _, fielder := range m.eventMatches {
+			m.state.Play.Fielders = append(m.state.Play.Fielders, fielderNumber[fielder])
+		}
 		m.state.recordOut()
 		m.state.Complete = true
 	case m.eventIs("K"):
+		m.state.Play = &Play{
+			Type: StrikeOut,
+		}
 		m.state.recordOut()
 		m.state.Complete = true
 	case m.eventIs("W"):
+		m.state.Play = &Play{
+			Type: Walk,
+		}
 		m.impliedAdvance("B-1")
 		m.state.Complete = true
 	case m.eventIs("SB%;SB%;SB%") || m.eventIs("SB%;SB%") || m.eventIs("SB%"):
+		m.state.Play = &Play{
+			Type:    StolenBase,
+			Runners: make([]PlayerID, len(m.eventMatches)),
+		}
 		for i := range m.eventMatches {
 			base := m.eventMatches[i]
+			var runner PlayerID
 			switch base {
 			case "2":
 				m.impliedAdvance("1-2")
+				runner = m.lastState.Runners[0]
 			case "3":
 				m.impliedAdvance("2-3")
+				runner = m.lastState.Runners[1]
 			case "H":
 				m.impliedAdvance("3-H")
+				runner = m.lastState.Runners[2]
 			default:
 				return fmt.Errorf("unknown stolen base code %s", m.state.EventCode)
 			}
+			m.state.Play.StolenBases = append(m.state.Play.StolenBases, base)
+			if runner == "" {
+				return fmt.Errorf("no runner can steal %s in %s", base, m.state.EventCode)
+			}
+			m.state.Play.Runners[i] = runner
 		}
 	case m.eventIs("K2$"):
+		m.state.Play = &Play{
+			Type:     StrikeOut,
+			Fielders: []int{2, fielderNumber[m.eventMatches[0]]},
+		}
 		m.state.recordOut()
 		m.state.Complete = true
 	case m.eventIs("K+PB"):
-		fallthrough
+		m.state.Play = &Play{
+			Type: StrikeOutPassedBall,
+		}
+		m.state.Complete = true
+		m.impliedAdvance("B-1")
 	case m.eventIs("K+WP"):
+		m.state.Play = &Play{
+			Type: StrikeOutWildPitch,
+		}
 		m.state.Complete = true
 		m.impliedAdvance("B-1")
 	case m.eventIs("S$"):
+		m.state.Play = &Play{
+			Type:     Single,
+			Fielders: []int{fielderNumber[m.eventMatches[0]]},
+		}
 		m.impliedAdvance("B-1")
 		m.state.Complete = true
 	case m.eventIs("D$"):
+		m.state.Play = &Play{
+			Type:     Double,
+			Fielders: []int{fielderNumber[m.eventMatches[0]]},
+		}
 		m.impliedAdvance("B-2")
 		m.state.Complete = true
 	case m.eventIs("T$"):
+		m.state.Play = &Play{
+			Type:     Triple,
+			Fielders: []int{fielderNumber[m.eventMatches[0]]},
+		}
 		m.impliedAdvance("B-3")
 		m.state.Complete = true
 	case m.eventIs("H"):
+		m.state.Play = &Play{
+			Type: HomeRun,
+		}
 		m.impliedAdvance("B-H")
 		m.state.Complete = true
 	case m.eventIs("PB"):
+		m.state.Play = &Play{
+			Type: PassedBall,
+		}
 		// movement in advances
 	case m.eventIs("WP"):
+		m.state.Play = &Play{
+			Type: WildPitch,
+		}
 		// movement in advances
 	case m.eventIs("HP"):
+		m.state.Play = &Play{
+			Type: HitByPitch,
+		}
 		m.impliedAdvance("B-1")
 		m.state.Complete = true
 	case m.eventIs("E$"):
+		fe, err := parseFieldingError(m.eventCode)
+		if err != nil {
+			return fmt.Errorf("cannot parse fielding error in %s - %w", m.eventCode, err)
+		}
+		m.state.Play = &Play{
+			Type:          ReachedOnError,
+			FieldingError: fe,
+		}
 		m.impliedAdvance("B-1")
 		m.state.Complete = true
 	case m.eventIs("C/E$"):
+		m.state.Play = &Play{
+			Type: CatcherInterference,
+			FieldingError: &FieldingError{
+				Fielder: fielderNumber[m.eventMatches[0]],
+			},
+		}
 		m.impliedAdvance("B-1")
 		m.state.Complete = true
 	case m.eventIs("PO%($$)"):
 		from := m.eventMatches[1]
 		if !(from == "1" || from == "2" || from == "3") {
 			return fmt.Errorf("illegal picked off base in %s", m.playCode)
+		}
+		runner, err := m.getBaseRunner(from)
+		if err != nil {
+			return fmt.Errorf("cannot pick off in %s - %w", m.playCode, err)
+		}
+		m.state.Play = &Play{
+			Type:    PickedOff,
+			Runners: []PlayerID{runner},
 		}
 		advance := m.state.Advances[from]
 		if advance == nil {
@@ -270,22 +364,46 @@ func (m *gameMachine) handleEvent() error {
 		}
 	case m.eventIs("FC$"):
 		// outs are in the advance, if any
+		m.state.Play = &Play{
+			Type: FieldersChoice,
+		}
 		m.impliedAdvance("B-1")
+		m.state.Complete = true
 	case m.eventIs("$$(%)$"):
 		if !m.modifiers.Contains("GDP") {
 			return fmt.Errorf("play should contain GDP modifier in %s", m.playCode)
 		}
+		base := m.eventMatches[2]
+		runner, err := m.getBaseRunner(base)
+		if err != nil {
+			return fmt.Errorf("no runner in double play %s - %w", m.playCode, err)
+		}
+		m.state.Play = &Play{
+			Type:    DoublePlay,
+			Runners: []PlayerID{runner},
+		}
 		// should pass fielders to record out to do assists
 		m.state.recordOut()
 		m.state.recordOut()
-		m.putOut(m.eventMatches[2])
+		m.putOut(base)
+		m.state.Complete = true
 	case m.eventIs("$(B)$(%)"):
 		if !m.modifiers.Contains("LDP") {
 			return fmt.Errorf("play should contain LDP modifier in %s (%v)", m.playCode, m.state.Modifiers)
 		}
+		base := m.eventMatches[2]
+		runner, err := m.getBaseRunner(base)
+		if err != nil {
+			return fmt.Errorf("no runner in lineout double play %s - %w", m.playCode, err)
+		}
+		m.state.Play = &Play{
+			Type:    DoublePlay,
+			Runners: []PlayerID{runner},
+		}
 		m.state.recordOut()
 		m.state.recordOut()
-		m.putOut(m.eventMatches[2])
+		m.putOut(base)
+		m.state.Complete = true
 	case m.eventIs("CS%($$)"):
 		to := m.eventMatches[0]
 		if !(to == "2" || to == "3" || to == "H") {
@@ -299,12 +417,40 @@ func (m *gameMachine) handleEvent() error {
 		} else {
 			m.state.NotOutOnPlay = advance.FieldingError != nil
 		}
+		runner, err := m.getBaseRunner(from)
+		if err != nil {
+			return fmt.Errorf("cannot catch stealing runner in %s - %w", m.playCode, err)
+		}
+		m.state.Play = &Play{
+			Type:    CaughtStealing,
+			Runners: []PlayerID{runner},
+			Base:    to,
+		}
 	case m.eventIs("NP"):
+		m.state.Play = &Play{
+			Type: NoPlay,
+		}
 		// no play
 	default:
 		return fmt.Errorf("unknown event %s in %s", m.eventCode, m.playCode)
 	}
 	return nil
+}
+
+func (m *gameMachine) getBaseRunner(base string) (runner PlayerID, err error) {
+	if base == "H" {
+		err = fmt.Errorf("a runner cannot be at H")
+		return
+	}
+	if m.lastState == nil {
+		err = fmt.Errorf("no runners are on base at the start of a half-inning")
+		return
+	}
+	runner = m.lastState.Runners[runnerNumber[base]]
+	if runner == "" {
+		err = fmt.Errorf("no runner on %s", base)
+	}
+	return
 }
 
 func (m *gameMachine) putOut(base string) {

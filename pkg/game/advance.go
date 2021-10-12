@@ -12,6 +12,8 @@ type Advance struct {
 	Out                bool  `yaml:",omitempty"`
 	Fielders           []int `yaml:",omitempty,flow"`
 	RunnerInterference bool  `yaml:",omitempty"`
+	Implied            bool
+	Runner             PlayerID
 	*FieldingError     `yaml:",omitempty"`
 }
 
@@ -28,6 +30,11 @@ var PreviousBase = map[string]string{
 	"H": "3",
 	"3": "2",
 	"2": "1",
+}
+var runnerNumber = map[string]int{
+	"1": 0,
+	"2": 1,
+	"3": 2,
 }
 
 func (a *Advance) GoString() string {
@@ -70,7 +77,7 @@ func parseAdvance(s string) (*Advance, error) {
 	return a, nil
 }
 
-func parseAdvances(advancesCode string) (advances Advances, err error) {
+func parseAdvances(advancesCode string, batter PlayerID, runners []PlayerID) (advances Advances, err error) {
 	advances = make(Advances)
 	if len(advancesCode) > 0 {
 		for _, as := range strings.Split(advancesCode, ";") {
@@ -81,6 +88,16 @@ func parseAdvances(advancesCode string) (advances Advances, err error) {
 			}
 			if advances[advance.From] != nil {
 				err = fmt.Errorf("cannot advance %s twice in %s", advance.From, advancesCode)
+				return
+			}
+			if advance.From == "B" {
+				advance.Runner = batter
+			} else {
+				advance.Runner = runners[runnerNumber[advance.From]]
+				if advance.Runner == "" {
+					err = fmt.Errorf("no runner to advance from %s in %s", advance.From, advancesCode)
+					return
+				}
 			}
 			advances[advance.From] = advance
 		}

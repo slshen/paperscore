@@ -1,16 +1,14 @@
-{{- if .Doubles}}
-2B - {{.Doubles}}{{end}}
-{{- if .Triples}}
-3B - {{.Triples}}{{end}}
-{{- if .HRs}}
-HR - {{.HRs}}{{end}}
-{{- if .SBs}}
-SB - {{.SBs}}{{end}}
-{{- if .Walks}}
-BB - {{.Walks}}{{end}}
-{{- if (gt .TotalLOB 0)}}
-LOB - {{.TotalLOB}}{{end}}
-{{- if .CaughtStealings}}
-CS - {{.CaughtStealings}}{{end}}
-{{- if .ErrorsList}}
-Errors -{{.ErrorsList}}{{end}}
+{{- if .Doubles}}2B - {{.Doubles}}
+{{end}}
+{{- if .Triples}}3B - {{.Triples}}
+{{end}}
+{{- if .HRs}}HR - {{.HRs}}
+{{end}}
+{{- if .SBs}}SB - {{.SBs}}
+{{end}}
+{{- if (gt .TotalLOB 0)}}LOB - {{.TotalLOB}}
+{{end}}
+{{- if .CaughtStealings}}CS - {{.CaughtStealings}}
+{{end}}
+{{- if .ErrorsList}}Errors -{{.ErrorsList}}
+{{end}}

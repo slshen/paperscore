@@ -13,10 +13,10 @@ func TestPitches(t *testing.T) {
 		b, s  int
 		count string
 	}{
-		{"", 0, 0, "00"},
-		{"B", 1, 0, "10"},
-		{"CSBB", 2, 2, "22"},
-		{"C.X", 0, 1, "01"},
+		{"", 0, 0, "0-0"},
+		{"B", 1, 0, "1-0"},
+		{"CSBB", 2, 2, "2-2"},
+		{"C.X", 0, 1, "0-1"},
 	} {
 		ps := Pitches(tc.in)
 		assert.Equal(tc.b, ps.Balls())

@@ -1,15 +1,16 @@
 {{.Game.Date}} game {{.Game.Number}} {{.Game.Visitor}} at {{.Game.Home}} 
 
 {{.InningScoreTable}}
-{{paste .VisitorLineup.BattingTable .HomeLineup.BattingTable 4}}
-{{- paste (execute "batting.tmpl" .VisitorLineup) (execute "batting.tmpl" .HomeLineup) 4 36}}
-{{paste .VisitorLineup.PitchingTable .HomeLineup.PitchingTable 4 36}}
-{{- paste (execute "pitching.tmpl" .VisitorLineup) (execute "pitching.tmpl" .HomeLineup) 4 36}}
-{{range .Comments}}{{.Half}} {{ordinal .Inning}}, {{.Outs}} Outs, {{.Batter}} at bat - {{.Text}}
+{{paste .VisitorLineup.BattingTable .HomeLineup.BattingTable 1 44}}
+{{paste (execute "batting.tmpl" .VisitorLineup) (execute "batting.tmpl" .HomeLineup) 1 44}}
+{{- paste .VisitorLineup.PitchingTable .HomeLineup.PitchingTable 1 -44}}
+{{paste (execute "pitching.tmpl" .VisitorLineup) (execute "pitching.tmpl" .HomeLineup) 1 44}}
+{{if (not (or .IncludePlays .IncludeScoringPlays))}}
+{{- range .Comments}}{{.Half}} {{ordinal .Inning}}, {{.Outs}} Outs, {{.Batter}} at bat - {{.Text}}
+{{end}}{{end}}
+{{- range .Game.Comments}}Comment - {{.}}
 {{end}}
-{{range .Game.Comments}}Comment - {{.}}
-{{end}}
-{{- if .IncludeScoringPlays}}
+{{- if (or .IncludeScoringPlays .IncludePlays)}}
 {{.ScoringPlays}}{{end}}
 {{- with .Game}}
 Start - {{.Start}}

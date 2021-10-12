@@ -6,6 +6,7 @@ import (
 )
 
 type eventCodeParser struct {
+	playCode     string
 	eventCode    string
 	eventMatches []string
 	advancesCode string
@@ -14,10 +15,21 @@ type eventCodeParser struct {
 
 var eventCodeRegexps = map[string]*regexp.Regexp{}
 var playRegexp = regexp.MustCompile(`([^./]+)`)
+var fielderNumber = map[string]int{
+	"1": 1,
+	"2": 2,
+	"3": 3,
+	"4": 4,
+	"5": 5,
+	"6": 6,
+	"7": 7,
+	"8": 8,
+	"9": 9,
+}
 
-func (p *eventCodeParser) parseEvent(code string) Play {
+func (p *eventCodeParser) parseEvent(code string) {
 	m := playRegexp.FindStringSubmatch(code)
-	play := Play(m[1])
+	p.playCode = m[1]
 	dot := strings.IndexRune(code, '.')
 	if dot > 0 {
 		p.advancesCode = code[dot+1:]
@@ -32,7 +44,7 @@ func (p *eventCodeParser) parseEvent(code string) Play {
 	} else {
 		p.modifiers = nil
 	}
-	return play
+	p.eventMatches = nil
 }
 
 func (p *eventCodeParser) eventIs(pattern string) bool {

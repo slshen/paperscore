@@ -60,16 +60,20 @@ func readCommand() *cobra.Command {
 }
 
 func boxCommand() *cobra.Command {
-	var yamlFormat bool
-	var pdfFormat bool
-	var scoringPlays bool
+	var (
+		yamlFormat   bool
+		pdfFormat    bool
+		scoringPlays bool
+		plays        bool
+	)
 	c := &cobra.Command{
 		Use:   "box",
 		Short: "Generate a box score",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var out io.Writer
 			if pdfFormat {
-				paps := exec.Command("paps", "--format=pdf", "--font=Andale Mono 11")
+				paps := exec.Command("paps", "--format=pdf", "--font=Andale Mono 10",
+					"--left-margin=18", "--right-margin=18", "--top-margin=18", "--bottom-margin=18")
 				w, err := paps.StdinPipe()
 				paps.Stdout = os.Stdout
 				paps.Stderr = os.Stderr
@@ -96,6 +100,7 @@ func boxCommand() *cobra.Command {
 					return err
 				}
 				box.IncludeScoringPlays = scoringPlays
+				box.IncludePlays = plays
 				if yamlFormat {
 					dat, err := yaml.Marshal(box)
 					if err != nil {
@@ -119,6 +124,7 @@ func boxCommand() *cobra.Command {
 	c.Flags().BoolVar(&yamlFormat, "yaml", false, "")
 	c.Flags().BoolVar(&pdfFormat, "pdf", false, "Run paps to convert output to pdf")
 	c.Flags().BoolVar(&scoringPlays, "scoring", false, "Include scoring plays in box")
+	c.Flags().BoolVar(&plays, "plays", false, "Include play by play in box")
 	return c
 }
 
