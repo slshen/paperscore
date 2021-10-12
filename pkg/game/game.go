@@ -49,11 +49,17 @@ func ReadGame(path string, in io.Reader) (*Game, error) {
 	if path != "" {
 		dir := filepath.Dir(path)
 		if g.HomeID != "" {
-			g.HomeTeam, err = ReadTeamFile(filepath.Join(dir, fmt.Sprintf("%s.yaml", g.HomeID)))
+			g.HomeTeam, err = ReadTeamFile(g.Home, filepath.Join(dir, fmt.Sprintf("%s.yaml", g.HomeID)))
 		}
 		if err == nil && g.VisitorID != "" {
-			g.VisitorTeam, err = ReadTeamFile(filepath.Join(dir, fmt.Sprintf("%s.yaml", g.VisitorID)))
+			g.VisitorTeam, err = ReadTeamFile(g.Visitor, filepath.Join(dir, fmt.Sprintf("%s.yaml", g.VisitorID)))
 		}
+	}
+	if g.HomeTeam == nil {
+		g.HomeTeam = NewTeam(g.Home)
+	}
+	if g.VisitorTeam == nil {
+		g.VisitorTeam = NewTeam(g.Visitor)
 	}
 	return g, err
 }

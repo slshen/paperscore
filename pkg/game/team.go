@@ -22,7 +22,14 @@ type Player struct {
 
 var playerNumberRegexp = regexp.MustCompile(`\d+`)
 
-func ReadTeamFile(path string) (*Team, error) {
+func NewTeam(name string) *Team {
+	return &Team{
+		Name:    name,
+		Players: make(map[PlayerID]*Player),
+	}
+}
+
+func ReadTeamFile(name, path string) (*Team, error) {
 	dat, err := os.ReadFile(path)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
@@ -30,7 +37,7 @@ func ReadTeamFile(path string) (*Team, error) {
 		}
 		return nil, err
 	}
-	team := &Team{}
+	team := NewTeam(name)
 	if err := yaml.Unmarshal(dat, team); err != nil {
 		return nil, err
 	}

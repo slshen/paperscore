@@ -22,6 +22,7 @@ var BaseNumber = map[string]int{
 	"1": 0,
 	"2": 1,
 	"3": 2,
+	"H": 3,
 }
 var PreviousBase = map[string]string{
 	"H": "3",

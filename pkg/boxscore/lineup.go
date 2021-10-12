@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/mitchellh/go-wordwrap"
 	"github.com/slshen/sb/pkg/game"
 	"github.com/slshen/sb/pkg/stats"
-	"github.com/slshen/sb/pkg/table"
+	"github.com/slshen/sb/pkg/text"
 )
 
 type Lineup struct {
@@ -36,7 +35,7 @@ func (lineup *Lineup) insertBatter(batter game.PlayerID) {
 		}
 	}
 	lineup.Order = append(lineup.Order, batter)
-	if lineup.Team != nil && lineup.Team.Players[batter] == nil {
+	if len(lineup.Team.Players) > 0 && lineup.Team.Players[batter] == nil {
 		fmt.Printf("batter %s does not have a team entry\n", batter)
 	}
 }
@@ -73,8 +72,8 @@ func (lineup *Lineup) TotalStrikeOuts() int {
 
 func (lineup *Lineup) BattingTable() string {
 	s := &strings.Builder{}
-	tab := table.Table{
-		Columns: []table.Column{
+	tab := text.Table{
+		Columns: []text.Column{
 			{Header: " #", Width: 2},
 			{Header: firstWord(lineup.TeamName, 20), Width: 20, Left: true},
 			{Header: "AB", Width: 2},
@@ -97,8 +96,8 @@ func (lineup *Lineup) BattingTable() string {
 
 func (lineup *Lineup) PitchingTable() string {
 	s := &strings.Builder{}
-	tab := table.Table{
-		Columns: []table.Column{
+	tab := text.Table{
+		Columns: []text.Column{
 			{Header: " #", Width: 2},
 			{Header: "  IP", Width: 4},
 			{Header: " H", Width: 2},
@@ -143,7 +142,7 @@ func (lineup *Lineup) battingCounts(get func(*stats.Batting) int) string {
 			}
 		}
 	}
-	return wordwrap.WrapString(strings.Join(counts, ", "), 30)
+	return text.Wrap(strings.Join(counts, ", "), 30)
 }
 
 func (lineup *Lineup) pitchingCounts(get func(*stats.Pitching) int) string {
@@ -159,7 +158,7 @@ func (lineup *Lineup) pitchingCounts(get func(*stats.Pitching) int) string {
 			}
 		}
 	}
-	return wordwrap.WrapString(strings.Join(counts, ", "), 30)
+	return text.Wrap(strings.Join(counts, ", "), 30)
 }
 
 func (lineup *Lineup) Singles() string {
@@ -226,15 +225,16 @@ func (lineup *Lineup) recordError(e *game.FieldingError) {
 func (lineup *Lineup) recordOffense(state, lastState *game.State) {
 	data := lineup.Stats.GetBatting(state.Batter)
 	lineup.TeamLOB += data.Record(state)
-	if second, third, home := state.Play.StolenBase(); second || third || home {
-		if second {
-			lineup.recordSteal(lastState.Runners[0])
-		}
-		if third {
-			lineup.recordSteal(lastState.Runners[1])
-		}
-		if home {
-			lineup.recordSteal(lastState.Runners[2])
+	if state.Play.StolenBase() {
+		for _, base := range state.Play.StolenBases() {
+			switch base {
+			case "2":
+				lineup.recordSteal(lastState.Runners[0])
+			case "3":
+				lineup.recordSteal(lastState.Runners[1])
+			case "H":
+				lineup.recordSteal(lastState.Runners[2])
+			}
 		}
 	}
 	if state.Play.CaughtStealing() {
@@ -247,13 +247,18 @@ func (lineup *Lineup) recordOffense(state, lastState *game.State) {
 	}
 }
 
-func (lineup *Lineup) recordDefense(state *game.State) {
+func (lineup *Lineup) recordDefense(state *game.State) error {
 	if !state.Complete {
-		return
+		return nil
 	}
-	if e := state.Play.ReachedOnError(); e != nil {
-		lineup.recordError(e)
+	if state.Play.ReachedOnError() {
+		fe, err := state.Play.FieldingError()
+		if err != nil {
+			return err
+		}
+		lineup.recordError(fe)
 	}
+	return nil
 }
 
 func (lineup *Lineup) recordPitching(state *game.State, lastState *game.State) {

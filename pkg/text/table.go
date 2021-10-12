@@ -1,4 +1,4 @@
-package table
+package text
 
 import (
 	"fmt"
