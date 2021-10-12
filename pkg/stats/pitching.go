@@ -12,7 +12,7 @@ type Pitching struct {
 	Swings, Misses                     int
 	Hits, Doubles, Triples, HRs, Walks int
 	StrikeOuts, StrikeOutsLooking      int
-	Outs                               int
+	Outs, GroundOuts, FlyOuts          int
 	WP, HP                             int
 	BattersFaced                       int
 }
@@ -38,7 +38,7 @@ func (p *Pitching) Record(state *game.State, lastState *game.State) {
 	if lastState != nil && (lastState.Batter != state.Batter || lastState.Pitcher != state.Pitcher) {
 		p.BattersFaced++
 	}
-	if state.Play.WildPitch() {
+	if state.Play.Type == game.WildPitch {
 		p.WP++
 	}
 	if state.Complete || state.Outs == 3 {
@@ -48,33 +48,33 @@ func (p *Pitching) Record(state *game.State, lastState *game.State) {
 		p.Swings += state.Pitches.Swings()
 		p.Misses += state.Pitches.Misses()
 		if state.Pitches.Last() == "X" {
-			if state.Play.HitByPitch() {
+			if state.Play.Type == game.HitByPitch {
 				p.Balls++
 			} else {
 				p.Strikes++
 				p.Swings++
 			}
 		}
-		if state.Play.StrikeOut() {
-			p.StrikeOuts++
-		}
-		if state.Play.Walk() {
-			p.Walks++
-		}
 		if state.Play.Hit() {
 			p.Hits++
 		}
-		if state.Play.HitByPitch() {
+		switch state.Play.Type {
+		case game.StrikeOut:
+			p.StrikeOuts++
+		case game.Walk:
+			p.Walks++
+		case game.HitByPitch:
 			p.HP++
-		}
-		if state.Play.Double() {
+		case game.Double:
 			p.Doubles++
-		}
-		if state.Play.Triple() {
+		case game.Triple:
 			p.Triples++
-		}
-		if state.Play.HomeRun() {
+		case game.HomeRun:
 			p.HRs++
+		case game.GroundOut:
+			p.GroundOuts++
+		case game.FlyOut:
+			p.FlyOuts++
 		}
 	}
 }

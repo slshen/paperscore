@@ -29,19 +29,14 @@ func firstWord(s string, w int) string {
 	return out.String()
 }
 
-func paste(c1, c2 string, widths ...int) string {
-	sepWidth := 2
-	var leftLen int
-	if len(widths) > 0 {
-		sepWidth = widths[0]
-		if len(widths) > 1 {
-			leftLen = widths[1]
-		}
-	}
-	if leftLen > 0 {
+func paste(c1, c2 string, sepWidth, leftLen int) string {
+	switch {
+	case leftLen > 0:
 		c1 = text.Wrap(c1, leftLen)
 		c2 = text.Wrap(c2, leftLen)
-	} else {
+	case leftLen < 0:
+		leftLen = -leftLen
+	default:
 		leftLen = lineLength(c1)
 	}
 	scan1 := bufio.NewScanner(strings.NewReader(c1))

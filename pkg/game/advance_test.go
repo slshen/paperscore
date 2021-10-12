@@ -23,8 +23,10 @@ func TestAdvance(t *testing.T) {
 			assert.Equal(2, a.FieldingError.Fielder)
 		}
 	}
-	as, err := parseAdvances("B-1;1-2;2-3")
+	as, err := parseAdvances("B-1;1-2;2-3", PlayerID("b1"), []PlayerID{"r1", "r2"})
 	assert.NoError(err)
 	assert.Equal(3, len(as))
 	assert.NotNil(as["B"])
+	assert.Equal(PlayerID("b1"), as["B"].Runner)
+	assert.Equal(PlayerID("r2"), as["2"].Runner)
 }

@@ -5,6 +5,7 @@ import "github.com/slshen/sb/pkg/game"
 type Batting struct {
 	Player                         *game.Player `yaml:"-"`
 	AB, Runs, Hits /*RBI,*/, Walks int
+	LineDrives                     int
 	StrikeOuts                     int
 	StrikeOutsLooking              int
 	RunsScored                     int
@@ -12,6 +13,7 @@ type Batting struct {
 	StolenBases, CaughtStealing    int
 	LOB                            int
 	PitchesSeen, Swings, Misses    int
+	GroundOuts, FlyOuts            int
 }
 
 func (b *Batting) Record(state *game.State) (teamLOB int) {
@@ -31,34 +33,36 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 	if state.Complete {
 		if state.Play.Hit() {
 			b.Hits++
-			if state.Play.Single() {
-				b.Singles++
-			}
-			if state.Play.Double() {
-				b.Doubles++
-			}
-			if state.Play.Triple() {
-				b.Triples++
-			}
-			if state.Play.HomeRun() {
-				b.HRs++
-			}
 		}
-		if state.Play.StrikeOut() {
+		switch state.Play.Type {
+		case game.Single:
+			b.Singles++
+		case game.Double:
+			b.Doubles++
+		case game.Triple:
+			b.Triples++
+		case game.HomeRun:
+			b.HRs++
+		case game.StrikeOut:
 			b.StrikeOuts++
-		}
-		if state.Play.Walk() {
+		case game.Walk:
 			b.Walks++
+		case game.GroundOut:
+			b.GroundOuts++
+		case game.FlyOut:
+			b.FlyOuts++
 		}
-		if !(state.Play.Walk() || state.Play.HitByPitch() ||
-			state.Play.CatcherInterference() ||
-			(state.Play.ReachedOnError() && state.Modifiers.Contains(game.Obstruction)) ||
+		if !(state.Play.Is(game.Walk, game.HitByPitch, game.CatcherInterference) ||
+			(state.Play.Type == game.ReachedOnError && state.Modifiers.Contains(game.Obstruction)) ||
 			state.Modifiers.Contains(game.SacrificeFly, game.SacrificeHit)) {
 			b.AB++
 		}
-		b.PitchesSeen = state.Pitches.Balls() + state.Pitches.Strikes()
-		b.Swings = state.Pitches.Swings()
-		b.Misses = state.Pitches.Misses()
+		if state.Modifiers.Trajectory() == game.LineDrive {
+			b.LineDrives++
+		}
 	}
+	b.PitchesSeen = state.Pitches.Balls() + state.Pitches.Strikes()
+	b.Swings = state.Pitches.Swings()
+	b.Misses = state.Pitches.Misses()
 	return
 }
