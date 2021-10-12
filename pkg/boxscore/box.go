@@ -8,7 +8,8 @@ import (
 	"text/template"
 
 	"github.com/slshen/sb/pkg/game"
-	"github.com/slshen/sb/pkg/table"
+	"github.com/slshen/sb/pkg/playbyplay"
+	"github.com/slshen/sb/pkg/text"
 )
 
 //go:embed "*.tmpl"
@@ -32,6 +33,8 @@ type BoxScore struct {
 	HomeLineup    *Lineup
 	VisitorLineup *Lineup
 	Comments      []Comment
+
+	IncludeScoringPlays bool
 }
 
 func NewBoxScore(g *game.Game) (*BoxScore, error) {
@@ -82,7 +85,9 @@ func (box *BoxScore) run() error {
 		defense.insertPitcher(state.Pitcher)
 		box.handleAdvances(state, lineup, defense)
 		lineup.recordOffense(state, lastState)
-		defense.recordDefense(state)
+		if err := defense.recordDefense(state); err != nil {
+			return err
+		}
 		defense.recordPitching(state, lastState)
 	}
 	return nil
@@ -105,22 +110,22 @@ func (box *BoxScore) handleAdvances(state *game.State, lineup, defense *Lineup) 
 }
 
 func (box *BoxScore) InningScoreTable() string {
-	tab := &table.Table{
-		Columns: []table.Column{
+	tab := &text.Table{
+		Columns: []text.Column{
 			{Header: "", Width: 20, Left: true},
 		},
 	}
 	for i := range box.InningScore {
-		tab.Columns = append(tab.Columns, table.Column{
+		tab.Columns = append(tab.Columns, text.Column{
 			Header: fmt.Sprintf("%2d", i+1),
 			Width:  2,
 		})
 	}
 	tab.Columns = append(tab.Columns,
-		table.Column{Header: "  ", Width: 2},
-		table.Column{Header: " R", Width: 2},
-		table.Column{Header: " H", Width: 2},
-		table.Column{Header: " E", Width: 2},
+		text.Column{Header: "  ", Width: 2},
+		text.Column{Header: " R", Width: 2},
+		text.Column{Header: " H", Width: 2},
+		text.Column{Header: " E", Width: 2},
 	)
 	s := &strings.Builder{}
 	s.WriteString(tab.Header())
@@ -139,12 +144,22 @@ func (box *BoxScore) InningScoreTable() string {
 	return s.String()
 }
 
+func (box *BoxScore) ScoringPlays() (string, error) {
+	gen := playbyplay.Generator{
+		Game:        box.Game,
+		ScoringOnly: true,
+	}
+	s := &strings.Builder{}
+	err := gen.Generate(s)
+	return s.String(), err
+}
+
 func (box *BoxScore) Render(w io.Writer) error {
 	tmpl := &template.Template{}
 	tmpl.Funcs(template.FuncMap{
 		"paste":   paste,
 		"execute": executeFunc(tmpl),
-		"ordinal": ordinal,
+		"ordinal": text.Ordinal,
 	})
 	tmpl, err := tmpl.ParseFS(templatesFS, "*.tmpl")
 	if err != nil {

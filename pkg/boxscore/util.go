@@ -6,21 +6,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/mitchellh/go-wordwrap"
+	"github.com/slshen/sb/pkg/text"
 )
-
-var ordinalDictionary = map[int]string{
-	0: "th",
-	1: "st",
-	2: "nd",
-	3: "rd",
-	4: "th",
-	5: "th",
-	6: "th",
-	7: "th",
-	8: "th",
-	9: "th",
-}
 
 func firstWord(s string, w int) string {
 	out := &strings.Builder{}
@@ -52,8 +39,8 @@ func paste(c1, c2 string, widths ...int) string {
 		}
 	}
 	if leftLen > 0 {
-		c1 = wordwrap.WrapString(c1, uint(leftLen))
-		c2 = wordwrap.WrapString(c2, uint(leftLen))
+		c1 = text.Wrap(c1, leftLen)
+		c2 = text.Wrap(c2, leftLen)
 	} else {
 		leftLen = lineLength(c1)
 	}
@@ -100,8 +87,4 @@ func executeFunc(tmpl *template.Template) func(string, interface{}) (string, err
 		err := tmpl.ExecuteTemplate(&s, name, data)
 		return s.String(), err
 	}
-}
-
-func ordinal(i int) string {
-	return fmt.Sprintf("%d%s", i, ordinalDictionary[i%10])
 }

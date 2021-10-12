@@ -11,7 +11,6 @@ func TestPlay(t *testing.T) {
 	single := Play("S6")
 	assert.True(single.Hit())
 	assert.True(single.Single())
-	sb2, sb3, sbh := Play("SB2").StolenBase()
-	assert.True(sb2)
-	assert.False(sb3 || sbh)
+	sb := Play("SB2")
+	assert.True(sb.StolenBase())
 }

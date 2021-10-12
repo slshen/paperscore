@@ -9,6 +9,8 @@
 {{end}}
 {{range .Game.Comments}}Comment - {{.}}
 {{end}}
+{{- if .IncludeScoringPlays}}
+{{.ScoringPlays}}{{end}}
 {{- with .Game}}
 Start - {{.Start}}
 Time Limit - {{.TimeLimit}}

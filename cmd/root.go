@@ -9,6 +9,7 @@ import (
 
 	"github.com/slshen/sb/pkg/boxscore"
 	"github.com/slshen/sb/pkg/game"
+	"github.com/slshen/sb/pkg/playbyplay"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
@@ -16,7 +17,7 @@ import (
 func Root() *cobra.Command {
 	root := &cobra.Command{}
 	root.SilenceUsage = true
-	root.AddCommand(readCommand(), boxCommand())
+	root.AddCommand(readCommand(), boxCommand(), playByPlayCommand())
 	return root
 }
 
@@ -61,6 +62,7 @@ func readCommand() *cobra.Command {
 func boxCommand() *cobra.Command {
 	var yamlFormat bool
 	var pdfFormat bool
+	var scoringPlays bool
 	c := &cobra.Command{
 		Use:   "box",
 		Short: "Generate a box score",
@@ -93,6 +95,7 @@ func boxCommand() *cobra.Command {
 				if err != nil {
 					return err
 				}
+				box.IncludeScoringPlays = scoringPlays
 				if yamlFormat {
 					dat, err := yaml.Marshal(box)
 					if err != nil {
@@ -115,5 +118,31 @@ func boxCommand() *cobra.Command {
 	}
 	c.Flags().BoolVar(&yamlFormat, "yaml", false, "")
 	c.Flags().BoolVar(&pdfFormat, "pdf", false, "Run paps to convert output to pdf")
+	c.Flags().BoolVar(&scoringPlays, "scoring", false, "Include scoring plays in box")
+	return c
+}
+
+func playByPlayCommand() *cobra.Command {
+	pbp := playbyplay.Generator{}
+	c := &cobra.Command{
+		Use:   "plays",
+		Short: "Generate play by play",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			files := args
+			sort.Strings(files)
+			for _, path := range files {
+				g, err := game.ReadGameFile(path)
+				if err != nil {
+					return err
+				}
+				pbp.Game = g
+				if err := pbp.Generate(os.Stdout); err != nil {
+					return err
+				}
+			}
+			return nil
+		},
+	}
+	c.Flags().BoolVar(&pbp.ScoringOnly, "scoring", false, "Only show scoring plays")
 	return c
 }

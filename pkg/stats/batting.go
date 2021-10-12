@@ -52,7 +52,7 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 		}
 		if !(state.Play.Walk() || state.Play.HitByPitch() ||
 			state.Play.CatcherInterference() ||
-			(state.Play.ReachedOnError() != nil && state.Modifiers.Contains(game.Obstruction)) ||
+			(state.Play.ReachedOnError() && state.Modifiers.Contains(game.Obstruction)) ||
 			state.Modifiers.Contains(game.SacrificeFly, game.SacrificeHit)) {
 			b.AB++
 		}
