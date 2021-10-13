@@ -173,7 +173,14 @@ func (m *gameMachine) handleSpecial() error {
 		}
 		score, err := strconv.Atoi(m.getPlayField(2))
 		if err != nil || runs != score {
-			return fmt.Errorf("# of at inning %d is %d not %s", m.state.InningNumber, runs, m.getPlayField(2))
+			return fmt.Errorf("at inning %d # runs is %d not %s", m.state.InningNumber, runs, m.getPlayField(2))
+		}
+		var outs int
+		if len(m.playFields) > 3 {
+			outs, err = strconv.Atoi(m.playFields[3])
+		}
+		if err != nil || outs != m.state.Outs {
+			return fmt.Errorf("at inning %d # outs is %d not %d", m.state.InningNumber, m.state.Outs, outs)
 		}
 	default:
 		return fmt.Errorf("unknown special play %s", m.playCode)
