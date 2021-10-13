@@ -11,6 +11,7 @@ import (
 )
 
 type Game struct {
+	ID            string
 	Home, Visitor string
 	Date          string
 	Number        int `yaml:"game"`
@@ -60,6 +61,9 @@ func ReadGame(path string, in io.Reader) (*Game, error) {
 	}
 	if g.VisitorTeam == nil {
 		g.VisitorTeam = NewTeam(g.Visitor)
+	}
+	if g.ID == "" {
+		g.ID = filepath.Base(path)
 	}
 	return g, err
 }

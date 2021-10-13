@@ -6,6 +6,6 @@
 
 * Record defensive positions
 
-* Generate multi-game stats
-
 * Generate run expectancy matrix
+
+* Count hard hit balls (foul or in-play)

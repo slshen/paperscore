@@ -3,8 +3,8 @@ package stats
 import "github.com/slshen/sb/pkg/game"
 
 type Batting struct {
-	Player                         *game.Player `yaml:"-"`
-	AB, Runs, Hits /*RBI,*/, Walks int
+	Player                         *game.Player `yaml:"-" mapstructure:",squash"`
+	AB, Hits /*RBI,*/, Walks       int
 	LineDrives                     int
 	StrikeOuts                     int
 	StrikeOutsLooking              int
@@ -14,6 +14,8 @@ type Batting struct {
 	LOB                            int
 	PitchesSeen, Swings, Misses    int
 	GroundOuts, FlyOuts            int
+	HitByPitch                     int
+	Games                          map[string]bool
 }
 
 func (b *Batting) Record(state *game.State) (teamLOB int) {
@@ -45,12 +47,17 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 			b.HRs++
 		case game.StrikeOut:
 			b.StrikeOuts++
+			if state.Pitches.Last() == "C" {
+				b.StrikeOutsLooking++
+			}
 		case game.Walk:
 			b.Walks++
 		case game.GroundOut:
 			b.GroundOuts++
 		case game.FlyOut:
 			b.FlyOuts++
+		case game.HitByPitch:
+			b.HitByPitch++
 		}
 		if !(state.Play.Is(game.Walk, game.HitByPitch, game.CatcherInterference) ||
 			(state.Play.Type == game.ReachedOnError && state.Modifiers.Contains(game.Obstruction)) ||
@@ -61,8 +68,8 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 			b.LineDrives++
 		}
 	}
-	b.PitchesSeen = state.Pitches.Balls() + state.Pitches.Strikes()
-	b.Swings = state.Pitches.Swings()
-	b.Misses = state.Pitches.Misses()
+	b.PitchesSeen += state.Pitches.Balls() + state.Pitches.Strikes()
+	b.Swings += state.Pitches.Swings()
+	b.Misses += state.Pitches.Misses()
 	return
 }

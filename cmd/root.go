@@ -10,6 +10,7 @@ import (
 	"github.com/slshen/sb/pkg/boxscore"
 	"github.com/slshen/sb/pkg/game"
 	"github.com/slshen/sb/pkg/playbyplay"
+	"github.com/slshen/sb/pkg/stats"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
@@ -17,7 +18,8 @@ import (
 func Root() *cobra.Command {
 	root := &cobra.Command{}
 	root.SilenceUsage = true
-	root.AddCommand(readCommand(), boxCommand(), playByPlayCommand())
+	root.AddCommand(readCommand(), boxCommand(), playByPlayCommand(),
+		statsCommand("batting"), statsCommand("pitching"))
 	return root
 }
 
@@ -150,5 +152,45 @@ func playByPlayCommand() *cobra.Command {
 		},
 	}
 	c.Flags().BoolVar(&pbp.ScoringOnly, "scoring", false, "Only show scoring plays")
+	return c
+}
+
+func statsCommand(statsType string) *cobra.Command {
+	var (
+		csv bool
+	)
+	mg := stats.NewMultiGame()
+	c := &cobra.Command{
+		Use:     fmt.Sprintf("%s-stats", statsType),
+		Aliases: []string{statsType},
+		Short:   "Print stats",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			files := args
+			sort.Strings(files)
+			for _, path := range files {
+				g, err := game.ReadGameFile(path)
+				if err != nil {
+					return err
+				}
+				if err := mg.Read(g); err != nil {
+					return err
+				}
+			}
+			var data *stats.Data
+			if statsType == "batting" {
+				data = mg.GetBattingData()
+			} else {
+				data = mg.GetPitchingData()
+			}
+			if csv {
+				return data.RenderCSV(os.Stdout)
+			} else {
+				data.RenderTable(os.Stdout)
+			}
+			return nil
+		},
+	}
+	c.Flags().BoolVar(&csv, "csv", false, "Print in CSV format")
+	c.Flags().StringVar(&mg.OnlyTeam, "team", "", "Limit stats to `team`")
 	return c
 }
