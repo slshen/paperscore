@@ -19,7 +19,7 @@ func Root() *cobra.Command {
 	root := &cobra.Command{}
 	root.SilenceUsage = true
 	root.AddCommand(readCommand(), boxCommand(), playByPlayCommand(),
-		statsCommand("batting"), statsCommand("pitching"))
+		statsCommand("batting"), statsCommand("pitching"), re24Command())
 	return root
 }
 
@@ -192,5 +192,37 @@ func statsCommand(statsType string) *cobra.Command {
 	}
 	c.Flags().BoolVar(&csv, "csv", false, "Print in CSV format")
 	c.Flags().StringVar(&mg.OnlyTeam, "team", "", "Limit stats to `team`")
+	return c
+}
+
+func re24Command() *cobra.Command {
+	var csv bool
+	re24 := stats.NewRE24()
+	c := &cobra.Command{
+		Use:   "re24",
+		Short: "Print RE24 matrix",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			files := args
+			sort.Strings(files)
+			for _, path := range files {
+				g, err := game.ReadGameFile(path)
+				if err != nil {
+					return err
+				}
+				if err := re24.Read(g); err != nil {
+					return err
+				}
+			}
+			data := re24.GetData()
+			if csv {
+				return data.RenderCSV(os.Stdout)
+			}
+			data.RenderTable(os.Stdout)
+			return nil
+		},
+	}
+	c.Flags().StringVar(&re24.Team, "team", "", "Include only states with `team`")
+	c.Flags().StringVar(&re24.NotTeam, "not-team", "", "Inlucde only states that are not `team`")
+	c.Flags().BoolVar(&csv, "csv", false, "Print in CSV format")
 	return c
 }
