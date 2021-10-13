@@ -64,7 +64,7 @@ func (gen *Generator) Generate(w io.Writer) error {
 					continue
 				}
 				if i == 0 && line.Len() > 0 {
-					line.WriteString(". ")
+					line.WriteString(", ")
 				}
 				var runnerID game.PlayerID
 				if advance.From == "B" {
@@ -210,11 +210,11 @@ func batterPlayDescription(state *game.State) string {
 	case game.CatcherInterference:
 		return "reaches on catcher's interference"
 	case game.ReachedOnError:
-		var throwing string
+		throwing := "an"
 		if play.FieldingError.Modifiers.Contains("TH") {
 			throwing = "a throwing "
 		}
-		return fmt.Sprintf("reaches on %serror by %s", throwing, positionName(play.FieldingError.Fielder))
+		return fmt.Sprintf("reaches on %s error by %s", throwing, positionName(play.FieldingError.Fielder))
 	case game.FieldersChoice:
 		return "reaches on a fielder's choice"
 	case game.StrikeOutWildPitch:
@@ -266,6 +266,10 @@ func runningPlayDescription(team *game.Team, state, lastState *game.State) strin
 		return strings.Join(sb, ", ")
 	case game.CaughtStealing:
 		return fmt.Sprintf("%s is caught stealing %s", team.GetPlayer(play.Runners[0]).NameOrNumber(), play.Base)
+	case game.WildPitch:
+		return "On a wild pitch"
+	case game.PassedBall:
+		return "On a passed ball"
 	default:
 		return ""
 	}

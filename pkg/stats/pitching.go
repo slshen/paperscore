@@ -7,7 +7,7 @@ import (
 )
 
 type Pitching struct {
-	Player                             *game.Player `yaml:"-"`
+	Player                             *game.Player `yaml:"-" mapstructure:",squash"`
 	Pitches, Strikes, Balls            int
 	Swings, Misses                     int
 	Hits, Doubles, Triples, HRs, Walks int
@@ -15,6 +15,8 @@ type Pitching struct {
 	Outs, GroundOuts, FlyOuts          int
 	WP, HP                             int
 	BattersFaced                       int
+	StolenBases                        int
+	Games                              map[string]bool
 }
 
 func (p *Pitching) Whiff() string {
@@ -35,11 +37,14 @@ func (p *Pitching) SwStr() string {
 
 func (p *Pitching) Record(state *game.State, lastState *game.State) {
 	p.Outs += state.OutsOnPlay
-	if lastState != nil && (lastState.Batter != state.Batter || lastState.Pitcher != state.Pitcher) {
+	if lastState == nil || lastState.Batter != state.Batter || lastState.Pitcher != state.Pitcher {
 		p.BattersFaced++
 	}
-	if state.Play.Type == game.WildPitch {
+	switch state.Play.Type {
+	case game.WildPitch:
 		p.WP++
+	case game.StolenBase:
+		p.StolenBases += len(state.Play.Runners)
 	}
 	if state.Complete || state.Outs == 3 {
 		p.Pitches += len(state.Pitches)
@@ -61,6 +66,9 @@ func (p *Pitching) Record(state *game.State, lastState *game.State) {
 		switch state.Play.Type {
 		case game.StrikeOut:
 			p.StrikeOuts++
+			if state.Pitches.Last() == "C" {
+				p.StrikeOutsLooking++
+			}
 		case game.Walk:
 			p.Walks++
 		case game.HitByPitch:

@@ -119,8 +119,8 @@ func (lineup *Lineup) PitchingTable() string {
 			{Header: "GO", Width: 2},
 			{Header: "FO", Width: 2},
 			{Header: "XBH", Width: 3},
-			{Header: "WHFF", Width: 4},
 			{Header: "SWST", Width: 4},
+			{Header: "SB", Width: 2},
 		},
 	}
 	s.WriteString(tab.Header())
@@ -130,7 +130,7 @@ func (lineup *Lineup) PitchingTable() string {
 		fmt.Fprintf(s, tab.Format(), data.Player.Number, ip, data.BattersFaced,
 			data.Hits, data.Walks, data.StrikeOuts, data.GroundOuts, data.FlyOuts,
 			data.Doubles+data.Triples+data.HRs,
-			data.Whiff(), data.SwStr())
+			data.SwStr(), data.StolenBases)
 	}
 	return strings.TrimRight(s.String(), "\n")
 }
