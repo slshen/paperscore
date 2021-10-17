@@ -21,10 +21,7 @@ type Generator struct {
 }
 
 func (gen *Generator) Generate(w io.Writer) error {
-	states, err := gen.Game.GetStates()
-	if err != nil {
-		return err
-	}
+	states := gen.Game.GetStates()
 	for _, state := range states {
 		if !gen.ScoringOnly && (gen.lastState == nil || gen.lastState.Half != state.Half ||
 			gen.lastState.InningNumber != state.InningNumber) {
@@ -80,6 +77,9 @@ func (gen *Generator) Generate(w io.Writer) error {
 				if advance.Out {
 					fmt.Fprintf(line, "%s is out advancing to %s", runner.NameOrNumber(), advance.To)
 				} else {
+					if state.NotOutOnPlay {
+						fmt.Fprintf(line, "but ")
+					}
 					if advance.To == "H" {
 						fmt.Fprintf(line, "%s scores", runner.NameOrNumber())
 					} else {

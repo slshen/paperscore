@@ -9,6 +9,7 @@ import (
 )
 
 type Data struct {
+	Name    string
 	Columns []string
 	Rows    []Row
 	Width   map[string]int

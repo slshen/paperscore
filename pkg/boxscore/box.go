@@ -51,10 +51,7 @@ func NewBoxScore(g *game.Game) (*BoxScore, error) {
 }
 
 func (box *BoxScore) run() error {
-	states, err := box.Game.GetStates()
-	if err != nil {
-		return err
-	}
+	states := box.Game.GetStates()
 	for i, state := range states {
 		var lineup, defense *Lineup
 		if state.Top() {

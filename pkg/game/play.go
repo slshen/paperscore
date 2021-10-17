@@ -24,6 +24,7 @@ const (
 	StrikeOut
 	StrikeOutPassedBall
 	StrikeOutWildPitch
+	FoulFlyError
 	NoPlay
 )
 

@@ -1,0 +1,81 @@
+date: 10/16/21
+game: 1
+visitor: Pride 14u 07
+visitorid: pride-fall-2021
+home: Firecrackers Leles Enyart Lim
+start: 7:56 AM
+timelimit: 80m
+#final:
+#  visitor: 0
+#  home: 2
+comments:
+  - Bees in the dugout
+visitorplays:
+  - pitcher,44
+  - mf17,X,S9/P3D
+  - aw6,B,SB2
+  - aw6,BBBB,W.B-1
+  - mj18,SB,SB3;SB2
+  - mj18,SBBX,E3/G3.B-1;3-H;2-H
+  - ms11,CSFS,K
+  - kg2,CX,S7/L7.B-1;1-2
+  - bj00,BBFX,FC6/G.B-1;1-2;2X3(65)
+  - cm22,B,SB3
+  - cm22,BSB,SB2.3-H(E2/TH)
+  - cm22,BSBBCX,S6/G45.B-1;2-H
+  - rv10,BBSSS,K
+  - inn,2,4
+  - ss16,BCX,S2/GB.B-1
+  - as7,X,25/B/SH.1-2
+  - le13,FFFX,S9/P9S.B-1;2-3
+  - ac14,B,SB2
+  - ac14,BSX,S7/P6D.B-1;2X3(75);3-H,Angelina thrown out advancing to 3
+  - kn21,B,WP.1-2
+  - kn21,BCBS,HP,hit by a strike?
+  - mf17,FBFBFX,T7/F78.B-3;2-H;1-H
+  - aw6,BBBF,FLE2
+  - aw6,BBBFFB,W.B-1
+  - mj18,BX,8/F8
+  - inn,3,7
+  - ms11,BX,53/G
+  - kg2,CX,4/L4
+  - bj00,FBFX,9/L9
+  - inn,4,7
+  - cm22,CSC,K
+  - rv10,SBSFS,K
+  - ss16,BFSFFBBB,W.B-1
+  - as7,FB,PB.1-2
+  - as7,FBFS,K
+homeplays:
+  - pitcher,ms11
+  - 10,BBBB,W.B-1
+  - 8,CFFC,K
+  - 33,B,SB2
+  - 33,BBBB,W.B-1
+  - 26,CX,FC5/G5.B-1;1-2;2X3(56)
+  - 22,CX,T9/F9.B-H(E3);1-H;2-H
+  - 5,BBX,S9/F9S.B-2(E9)
+  - 98,B,SB3
+  - 98,BCSBBB,W.B-1
+  - 44,BB,SB2;SBH
+  - 44,BBCSS,K23
+  - inn,2,4
+  - 16,BX,4/P4
+  - 97,BBFCFX,13/G
+  - 10,X,4/G4
+  - inn,3,4
+  - 8,X,63/G
+  - 33,BBBB,W.B-1
+  - 26,CSS,K
+  - 22,BX,63/G
+  - inn,4,4
+  - 5,CBBBX,S8/L8.B-1
+  - 98,BBBCB,W.B-1;1-2
+  - pitcher,bj00
+  - 44,BB,PB.1-2;2-3
+  - 44,BBCCFBB,W.B-1
+  - 16,BBCBSS,K
+  - 97,CSBFS,K
+  - 10,CFX,S7/L7.B-1;1-2;2-3;3-H
+  - 8,BBBCFS,K
+  
