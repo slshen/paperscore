@@ -5,9 +5,9 @@ import (
 	"io"
 	"os"
 	"os/exec"
-	"sort"
 
 	"github.com/slshen/sb/pkg/boxscore"
+	"github.com/slshen/sb/pkg/export"
 	"github.com/slshen/sb/pkg/game"
 	"github.com/slshen/sb/pkg/playbyplay"
 	"github.com/slshen/sb/pkg/stats"
@@ -19,7 +19,8 @@ func Root() *cobra.Command {
 	root := &cobra.Command{}
 	root.SilenceUsage = true
 	root.AddCommand(readCommand(), boxCommand(), playByPlayCommand(),
-		statsCommand("batting"), statsCommand("pitching"), re24Command())
+		statsCommand("batting"), statsCommand("pitching"), reCommand(),
+		exportCommand())
 	return root
 }
 
@@ -29,14 +30,12 @@ func readCommand() *cobra.Command {
 		Use:   "read",
 		Short: "Read and print a score file",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			files := args
-			sort.Strings(files)
-			for _, path := range files {
-				g, err := game.ReadGameFile(path)
-				if err != nil {
-					return err
-				}
-				states, err := g.GetStates()
+			games, err := game.ReadGameFiles(args)
+			if err != nil {
+				return err
+			}
+			for _, g := range games {
+				states := g.GetStates()
 				for _, state := range states {
 					if home || visitor {
 						if visitor && !state.Top() {
@@ -48,9 +47,6 @@ func readCommand() *cobra.Command {
 					}
 					d, _ := yaml.Marshal(state)
 					fmt.Println(string(d))
-				}
-				if err != nil {
-					return err
 				}
 			}
 			return nil
@@ -72,6 +68,10 @@ func boxCommand() *cobra.Command {
 		Use:   "box",
 		Short: "Generate a box score",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			games, err := game.ReadGameFiles(args)
+			if err != nil {
+				return err
+			}
 			var out io.Writer
 			if pdfFormat {
 				paps := exec.Command("paps", "--format=pdf", "--font=Andale Mono 10",
@@ -90,13 +90,7 @@ func boxCommand() *cobra.Command {
 			} else {
 				out = os.Stdout
 			}
-			files := args
-			sort.Strings(files)
-			for i, path := range files {
-				g, err := game.ReadGameFile(path)
-				if err != nil {
-					return err
-				}
+			for i, g := range games {
 				box, err := boxscore.NewBoxScore(g)
 				if err != nil {
 					return err
@@ -114,7 +108,7 @@ func boxCommand() *cobra.Command {
 				} else if err := box.Render(out); err != nil {
 					return err
 				}
-				if i != len(files)-1 {
+				if i != len(games)-1 {
 					if _, err := out.Write([]byte{'\f'}); err != nil {
 						return err
 					}
@@ -136,13 +130,11 @@ func playByPlayCommand() *cobra.Command {
 		Use:   "plays",
 		Short: "Generate play by play",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			files := args
-			sort.Strings(files)
-			for _, path := range files {
-				g, err := game.ReadGameFile(path)
-				if err != nil {
-					return err
-				}
+			games, err := game.ReadGameFiles(args)
+			if err != nil {
+				return err
+			}
+			for _, g := range games {
 				pbp.Game = g
 				if err := pbp.Generate(os.Stdout); err != nil {
 					return err
@@ -159,19 +151,17 @@ func statsCommand(statsType string) *cobra.Command {
 	var (
 		csv bool
 	)
-	mg := stats.NewMultiGame()
+	mg := stats.NewGameStats()
 	c := &cobra.Command{
 		Use:     fmt.Sprintf("%s-stats", statsType),
 		Aliases: []string{statsType},
 		Short:   "Print stats",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			files := args
-			sort.Strings(files)
-			for _, path := range files {
-				g, err := game.ReadGameFile(path)
-				if err != nil {
-					return err
-				}
+			games, err := game.ReadGameFiles(args)
+			if err != nil {
+				return err
+			}
+			for _, g := range games {
 				if err := mg.Read(g); err != nil {
 					return err
 				}
@@ -195,20 +185,18 @@ func statsCommand(statsType string) *cobra.Command {
 	return c
 }
 
-func re24Command() *cobra.Command {
+func reCommand() *cobra.Command {
 	var csv bool
-	re24 := stats.NewRE24()
+	re24 := &stats.RunExpectancy{}
 	c := &cobra.Command{
-		Use:   "re24",
-		Short: "Print RE24 matrix",
+		Use:   "re",
+		Short: "Determine the run expectancy matrix",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			files := args
-			sort.Strings(files)
-			for _, path := range files {
-				g, err := game.ReadGameFile(path)
-				if err != nil {
-					return err
-				}
+			games, err := game.ReadGameFiles(args)
+			if err != nil {
+				return err
+			}
+			for _, g := range games {
 				if err := re24.Read(g); err != nil {
 					return err
 				}
@@ -224,5 +212,45 @@ func re24Command() *cobra.Command {
 	c.Flags().StringVar(&re24.Team, "team", "", "Include only states with `team`")
 	c.Flags().StringVar(&re24.NotTeam, "not-team", "", "Inlucde only states that are not `team`")
 	c.Flags().BoolVar(&csv, "csv", false, "Print in CSV format")
+	return c
+}
+
+func exportCommand() *cobra.Command {
+	var (
+		us            string
+		spreadsheetID string
+	)
+	c := &cobra.Command{
+		Use:   "export",
+		Short: "Export games and stats to Google sheets",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if us == "" {
+				return fmt.Errorf("--us is required")
+			}
+			config, err := export.NewConfig()
+			if err != nil {
+				return err
+			}
+			if spreadsheetID != "" {
+				config.SpreadsheetID = spreadsheetID
+			}
+			sheets, err := export.NewSheetExport(config)
+			if err != nil {
+				return err
+			}
+			export, err := export.NewExport(sheets)
+			if err != nil {
+				return err
+			}
+			export.Us = us
+			games, err := game.ReadGameFiles(args)
+			if err != nil {
+				return err
+			}
+			return export.Export(games)
+		},
+	}
+	c.Flags().StringVar(&us, "us", "", "Our `team`")
+	c.Flags().StringVar(&spreadsheetID, "spreadsheet-id", "", "The spreadsheet to use")
 	return c
 }

@@ -100,7 +100,7 @@ func (m *gameMachine) run() error {
 		}
 		m.state.Advances, err = parseAdvances(m.advancesCode, m.state.Batter, runners)
 		if err != nil {
-			return err
+			return fmt.Errorf("%w in %s", err, m.playCode)
 		}
 		if err := m.handleEvent(); err != nil {
 			return err
@@ -263,7 +263,7 @@ func (m *gameMachine) handleEvent() error {
 			}
 			m.state.Play.StolenBases = append(m.state.Play.StolenBases, base)
 			if runner == "" {
-				return fmt.Errorf("no runner can steal %s in %s", base, m.state.EventCode)
+				return fmt.Errorf("no runner can steal %s in %s", base, m.playCode)
 			}
 			m.state.Play.Runners[i] = runner
 		}
@@ -349,8 +349,16 @@ func (m *gameMachine) handleEvent() error {
 		}
 		m.impliedAdvance("B-1")
 		m.state.Complete = true
+	case m.eventIs("PO%(E$)"):
+		m.state.Play = &Play{
+			Type: PickedOff,
+			FieldingError: &FieldingError{
+				Fielder: fielderNumber[m.eventMatches[1]],
+			},
+		}
+		m.state.NotOutOnPlay = true
 	case m.eventIs("PO%($$)"):
-		from := m.eventMatches[1]
+		from := m.eventMatches[0]
 		if !(from == "1" || from == "2" || from == "3") {
 			return fmt.Errorf("illegal picked off base in %s", m.playCode)
 		}
@@ -432,6 +440,13 @@ func (m *gameMachine) handleEvent() error {
 			Type:    CaughtStealing,
 			Runners: []PlayerID{runner},
 			Base:    to,
+		}
+	case m.eventIs("FLE$"):
+		m.state.Play = &Play{
+			Type: FoulFlyError,
+			FieldingError: &FieldingError{
+				Fielder: fielderNumber[m.eventMatches[0]],
+			},
 		}
 	case m.eventIs("NP"):
 		m.state.Play = &Play{

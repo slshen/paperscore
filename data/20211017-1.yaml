@@ -1,0 +1,81 @@
+date: 10/17/21
+game: 1
+visitor: Pride 14u 07
+visitorid: pride-fall-2021
+home: Sorcerer McCafferty
+start: 7:59AM
+timelimit: 80m
+#final:
+#  visitor: 0
+#  home: 2
+#comments:
+#  - Big strikezone
+visitorplays:
+  - pitcher,11
+  - mf17,X,13/G
+  - aw6,X,HP.B-1
+  - cm22,CCBX,FC6/G6.B-1;1X2(64)
+  - kg2,BCB,PB.1-2
+  - kg2,BCBBX,53/G
+  - inn,2,0
+  - bj00,FBFFFFFC,K
+  - ms11,CX,13/G
+  - le13,BCBCX,S7/L7.B-1
+  - rv10,CBSC,K
+  - inn,3,0
+  - ss16,X,7/F7D
+  - mf17,BBBB,W.B-1
+  - aw6,CSF,K/B
+  - cm22,BB,SB2
+  - cm22,BBBCX,43/G
+  - inn,4,0
+  - kg2,BX,S9/F9S
+  - bj00,FX,FC5.B-1;1X2(54)
+  - ms11,X,4/P43D
+  - le13,CCX,13/G
+  - inn,5,0
+  - rv10,CFS,K
+  - ss16,BX,63/G
+  - mf17,X,H/IPHR.B-H,inside the park HR
+  - aw6,SSBBX,D7/F7.B-2
+  - cm22,BX,S8/L89.B-1;2-H
+  - pitcher,7
+  - kg2,BFSFX,13/G
+  - inn,6,2
+homeplays:
+  - pitcher,ms11
+  - 00,BBBB,W.B-1
+  - 73,CB,SB2
+  - 73,CBX,E2/TH.B-1;2-3
+  - 10,CX,53/G.3-H(E3);1-H
+  - 8,CBSS,K23
+  - 22,X,T7/L7.B-3
+  - 13,CX,S8/L8.B-1;3-H
+  - 11,C,SB2
+  - 11,CBX,4/L4
+  - inn,2,3
+  - 18,BCBFX,63/G
+  - 4,X,D7/L7.B-2
+  - 00,CBBX,23/BG/SH.2-3
+  - 73,B,WP.3-H
+  - 73,BFX,1/P1
+  - inn,3,4
+  - 10,BBFCBX,S9/P4D.B-1
+  - 8,BCX,4/L4.1X2(436)
+  - 22,FBX,E1/TH.B-2
+  - 13,X,D7/L7.B-3;2-H(E2)
+  - 11,B,CSH(12).3-H(E2)
+  - 11,BSX,D7/G7.B-2
+  - 9,B,SB3,9 replaces 18
+  - 9,BCBCB,WP.3-H
+  - 9,BCBCBB,W.B-1
+  - 4,FX,53/G
+  - inn,4,7
+  - 00,CBBBCX,S7/G56
+  - 73,S,SB2
+  - 73,SFB,WP.2-3
+  - 73,SFBFBS,K
+  - 7,CX,S8/G45.B-1;3-H,7 replaces 10
+  - 8,SX,13/G.1-2,throw should have gone 2
+  - 22,FFBFBBFFX,S8/L8.B-1;2-H
+  - 13,BX,S9/L9.B-1;1XH(912)

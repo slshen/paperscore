@@ -18,8 +18,7 @@ func TestLoad(t *testing.T) {
 		assert.Nil(err)
 		if assert.NotNil(g) {
 			// assert.Greater(len(g.VisitorPlays), 10)
-			states, err := g.GetStates()
-			assert.Nil(err)
+			states := g.GetStates()
 			for _, state := range states {
 				d, _ := yaml.Marshal(state)
 				fmt.Println(string(d))

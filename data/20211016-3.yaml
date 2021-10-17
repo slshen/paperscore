@@ -1,0 +1,76 @@
+date: 10/16/21
+game: 1
+visitor: Pride 14u 07
+visitorid: pride-fall-2021
+home: California Riptide
+start: 2:59 PM
+timelimit: 80m
+#final:
+#  visitor: 0
+#  home: 2
+#comments:
+#  - Big strikezone
+visitorplays:
+  - pitcher,17
+  - mf17,BBBB,W.B-1
+  - aw6,B,SB2
+  - aw6,BBBCCX,S1/GB.B-1
+  - mj18,BB,WP.2-3;1-2
+  - mj18,BBBCCX,53/G.2-3;3-H
+  - ms11,X,S8/G56.3-H;B-1
+  - kg2,BCBBX,S5/G5.B-1;1-2
+  - bj00,CBBCFBX,S8/F8S.B-1;1-2;2-3
+  - cm22,CX,S8/G8.B-1;1-2;2-H;3-H
+  - pitcher,2
+  - rv10,CSBC,K
+  - ss16,CBCC,K
+  - inn,2,4
+  - as7,BBBCB,W.B-1
+  - le13,BBBB,W.B-1;1-2
+  - ac14,SBCBX,6/P6/IF
+  - kn21,X,43/G.1-2;2-3
+  - mf17,BBCFBFB,W.B-1
+  - aw6,BBCCX,53/G
+  - inn,3,4
+  - mj18,CBX,S7/L78.B-1
+  - ms11,BCCBC,K
+  - kg2,CFBBBB,W.B-1;1-2
+  - bj00,CX,S9/F9S.B-2;2-H(E9);1-H
+  - cm22,BBBB,W.B-1
+  - rv10,BCBCBB,W.B-1;1-2;2-3
+  - ss16,CSX,E3/G5.B-1;1-3;3-H
+  - as7,BBX,8/F8/SF.3-H
+  - le13,BBBB,W.B-1;1-2;2-3
+  - ac14,CBX,13/G
+  - inn,4,8
+  - kn21,FBCFBS,K
+  - mf17,CFBBFX,9/F9
+  - aw6,BCBFX,S7/F7S
+  - mj18,BB,CS2(26)
+homeplays:
+  - pitcher,ms11
+  - 31,BCX,S7/G56.B-1
+  - 26,FCB,SB2
+  - 26,FCBFX,2/P2
+  - 2,FS,PO2(E4).2-3
+  - 2,FSC,K
+  - 10,BCBBX,3/P3
+  - inn,2,0
+  - 13,FX,HP
+  - 25,B,CS2(26)
+  - 25,BX,43/G
+  - 00,BBFBB,W.B-1
+  - 17,CX,3/P3
+  - inn,3,0
+  - 8,SX,8/F8
+  - 7,X,S9/G43.B-1
+  - 31,CFC,K
+  - 26,B,WP.1-2
+  - 26,BX,E3/G3.B-1;2-3
+  - 2,X,4/P3D
+  - inn,4,0
+  - 10,SX,6/L6
+  - 13,BSFBS,K
+  - 25,X,9/F9
+
+

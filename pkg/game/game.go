@@ -5,8 +5,10 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"sort"
 	"time"
 
+	"github.com/hashicorp/go-multierror"
 	"gopkg.in/yaml.v3"
 )
 
@@ -27,7 +29,20 @@ type Game struct {
 	HomeTeam, VisitorTeam *Team
 	Comments              []string
 	Venue                 string
-	states                []*State
+
+	states []*State
+}
+
+func ReadGameFiles(paths []string) (games []*Game, errs error) {
+	sort.Strings(paths)
+	for _, path := range paths {
+		g, err := ReadGameFile(path)
+		if err != nil {
+			errs = multierror.Append(errs, err)
+		}
+		games = append(games, g)
+	}
+	return
 }
 
 func ReadGameFile(path string) (*Game, error) {
@@ -43,17 +58,24 @@ func ReadGame(path string, in io.Reader) (*Game, error) {
 	g := &Game{}
 	dec := yaml.NewDecoder(in)
 	dec.KnownFields(true)
-	err := dec.Decode(g)
-	if err != nil {
+	if err := dec.Decode(g); err != nil {
 		return nil, err
 	}
+	var errs error
 	if path != "" {
+		var err error
 		dir := filepath.Dir(path)
 		if g.HomeID != "" {
 			g.HomeTeam, err = ReadTeamFile(g.Home, filepath.Join(dir, fmt.Sprintf("%s.yaml", g.HomeID)))
+			if err != nil {
+				errs = multierror.Append(errs, err)
+			}
 		}
-		if err == nil && g.VisitorID != "" {
+		if g.VisitorID != "" {
 			g.VisitorTeam, err = ReadTeamFile(g.Visitor, filepath.Join(dir, fmt.Sprintf("%s.yaml", g.VisitorID)))
+			if err != nil {
+				errs = multierror.Append(errs, err)
+			}
 		}
 	}
 	if g.HomeTeam == nil {
@@ -65,14 +87,17 @@ func ReadGame(path string, in io.Reader) (*Game, error) {
 	if g.ID == "" {
 		g.ID = filepath.Base(path)
 	}
-	return g, err
+	if err := g.generateStates(); err != nil {
+		errs = multierror.Append(errs, err)
+	}
+	return g, errs
 }
 
-func (g *Game) GetStates() ([]*State, error) {
-	if g.states != nil {
-		return g.states, nil
-	}
+func (g *Game) GetStates() []*State {
+	return g.states
+}
+
+func (g *Game) generateStates() error {
 	m := &gameMachine{game: g}
-	err := m.run()
-	return g.states, err
+	return m.run()
 }

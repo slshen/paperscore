@@ -247,19 +247,31 @@ func (lineup *Lineup) recordOffense(state, lastState *game.State) {
 			lineup.recordSteal(runner)
 		}
 	case game.CaughtStealing:
+		fallthrough
+	case game.PickedOff:
 		if !state.NotOutOnPlay {
 			runner := state.Play.Runners[0]
 			runnerData := lineup.Stats.GetBatting(runner)
-			runnerData.CaughtStealing++
+			if state.Play.Type == game.PickedOff {
+				runnerData.PickedOff++
+			} else {
+				runnerData.CaughtStealing++
+			}
 		}
 	}
 }
 
 func (lineup *Lineup) recordDefense(state *game.State) error {
-	if !state.Complete {
-		return nil
-	}
-	if state.Play.Type == game.ReachedOnError {
+	switch state.Play.Type {
+	case game.ReachedOnError:
+		lineup.recordError(state.Play.FieldingError)
+	case game.PickedOff:
+		fallthrough
+	case game.CaughtStealing:
+		if state.NotOutOnPlay && state.Play.FieldingError != nil {
+			lineup.recordError(state.Play.FieldingError)
+		}
+	case game.FoulFlyError:
 		lineup.recordError(state.Play.FieldingError)
 	}
 	return nil
