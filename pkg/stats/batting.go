@@ -13,6 +13,7 @@ type Batting struct {
 	RunsScored                     int
 	Singles, Doubles, Triples, HRs int
 	StolenBases, CaughtStealing    int
+	SB2, SB2Opportunities          int
 	PickedOff                      int
 	LOB                            int
 	PitchesSeen, Swings, Misses    int

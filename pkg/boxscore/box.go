@@ -70,8 +70,11 @@ func (box *BoxScore) run() error {
 				Text:   state.Comment,
 			})
 		}
-		box.Score.Home = state.Score.Home
-		box.Score.Visitor = state.Score.Visitor
+		if state.Top() {
+			box.Score.Visitor = state.Score
+		} else {
+			box.Score.Home = state.Score
+		}
 		for len(box.InningScore) < state.InningNumber {
 			box.InningScore = append(box.InningScore, Score{})
 		}

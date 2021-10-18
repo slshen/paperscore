@@ -16,13 +16,15 @@ func TestLoad(t *testing.T) {
 		"20210925-3.yaml", "20210926-1.yaml", "20210925-2.yaml",
 	} {
 		g, err := ReadGameFile(filepath.Join("../../data", f))
-		assert.Nil(err)
+		assert.NoError(err, f)
 		if assert.NotNil(g) {
 			// assert.Greater(len(g.VisitorPlays), 10)
 			states := g.GetStates()
-			for _, state := range states {
-				d, _ := yaml.Marshal(state)
-				fmt.Println(string(d))
+			if err != nil {
+				for _, state := range states {
+					d, _ := yaml.Marshal(state)
+					fmt.Println(string(d))
+				}
 			}
 		}
 	}

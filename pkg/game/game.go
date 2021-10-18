@@ -98,7 +98,68 @@ func (g *Game) GetStates() []*State {
 	return g.states
 }
 
-func (g *Game) generateStates() error {
-	m := &gameMachine{game: g}
-	return m.run()
+func (g *Game) AddVisitorPlay(playCode string) (*State, error) {
+	g.VisitorPlays = append(g.VisitorPlays, playCode)
+	var lastState *State
+	if len(g.states) > 0 {
+		lastState = g.states[len(g.states)-1]
+	}
+	m := newGameMachine(Top, lastState)
+	state, err := m.runOne(playCode)
+	if state != nil {
+		g.states = append(g.states, state)
+	}
+	return state, err
+}
+
+func (g *Game) generateStates() (errs error) {
+	visitorStates, err := g.runPlays(Top, g.VisitorPlays)
+	if err != nil {
+		errs = multierror.Append(errs, err)
+	}
+	homeStates, err := g.runPlays(Bottom, g.HomePlays)
+	if err != nil {
+		errs = multierror.Append(errs, err)
+	}
+	g.states = make([]*State, 0, len(visitorStates)+len(homeStates))
+	half := Top
+	for i, j := 0, 0; i < len(visitorStates) || j < len(homeStates); {
+		var state *State
+		if half == Top {
+			if i < len(visitorStates) {
+				state = visitorStates[i]
+				i++
+			}
+		} else {
+			if j < len(homeStates) {
+				state = homeStates[j]
+				j++
+			}
+		}
+		if state != nil {
+			g.states = append(g.states, state)
+		}
+		if state != nil && state.Outs == 3 || state == nil {
+			if half == Top {
+				half = Bottom
+			} else {
+				half = Top
+			}
+		}
+	}
+	return
+}
+
+func (g *Game) runPlays(half Half, playCodes []string) (states []*State, errs error) {
+	m := newGameMachine(half, nil)
+	for _, play := range playCodes {
+		state, err := m.runOne(play)
+		if err != nil {
+			errs = multierror.Append(errs, err)
+		}
+		if state != nil {
+			states = append(states, state)
+		}
+	}
+	return
 }

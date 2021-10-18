@@ -28,13 +28,19 @@ const (
 	NoPlay
 )
 
+//go:generate stringer -type=PlayType
+
+func (p PlayType) MarshalYAML() (interface{}, error) {
+	return p.String(), nil
+}
+
 type Play struct {
 	Type          PlayType
-	Runners       []PlayerID
-	Base          string
-	FieldingError *FieldingError
-	Fielders      []int
-	StolenBases   []string
+	Runners       []PlayerID     `yaml:",omitempty,flow"`
+	Base          string         `yaml:",omitempty"`
+	FieldingError *FieldingError `yaml:",omitempty"`
+	Fielders      []int          `yaml:",omitempty,flow"`
+	StolenBases   []string       `yaml:",omitempty,flow"`
 }
 
 func (p *Play) Is(ts ...PlayType) bool {
