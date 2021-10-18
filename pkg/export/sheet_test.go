@@ -29,3 +29,14 @@ func TestSheets(t *testing.T) {
 	}
 	assert.NoError(s.ExportData(data))
 }
+
+func TestColumnLetters(t *testing.T) {
+	assert := assert.New(t)
+	assert.Equal("A", columnLetters(0))
+	assert.Equal("B", columnLetters(1))
+	assert.Equal("Z", columnLetters(25))
+	assert.Equal("AA", columnLetters(26))
+	assert.Equal("AB", columnLetters(27))
+	assert.Equal("AZ", columnLetters(51))
+	assert.Equal("BA", columnLetters(52))
+}

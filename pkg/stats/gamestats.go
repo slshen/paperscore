@@ -76,36 +76,8 @@ func (mg *GameStats) GetStats(team *game.Team) *Stats {
 	return stats
 }
 
-type dataMaker struct {
-	columnIndexes map[string]int
-	data          Data
-}
-
-func (dm *dataMaker) addRow(m map[string]interface{}) {
-	if dm.columnIndexes == nil {
-		dm.data.Width = map[string]int{
-			"Name": 20,
-		}
-		dm.columnIndexes = map[string]int{
-			"Name": 0,
-		}
-		dm.data.Columns = []string{"Name"}
-		for _, k := range sortKeys(m) {
-			if _, ok := dm.columnIndexes[k]; !ok {
-				dm.columnIndexes[k] = len(dm.columnIndexes)
-				dm.data.Columns = append(dm.data.Columns, k)
-			}
-		}
-	}
-	row := make([]interface{}, len(dm.columnIndexes))
-	for k, v := range m {
-		row[dm.columnIndexes[k]] = v
-	}
-	dm.data.Rows = append(dm.data.Rows, row)
-}
-
 func (mg *GameStats) GetPitchingData() *Data {
-	var dm dataMaker
+	dm := newDataMaker("PIT")
 	for team, stats := range mg.TeamStats {
 		if mg.filterExclude(team, stats) {
 			continue
@@ -124,8 +96,7 @@ func (mg *GameStats) GetPitchingData() *Data {
 			dm.addRow(m)
 		}
 	}
-	dm.data.Name = "PIT"
-	return &dm.data
+	return dm.data
 }
 
 func sortPlayers(players []game.PlayerID) []game.PlayerID {
@@ -136,7 +107,7 @@ func sortPlayers(players []game.PlayerID) []game.PlayerID {
 }
 
 func (mg *GameStats) GetBattingData() *Data {
-	var dm dataMaker
+	dm := newDataMaker("BAT")
 	for team, stats := range mg.TeamStats {
 		if mg.filterExclude(team, stats) {
 			continue
@@ -155,8 +126,7 @@ func (mg *GameStats) GetBattingData() *Data {
 			dm.addRow(m)
 		}
 	}
-	dm.data.Name = "BAT"
-	return &dm.data
+	return dm.data
 }
 
 func (mg *GameStats) adjustRowValues(gameCount int, team string, player *game.Player, m map[string]interface{}) {
@@ -177,13 +147,4 @@ func (mg *GameStats) filterExclude(team string, stats *Stats) bool {
 		return true
 	}
 	return false
-}
-
-func sortKeys(m map[string]interface{}) []string {
-	var keys []string
-	for k := range m {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-	return keys
 }

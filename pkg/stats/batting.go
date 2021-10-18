@@ -4,7 +4,7 @@ import "github.com/slshen/sb/pkg/game"
 
 type Batting struct {
 	Player                         *game.Player `yaml:"-" mapstructure:",squash"`
-	AB, Hits /*RBI,*/, Walks       int
+	PA, AB, Hits, Walks            int
 	LineDrives                     int
 	StrikeOuts                     int
 	StrikeOutsLooking              int
@@ -16,6 +16,12 @@ type Batting struct {
 	PitchesSeen, Swings, Misses    int
 	GroundOuts, FlyOuts            int
 	HitByPitch                     int
+	OnBase                         int
+	SacrificeBunts                 int
+	SacrificeFlys                  int
+	ReachedOnError                 int
+	FieldersChoice                 int
+	ReachedOnK                     int
 	Games                          map[string]bool
 }
 
@@ -34,6 +40,7 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 		}
 	}
 	if state.Complete {
+		b.PA++
 		if state.Play.Hit() {
 			b.Hits++
 		}
@@ -59,6 +66,14 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 			b.FlyOuts++
 		case game.HitByPitch:
 			b.HitByPitch++
+		case game.ReachedOnError:
+			b.ReachedOnError++
+		case game.FieldersChoice:
+			b.FieldersChoice++
+		case game.StrikeOutPassedBall:
+			fallthrough
+		case game.StrikeOutWildPitch:
+			b.ReachedOnK++
 		}
 		if !(state.Play.Is(game.Walk, game.HitByPitch, game.CatcherInterference) ||
 			(state.Play.Type == game.ReachedOnError && state.Modifiers.Contains(game.Obstruction)) ||
@@ -67,6 +82,15 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 		}
 		if state.Modifiers.Trajectory() == game.LineDrive {
 			b.LineDrives++
+		}
+		if state.Play.Hit() || state.Play.Is(game.Walk, game.HitByPitch) {
+			b.OnBase++
+		}
+		if state.Modifiers.Contains(game.SacrificeHit) {
+			b.SacrificeBunts++
+		}
+		if state.Modifiers.Contains(game.SacrificeFly) {
+			b.SacrificeFlys++
 		}
 	}
 	b.PitchesSeen += state.Pitches.Balls() + state.Pitches.Strikes()
