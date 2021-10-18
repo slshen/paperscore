@@ -21,9 +21,12 @@ func NewStats(players PlayerLookup) *Stats {
 	}
 }
 
-func (stats *Stats) RecordBatting(g *game.Game, state *game.State) {
+func (stats *Stats) RecordBatting(g *game.Game, state, lastState *game.State, re *RunExpectancy) {
 	batting := stats.GetBatting(state.Batter)
 	batting.Record(state)
+	if re != nil {
+		batting.RecordRE24(state, lastState, re)
+	}
 	batting.Games[g.ID] = true
 	switch state.Play.Type {
 	case game.CaughtStealing:
@@ -35,6 +38,28 @@ func (stats *Stats) RecordBatting(g *game.Game, state *game.State) {
 		for _, runnerID := range state.Play.Runners {
 			runner := stats.GetBatting(runnerID)
 			runner.StolenBases++
+		}
+	}
+	for _, runnerID := range state.ScoringRunners {
+		runner := stats.GetBatting(runnerID)
+		runner.RunsScored++
+	}
+	if re != nil {
+		reChange := re.GetExpectedRuns(state) - re.GetExpectedRuns(lastState) + float64(len(state.ScoringRunners))
+		if state.Play.Is(game.StolenBase, game.CaughtStealing, game.PickedOff) {
+			perRunner := reChange / float64(len(state.Play.Runners))
+			for _, runnerID := range state.Play.Runners {
+				runner := stats.GetBatting(runnerID)
+				runner.RE24 += perRunner
+			}
+		} else if state.Play.Is(game.WildPitch, game.PassedBall) {
+			// this will give apportioned credit to all runnners, even
+			// if some of them were out
+			perRunner := reChange / float64(len(state.Advances))
+			for _, advance := range state.Advances {
+				runner := stats.GetBatting(advance.Runner)
+				runner.RE24 += perRunner
+			}
 		}
 	}
 }

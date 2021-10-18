@@ -28,3 +28,4 @@ ReachedOnError
 FieldersChoice
 ReachedOnK
 SacrificeFlys
+RE24

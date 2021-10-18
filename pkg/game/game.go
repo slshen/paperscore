@@ -29,6 +29,7 @@ type Game struct {
 	HomeTeam, VisitorTeam *Team
 	Comments              []string
 	Venue                 string
+	League                string
 
 	states []*State
 }

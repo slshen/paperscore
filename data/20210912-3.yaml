@@ -1,0 +1,103 @@
+date: 9/12/21
+game: 3
+visitor: Pride 14u 07
+visitorid: pride-fall-2021
+home: NorCal Starz
+start: 
+timelimit: 75m
+league: AST
+#final:
+#  visitor: 
+#  home: 
+#comments:
+#  - 
+visitorplays:
+  - pitcher,2
+  - mf17,BBBB,W.B-1
+  - aw6,C,SB2
+  - aw6,CX,53/G5.2-3
+  - mj18,BX,T9/L9.B-3;3-H
+  - ms11,BB,WP.3-H
+  - ms11,BBX,S7/G56.B-1
+  - kg2,FBX,S6/P6D.B-1;1-2
+  - bj00,B,WP.1-2;2-3
+  - bj00,BBFCFFX,8/F8.3XH(82)
+  - inn,2,2
+  - cm22,CFBC,K
+  - rv10,X,43/G
+  - ss16,X,53/G
+  - inn,3,2
+  - mf17,CCBFBX,S1/G1.B-1
+  - aw6,C,SB2
+  - aw6,CX,8/F8S
+  - mj18,CBX,S6/G6.B-1;2X3(RINT)
+  - ms11,X,D7/L89.B-2;1-H
+  - kg2,B,WP.2-3
+  - kg2,BCX,E6/G6.B-1;3-H
+  - bj00,CFX,3/P3
+  - inn,4,4
+  - cm22,X,63/G
+  - rv10,FBBX,13/G
+  - ss16,X,63/G
+  - inn,5,4
+  - mf17,X,13/B
+  - aw6,CBCX,D8/F8
+  - mj18,BB,SB3
+  - mj18,BBCFFX,S7/L78.B-1;3-H
+  - ms11,BBBX,63/G.1-2
+  - kg2,BCBBX,63/G
+  - inn,6,5
+  - radj,sk12,2
+  - bj00,BX,S9/L9.2-H;B-2,advance on throw
+  - cm22,BFX,S2/G.B-1;2-3
+  - rv10,B,SB2
+  - rv10,BCX,S9/F9S.B-3(E9/TH);2-H;3-H
+  - ss16,X,S9/L9.B-1;3-H
+  - mf17,BCX,S8/F8S.B-1;1-2
+  - aw6,FX,FC6/G.B-1;1-2;2X3(65)
+  - mj18,BCFX,9/F9/SH.2-3
+  - ms11,B,SB2
+  - ms11,BBBB,W.B-1,intentional walk
+  - sk12,X,S9/L9.B-1;1-2;2-H;3-H
+  - bj00,X,8/F8S
+  - inn,7,11
+homeplays:
+  - pitcher,kg2
+  - 11,B,NP
+  - pitcher,ms11
+  - 11,BCSBFC,K
+  - 2,SBSS,K
+  - 5,BBBB,W.B-1
+  - 30,X,S8/G.B-1;1-2
+  - 25,CBBX,E5/G5.B-2;1-3;2-H
+  - 99,SX,E6/G6.B-1;3-H
+  - 9,S,SB2.1-H(E2/TH)
+  - 9,SBX,63/G
+  - inn,2,3
+  - 32,BCSBC,K
+  - 4,X,S1/B.B-1
+  - 11,FB,FC5.B-1;1X2(54)
+  - 2,BC,SB2
+  - 2,BCSX,D7/L7.2-H;B-2
+  - 5,B,PO2(24)
+  - inn,3,4
+  - 5,BBBCCX,1/P1
+  - 30,X,63/G
+  - 25,CX,63/G
+  - inn,4,4
+  - 9,BX,9/F9S
+  - 32,X,63/G
+  - 4,CX,13/G
+  - inn,5,4
+  - 4,BX,D8/F89
+  - 11,BX,D8/L8.B-2;2-H
+  - 2,BB,WP.2-3
+  - 2,BBBCX,FC2.3XH(26);B-1,pickle?
+  - 5,CFC,K
+  - 30,X,43/G
+  - inn,6,5
+  - radj,30,2
+  - 25,CX,13/G.2-3
+  - 99,BX,93/L9.3-H
+  - 9,CFS,K
+  - inn,7,6

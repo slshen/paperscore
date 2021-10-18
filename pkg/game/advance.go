@@ -93,6 +93,10 @@ func parseAdvances(advancesCode string, batter PlayerID, runners []PlayerID) (ad
 			if advance.From == "B" {
 				advance.Runner = batter
 			} else {
+				if runners == nil {
+					err = fmt.Errorf("no runner to advance from %s at the start of a half-inning", advance.From)
+					return
+				}
 				advance.Runner = runners[runnerNumber[advance.From]]
 				if advance.Runner == "" {
 					err = fmt.Errorf("no runner to advance from %s in %s", advance.From, advancesCode)

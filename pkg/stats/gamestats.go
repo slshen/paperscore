@@ -11,18 +11,23 @@ import (
 
 type GameStats struct {
 	TeamStats map[string]*Stats
-	OnlyTeam  string
+	RE        *RunExpectancy
+	Filter
 }
 
-func NewGameStats() *GameStats {
+func NewGameStats(re *RunExpectancy) *GameStats {
 	return &GameStats{
 		TeamStats: make(map[string]*Stats),
+		RE:        re,
 	}
 }
 
-func (mg *GameStats) Read(g *game.Game) error {
+func (gs *GameStats) Read(g *game.Game) error {
 	states := g.GetStates()
 	for i, state := range states {
+		if gs.filterOut(g, state) {
+			continue
+		}
 		var battingTeam, fieldingTeam *game.Team
 		if state.Top() {
 			battingTeam = g.VisitorTeam
@@ -31,31 +36,16 @@ func (mg *GameStats) Read(g *game.Game) error {
 			battingTeam = g.HomeTeam
 			fieldingTeam = g.VisitorTeam
 		}
-		battingTeamStats := mg.GetStats(battingTeam)
-		fieldingTeamStats := mg.GetStats(fieldingTeam)
-		battingTeamStats.RecordBatting(g, state)
-		fieldingTeamStats.RecordPitching(g, state, lastState(states, i))
-		for _, runnerID := range state.ScoringRunners {
-			runner := battingTeamStats.GetBatting(runnerID)
-			runner.RunsScored++
-		}
-		switch state.Play.Type {
-		case game.StolenBase:
-			for _, runnerID := range state.Play.Runners {
-				runner := battingTeamStats.GetBatting(runnerID)
-				runner.StolenBases++
-			}
-		case game.CaughtStealing:
-			if !state.NotOutOnPlay {
-				runner := battingTeamStats.GetBatting(state.Play.Runners[0])
-				runner.CaughtStealing++
-			}
-		}
+		battingTeamStats := gs.GetStats(battingTeam)
+		fieldingTeamStats := gs.GetStats(fieldingTeam)
+		lastState := getLastState(states, i)
+		battingTeamStats.RecordBatting(g, state, lastState, gs.RE)
+		fieldingTeamStats.RecordPitching(g, state, lastState)
 	}
 	return nil
 }
 
-func lastState(states []*game.State, i int) *game.State {
+func getLastState(states []*game.State, i int) *game.State {
 	if i == 0 {
 		return nil
 	}
@@ -67,21 +57,18 @@ func lastState(states []*game.State, i int) *game.State {
 	return nil
 }
 
-func (mg *GameStats) GetStats(team *game.Team) *Stats {
-	stats := mg.TeamStats[team.Name]
+func (gs *GameStats) GetStats(team *game.Team) *Stats {
+	stats := gs.TeamStats[team.Name]
 	if stats == nil {
 		stats = NewStats(team)
-		mg.TeamStats[team.Name] = stats
+		gs.TeamStats[team.Name] = stats
 	}
 	return stats
 }
 
-func (mg *GameStats) GetPitchingData() *Data {
+func (gs *GameStats) GetPitchingData() *Data {
 	dm := newDataMaker("PIT")
-	for team, stats := range mg.TeamStats {
-		if mg.filterExclude(team, stats) {
-			continue
-		}
+	for team, stats := range gs.TeamStats {
 		var players []game.PlayerID
 		for player := range stats.Pitching {
 			players = append(players, player)
@@ -92,7 +79,7 @@ func (mg *GameStats) GetPitchingData() *Data {
 			if err := mapstructure.Decode(pitching, &m); err != nil {
 				panic(err)
 			}
-			mg.adjustRowValues(len(pitching.Games), team, pitching.Player, m)
+			gs.adjustRowValues(len(pitching.Games), team, pitching.Player, m)
 			dm.addRow(m)
 		}
 	}
@@ -106,12 +93,9 @@ func sortPlayers(players []game.PlayerID) []game.PlayerID {
 	return players
 }
 
-func (mg *GameStats) GetBattingData() *Data {
+func (gs *GameStats) GetBattingData() *Data {
 	dm := newDataMaker("BAT")
-	for team, stats := range mg.TeamStats {
-		if mg.filterExclude(team, stats) {
-			continue
-		}
+	for team, stats := range gs.TeamStats {
 		var players []game.PlayerID
 		for player := range stats.Batting {
 			players = append(players, player)
@@ -122,29 +106,21 @@ func (mg *GameStats) GetBattingData() *Data {
 			if err := mapstructure.Decode(batting, &m); err != nil {
 				panic(err)
 			}
-			mg.adjustRowValues(len(batting.Games), team, batting.Player, m)
+			gs.adjustRowValues(len(batting.Games), team, batting.Player, m)
 			dm.addRow(m)
 		}
 	}
 	return dm.data
 }
 
-func (mg *GameStats) adjustRowValues(gameCount int, team string, player *game.Player, m map[string]interface{}) {
+func (gs *GameStats) adjustRowValues(gameCount int, team string, player *game.Player, m map[string]interface{}) {
 	delete(m, "Games")
 	m["Games"] = gameCount
-	if mg.OnlyTeam != "" {
+	if gs.Team != "" {
 		m["Name"] = player.NameOrNumber()
 	} else {
 		m["Name"] = fmt.Sprintf("%s/%s", team, player.NameOrNumber())
 	}
 	delete(m, "PlayerID")
 	delete(m, "Number")
-}
-
-func (mg *GameStats) filterExclude(team string, stats *Stats) bool {
-	if mg.OnlyTeam != "" &&
-		!strings.HasPrefix(strings.ToLower(team), strings.ToLower(mg.OnlyTeam)) {
-		return true
-	}
-	return false
 }

@@ -9,6 +9,7 @@ import (
 
 type Export struct {
 	Us     string
+	League string
 	sheets *SheetExport
 }
 
@@ -30,20 +31,30 @@ func NewExport(sheets *SheetExport) (*Export, error) {
 }
 
 func (export *Export) Export(games []*game.Game) error {
-	gameStats := stats.NewGameStats()
-	gameStatsUs := stats.NewGameStats()
-	gameStatsUs.OnlyTeam = export.Us
+	re := &stats.RunExpectancy{Filter: stats.Filter{
+		League: export.League,
+		Team:   export.Us,
+	}}
+	if err := export.readGames(games, []StatsGenerator{re}); err != nil {
+		return err
+	}
+	gameStats := stats.NewGameStats(re)
+	gameStats.League = export.League
+	gameStatsUs := stats.NewGameStats(re)
+	gameStatsUs.League = export.League
+	gameStatsUs.Team = export.Us
 	generators := []StatsGenerator{
 		&stats.RunExpectancy{
-			Name: "RE",
+			Name:   "RE",
+			Filter: stats.Filter{League: export.League},
 		},
 		&stats.RunExpectancy{
-			Name: "RE-Us",
-			Team: export.Us,
+			Name:   "RE-Us",
+			Filter: stats.Filter{League: export.League, Team: export.Us},
 		},
 		&stats.RunExpectancy{
-			Name:    "RE-Them",
-			NotTeam: export.Us,
+			Name:   "RE-Them",
+			Filter: stats.Filter{League: export.League, NotTeam: export.Us},
 		},
 		&GameStatsGenerator{
 			read:           gameStats.Read,
@@ -62,17 +73,24 @@ func (export *Export) Export(games []*game.Game) error {
 			get: gameStatsUs.GetPitchingData,
 		},
 	}
-	for _, g := range games {
-		for _, gen := range generators {
-			if err := gen.Read(g); err != nil {
-				return err
-			}
-		}
+	if err := export.readGames(games, generators); err != nil {
+		return err
 	}
 	for _, gen := range generators {
 		data := gen.GetData()
 		if err := export.sheets.ExportData(data); err != nil {
 			return err
+		}
+	}
+	return nil
+}
+
+func (export *Export) readGames(games []*game.Game, generators []StatsGenerator) error {
+	for _, g := range games {
+		for _, gen := range generators {
+			if err := gen.Read(g); err != nil {
+				return err
+			}
 		}
 	}
 	return nil

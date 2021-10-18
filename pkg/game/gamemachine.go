@@ -182,6 +182,23 @@ func (m *gameMachine) handleSpecial() error {
 		if err != nil || outs != m.state.Outs {
 			return fmt.Errorf("at inning %d # outs is %d not %d", m.state.InningNumber, m.state.Outs, outs)
 		}
+	case "radj":
+		runner := PlayerID(m.getPlayField(1))
+		base := m.getPlayField(2)
+		if runner == "" || !(base == "1" || base == "2" || base == "3") {
+			return fmt.Errorf("radj must be runner,base")
+		}
+		if m.lastState != nil {
+			return fmt.Errorf("radj must be at the inning start")
+		}
+		m.lastState = &State{
+			InningNumber: m.state.InningNumber,
+			Half:         m.state.Half,
+			Outs:         m.state.Outs,
+		}
+		m.lastState.init()
+		m.lastState.Runners[BaseNumber[base]] = runner
+		m.state.Comment = m.getPlayField(3)
 	default:
 		return fmt.Errorf("unknown special play %s", m.playCode)
 	}

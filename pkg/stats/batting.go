@@ -22,7 +22,16 @@ type Batting struct {
 	ReachedOnError                 int
 	FieldersChoice                 int
 	ReachedOnK                     int
+	RE24                           float64
 	Games                          map[string]bool
+}
+
+func (b *Batting) RecordRE24(state *game.State, lastState *game.State, re *RunExpectancy) {
+	if state.Complete {
+		runsBefore := re.GetExpectedRuns(lastState)
+		runsAfter := re.GetExpectedRuns(state)
+		b.RE24 += runsAfter - runsBefore + float64(len(state.ScoringRunners))
+	}
 }
 
 func (b *Batting) Record(state *game.State) (teamLOB int) {

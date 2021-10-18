@@ -2,15 +2,13 @@ package stats
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/slshen/sb/pkg/game"
 )
 
 type RunExpectancy struct {
-	Name    string
-	Team    string
-	NotTeam string
+	Name string
+	Filter
 
 	states []*State24
 }
@@ -59,33 +57,27 @@ func (re *RunExpectancy) reset() []*State24 {
 	return []*State24{nono}
 }
 
-func (re *RunExpectancy) filterOut(g *game.Game, state *game.State) bool {
-	team := g.Home
-	if state.Top() {
-		team = g.Visitor
-	}
-	team = strings.ToLower(team)
-	if re.Team != "" {
-		if !strings.HasPrefix(team, strings.ToLower(re.Team)) {
-			return true
-		}
-	}
-	if re.NotTeam != "" {
-		if strings.HasPrefix(team, strings.ToLower(re.NotTeam)) {
-			return true
-		}
-	}
-	return false
-}
-
 func (re *RunExpectancy) getIndex(state *game.State) int {
-	index := state.Outs * 8
-	for i, runner := range state.Runners {
+	var (
+		outs    int
+		runners []game.PlayerID
+	)
+	if state != nil && state.Outs != 3 {
+		outs = state.Outs
+		runners = state.Runners
+	}
+	index := outs * 8
+	for i, runner := range runners {
 		if runner != "" {
 			index += 1 << i
 		}
 	}
 	return index
+}
+
+func (re *RunExpectancy) GetExpectedRuns(state *game.State) float64 {
+	state24 := re.states[re.getIndex(state)]
+	return state24.GetExpectedRuns()
 }
 
 func (re *RunExpectancy) GetData() *Data {
@@ -95,13 +87,17 @@ func (re *RunExpectancy) GetData() *Data {
 	}
 	for i := range re.states {
 		state24 := re.states[i]
-		var rate float64
-		if state24.Count > 0 {
-			rate = float64(state24.Runs) / float64(state24.Count)
-		}
 		data.Rows = append(data.Rows, Row{
-			state24.Outs, state24.Runners, state24.Count, state24.Runs, fmt.Sprintf("%0.2f", rate),
+			state24.Outs, state24.Runners, state24.Count, state24.Runs,
+			fmt.Sprintf("%0.2f", state24.GetExpectedRuns()),
 		})
 	}
 	return data
+}
+
+func (state24 *State24) GetExpectedRuns() (runs float64) {
+	if state24.Count > 0 {
+		runs = float64(state24.Runs) / float64(state24.Count)
+	}
+	return
 }
