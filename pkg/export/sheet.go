@@ -51,7 +51,7 @@ func (ex *SheetExport) ExportData(data *stats.Data) error {
 	if err != nil {
 		return err
 	}
-	crange := fmt.Sprintf("%s!A2:%s1000", data.Name, columnLetter(len(data.Columns)-1))
+	crange := fmt.Sprintf("%s!A2:%s1000", data.Name, columnLetters(len(data.Columns)-1))
 	log.Default().Printf("Clearing %s of sheet %s", crange, data.Name)
 	_, err = ex.service.Spreadsheets.Values.Clear(ex.SpreadsheetID,
 		crange,
@@ -67,7 +67,7 @@ func (ex *SheetExport) ExportData(data *stats.Data) error {
 	for _, row := range data.Rows {
 		values = append(values, row)
 	}
-	vrange := fmt.Sprintf("%s!A1:%s%d", data.Name, columnLetter(len(data.Columns)-1),
+	vrange := fmt.Sprintf("%s!A1:%s%d", data.Name, columnLetters(len(data.Columns)-1),
 		len(data.Rows)+1)
 	log.Default().Printf("Updated values of %s in range %s", data.Name, vrange)
 	_, err = ex.service.Spreadsheets.Values.Update(ex.SpreadsheetID, vrange, &sheets.ValueRange{
@@ -77,9 +77,22 @@ func (ex *SheetExport) ExportData(data *stats.Data) error {
 	return err
 }
 
-func columnLetter(n int) string {
-	letter := rune('A' + n)
-	return string(letter)
+func columnLetters(n int) string {
+	var letters []rune
+	for {
+		letters = append(letters, rune('A'+(n%26)))
+		n /= 26
+		if n == 0 {
+			break
+		}
+		n--
+	}
+	for i, j := 0, len(letters)-1; i < j; {
+		letters[i], letters[j] = letters[j], letters[i]
+		i++
+		j--
+	}
+	return string(letters)
 }
 
 func (ex *SheetExport) findOrCreateSheet(sheetName string) (*sheets.Sheet, error) {
