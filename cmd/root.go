@@ -31,9 +31,6 @@ func readCommand() *cobra.Command {
 		Short: "Read and print a score file",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			games, err := game.ReadGameFiles(args)
-			if err != nil {
-				return err
-			}
 			for _, g := range games {
 				states := g.GetStates()
 				for _, state := range states {
@@ -49,7 +46,7 @@ func readCommand() *cobra.Command {
 					fmt.Println(string(d))
 				}
 			}
-			return nil
+			return err
 		},
 	}
 	c.Flags().BoolVar(&home, "home", false, "Print only home plays")
@@ -151,7 +148,7 @@ func statsCommand(statsType string) *cobra.Command {
 	var (
 		csv bool
 	)
-	mg := stats.NewGameStats()
+	mg := stats.NewGameStats(nil)
 	c := &cobra.Command{
 		Use:     fmt.Sprintf("%s-stats", statsType),
 		Aliases: []string{statsType},
@@ -161,6 +158,18 @@ func statsCommand(statsType string) *cobra.Command {
 			if err != nil {
 				return err
 			}
+			re := &stats.RunExpectancy{
+				Filter: stats.Filter{
+					NotTeam: mg.Team,
+					League:  mg.League,
+				},
+			}
+			for _, g := range games {
+				if err := re.Read(g); err != nil {
+					return err
+				}
+			}
+			mg.RE = re
 			for _, g := range games {
 				if err := mg.Read(g); err != nil {
 					return err
@@ -181,7 +190,8 @@ func statsCommand(statsType string) *cobra.Command {
 		},
 	}
 	c.Flags().BoolVar(&csv, "csv", false, "Print in CSV format")
-	c.Flags().StringVar(&mg.OnlyTeam, "team", "", "Limit stats to `team`")
+	c.Flags().StringVar(&mg.Team, "team", "", "Limit stats to `team`")
+	c.Flags().StringVar(&mg.League, "league", "", "Limit stats to `league`")
 	return c
 }
 
@@ -211,6 +221,7 @@ func reCommand() *cobra.Command {
 	}
 	c.Flags().StringVar(&re24.Team, "team", "", "Include only states with `team`")
 	c.Flags().StringVar(&re24.NotTeam, "not-team", "", "Inlucde only states that are not `team`")
+	c.Flags().StringVar(&re24.League, "league", "", "Inlucde only games in `league`")
 	c.Flags().BoolVar(&csv, "csv", false, "Print in CSV format")
 	return c
 }
@@ -218,6 +229,7 @@ func reCommand() *cobra.Command {
 func exportCommand() *cobra.Command {
 	var (
 		us            string
+		league        string
 		spreadsheetID string
 	)
 	c := &cobra.Command{
@@ -243,6 +255,7 @@ func exportCommand() *cobra.Command {
 				return err
 			}
 			export.Us = us
+			export.League = league
 			games, err := game.ReadGameFiles(args)
 			if err != nil {
 				return err
@@ -251,6 +264,7 @@ func exportCommand() *cobra.Command {
 		},
 	}
 	c.Flags().StringVar(&us, "us", "", "Our `team`")
+	c.Flags().StringVar(&league, "league", "", "Include only games in `league`")
 	c.Flags().StringVar(&spreadsheetID, "spreadsheet-id", "", "The spreadsheet to use")
 	return c
 }

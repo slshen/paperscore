@@ -1,0 +1,71 @@
+date: 9/11/21
+game: 3
+visitor: Pride 14u 07
+visitorid: pride-fall-2021
+home: Davis Dynamite
+start: "?"
+timelimit:
+league: AST
+#final:
+#  visitor: 0
+#  home: 2
+comments:
+  - Pitcher u1 not recorded
+visitorplays:
+  - pitcher,u1
+  - mf17,X,S9/G3.B-1
+  - aw6,BBX,S8/L8.B-1;1-2
+  - mj18,BX,FC5/G.B-1;1-2;2X3(5)
+  - bj00,CBFX,HP.B-1;1-2;2-3
+  - kg2,X,S9/G9.B-1;1-3;2-H;3-H
+  - ms11,BX,FC5.B-1;1-2;3XH(52)
+  - as7,CCX,S6/G.B-1;1-2;2-3
+  - rv10,BBX,D9/F9.B-2;1-H;2-H;3-H
+  - cm22,CX,53/G
+  - inn,2,5
+  - ss16,FSB,53/G
+  - le13,FX,53/G
+  - sk12,CBX,3/P3
+  - inn,3,5
+  - kn21,X,E4/G4.B-1
+  - mf17,B,WP.1-2
+  - mf17,BBF,H/IPHR.B-H;2-H
+  - aw6,X,S7/G7.B-1
+  - mj18,B,WP.1-2
+  - mj18,BSX,S8/L8.B-1;2-3
+  - bj00,B,SB2;SBH
+  - bj00,BBX,S8/G8.B-2;2XH(82)
+  - kg2,SB,WP.2-3
+  - kg2,SBX,S8/L8.B-1;3-H
+  - ms11,CBX,9/F89
+  - as7,SBX,E5/G5.B-1;1-2
+  - rv10,BX,S8/L8.B-1;1-2;2-3
+  - cm22,CFX,S8/L89.B-1;1-2;2-H;3-H
+  - ss16,BFCS,K
+  - inn,4,11
+  - le13,CSS,K
+  - sk12,BX,4/L4
+  - kn21,BCFX,K23
+homeplays:
+  - pitcher,ss16
+  - 88,X,S8/L8.B-1
+  - 21,X,63/G.1-2
+  - 9,BBX,E5/G5.B-1
+  - 34,BFX,7/F7
+  - 26,X,43/G
+  - inn,2,0
+  - 19,BX,53/G
+  - 20,X,HP.B-1
+  - 14,CCC,K
+  - 92,X,E4/G4.B-1;1-2
+  - 7,CX,HP.B-1;1-2;2-3
+  - 88,CCX,8/F8
+  - inn,3,0
+  - 21,X,7/F7S
+  - 9,BCBFBS,K
+  - 34,FBBX,43/G
+  - inn,4,0
+  - 26,FBX,63/G
+  - 19,FSC,S9/P34D.B-1
+  - 20,X,FC6.B-1;1X2(64)
+  - 14,X,4/P

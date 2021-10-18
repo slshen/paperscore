@@ -9,7 +9,7 @@ import (
 
 func TestGameStats(t *testing.T) {
 	assert := assert.New(t)
-	gs := NewGameStats()
+	gs := NewGameStats(nil)
 	g, err := game.ReadGameFile("../../data/20210911-1.yaml")
 	if !assert.NoError(err) {
 		return

@@ -6,10 +6,10 @@ home:
 start:
 timelimit:
 #final:
-#  visitor: 0
-#  home: 2
+#  visitor: 
+#  home: 
 #comments:
-#  - Big strikezone
+#  - 
 visitorplays:
 #  - pitcher,39
 homeplays:
