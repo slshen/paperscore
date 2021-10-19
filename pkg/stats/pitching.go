@@ -48,10 +48,10 @@ func (p *Pitching) Record(state *game.State, lastState *game.State) {
 	}
 	if state.Complete || state.Outs == 3 {
 		p.Pitches += len(state.Pitches)
-		p.Strikes += state.Pitches.Strikes()
-		p.Balls += state.Pitches.Balls()
-		p.Swings += state.Pitches.Swings()
-		p.Misses += state.Pitches.Misses()
+		p.Strikes += state.Pitches.CountUp('S', 'C', 'F')
+		p.Balls += state.Pitches.CountUp('B')
+		p.Swings += state.Pitches.CountUp('S', 'F')
+		p.Misses += state.Pitches.CountUp('S')
 		if state.Pitches.Last() == "X" {
 			if state.Play.Type == game.HitByPitch {
 				p.Balls++
