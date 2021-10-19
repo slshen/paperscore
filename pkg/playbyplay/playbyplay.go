@@ -133,7 +133,8 @@ func countDescription(pitches game.Pitches) string {
 	if pitches == "X" {
 		return "on the first pitch"
 	}
-	return fmt.Sprintf("with the count %s", pitches.Count())
+	count, _, _ := pitches.Count()
+	return fmt.Sprintf("with the count %s", count)
 }
 
 func positionName(fielder int) string {

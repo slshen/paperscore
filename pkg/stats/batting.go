@@ -1,6 +1,8 @@
 package stats
 
-import "github.com/slshen/sb/pkg/game"
+import (
+	"github.com/slshen/sb/pkg/game"
+)
 
 type Batting struct {
 	Player                         *game.Player `yaml:"-" mapstructure:",squash"`
@@ -14,6 +16,7 @@ type Batting struct {
 	PickedOff                      int
 	LOB                            int
 	PitchesSeen, Swings, Misses    int
+	Strikes, CalledStrikes         int
 	GroundOuts, FlyOuts            int
 	HitByPitch                     int
 	OnBase                         int
@@ -102,8 +105,18 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 			b.SacrificeFlys++
 		}
 	}
-	b.PitchesSeen += state.Pitches.Balls() + state.Pitches.Strikes()
-	b.Swings += state.Pitches.Swings()
-	b.Misses += state.Pitches.Misses()
+	if state.Complete || state.Incomplete {
+		b.PitchesSeen += len(state.Pitches)
+		b.Strikes += state.Pitches.CountUp('C', 'S', 'F')
+		b.Swings += state.Pitches.CountUp('S', 'F')
+		b.Misses += state.Pitches.CountUp('S')
+		b.CalledStrikes += state.Pitches.CountUp('C')
+		if state.Pitches.Last() == "X" {
+			if state.Play.Type != game.HitByPitch {
+				b.Strikes++
+				b.Swings++
+			}
+		}
+	}
 	return
 }

@@ -29,3 +29,5 @@ FieldersChoice
 ReachedOnK
 SacrificeFlys
 RE24
+CalledStrikes
+Strikes

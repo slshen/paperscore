@@ -17,11 +17,13 @@ func TestPitches(t *testing.T) {
 		{"B", 1, 0, "1-0"},
 		{"CSBB", 2, 2, "2-2"},
 		{"C.X", 0, 1, "0-1"},
+		{"BCCFBX", 2, 2, "2-2"},
 	} {
 		ps := Pitches(tc.in)
-		assert.Equal(tc.b, ps.Balls())
-		assert.Equal(tc.s, ps.Strikes())
-		assert.Equal(tc.count, ps.Count())
+		count, balls, strikes := ps.Count()
+		assert.Equal(tc.count, count)
+		assert.Equal(tc.b, balls)
+		assert.Equal(tc.s, strikes)
 	}
 	assert.Equal("X", Pitches("CX").Last())
 }
