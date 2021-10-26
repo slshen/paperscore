@@ -10,14 +10,14 @@ import (
 )
 
 type GameStats struct {
-	TeamStats map[string]*Stats
+	TeamStats map[string]*TeamStats
 	RE        *RunExpectancy
 	Filter
 }
 
 func NewGameStats(re *RunExpectancy) *GameStats {
 	return &GameStats{
-		TeamStats: make(map[string]*Stats),
+		TeamStats: make(map[string]*TeamStats),
 		RE:        re,
 	}
 }
@@ -57,7 +57,7 @@ func getLastState(states []*game.State, i int) *game.State {
 	return nil
 }
 
-func (gs *GameStats) GetStats(team *game.Team) *Stats {
+func (gs *GameStats) GetStats(team *game.Team) *TeamStats {
 	stats := gs.TeamStats[team.Name]
 	if stats == nil {
 		stats = NewStats(team)
@@ -123,4 +123,5 @@ func (gs *GameStats) adjustRowValues(gameCount int, team string, player *game.Pl
 	}
 	delete(m, "PlayerID")
 	delete(m, "Number")
+	delete(m, "Active")
 }

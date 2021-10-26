@@ -19,6 +19,7 @@ players:
     name: Marina S
   sk12:
     name: Sara K
+    active: false
   rv10:
     name: Riley V
   as7:

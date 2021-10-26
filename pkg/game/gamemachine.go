@@ -7,173 +7,111 @@ import (
 )
 
 type gameMachine struct {
-	game                        *Game
-	visitorPlay                 int
-	homePlay                    int
-	visitorPA                   int
-	homePA                      int
-	homePitcher, visitorPitcher PlayerID
-	state                       *State
-	lastState                   *State // last state, same side or nil if start of half-inning
-	playCode                    string
-	playFields                  []string
-	basePutOuts                 map[string]bool
+	state       *State
+	lastState   *State
+	PA          int
+	pitcher     PlayerID
+	playCode    string
+	playFields  []string
+	basePutOuts map[string]bool
 	eventCodeParser
 }
 
-func (m *gameMachine) run() error {
-	m.visitorPA = 1
-	m.homePA = 1
-	m.state = &State{
-		InningNumber: 1,
-		Half:         Top,
+func newGameMachine(half Half, lastState *State) *gameMachine {
+	if lastState == nil {
+		lastState = &State{
+			InningNumber: 1,
+			Half:         half,
+			Runners:      make([]PlayerID, 3),
+		}
 	}
-	m.state.init()
-	var visitorDone, homeDone bool
-	for {
-		if len(m.game.states) > 0 {
-			last := m.game.states[len(m.game.states)-1]
-			if last.Outs == 3 {
-				m.flipHalfInning()
-				m.lastState = nil
-			} else {
-				m.lastState = last
-			}
-		} else {
-			m.lastState = nil
-		}
-	next_play:
-		if visitorDone && homeDone {
-			break
-		}
-		if m.state.Top() {
-			if visitorDone {
-				// no more plays, just move onto the bottom
-				m.flipHalfInning()
-				goto next_play
-			}
-			m.playCode = m.game.VisitorPlays[m.visitorPlay]
-			m.visitorPlay++
-			visitorDone = m.visitorPlay == len(m.game.VisitorPlays)
-		} else {
-			if homeDone {
-				m.flipHalfInning()
-				goto next_play
-			}
-			m.playCode = m.game.HomePlays[m.homePlay]
-			m.homePlay++
-			homeDone = m.homePlay == len(m.game.HomePlays)
-		}
-		m.playFields = strings.Split(m.playCode, ",")
-		if !IsPlayerID(m.getPlayField(0)) {
-			if err := m.handleSpecial(); err != nil {
-				return err
-			}
-			goto next_play
-		}
-		if m.state.Top() {
-			m.state.Number = m.visitorPA
-			m.state.Pitcher = m.homePitcher
-		} else {
-			m.state.Number = m.homePA
-			m.state.Pitcher = m.visitorPitcher
-		}
-		m.state.Batter = PlayerID(m.getPlayField(0))
-		if m.state.Batter == "" {
-			return fmt.Errorf("no batter for %s", m.playCode)
-		}
-		if m.state.Pitcher == "" {
-			return fmt.Errorf("no pitcher for %s", m.playCode)
-		}
-		m.state.Pitches = Pitches(m.getPlayField(1))
-		m.state.EventCode = m.getPlayField(2)
-		if m.state.EventCode == "" {
-			return fmt.Errorf("empty event code in %s", m.playCode)
-		}
-		m.state.Comment = m.getPlayField(3)
-		m.basePutOuts = nil
-		m.parseEvent(m.state.EventCode)
-		var err error
-		var runners []PlayerID
-		if m.lastState != nil {
-			runners = m.lastState.Runners
-		}
-		m.state.Advances, err = parseAdvances(m.advancesCode, m.state.Batter, runners)
-		if err != nil {
-			return fmt.Errorf("%w in %s", err, m.playCode)
-		}
-		if err := m.handleEvent(); err != nil {
-			return err
-		}
-		if err := m.moveRunners(); err != nil {
-			return err
-		}
-		if m.state.Outs == 3 && !m.state.Complete {
-			// inning ended
-			m.state.Incomplete = true
-		}
-		if m.state.Complete {
-			if !strings.HasSuffix(string(m.state.Pitches), "X") &&
-				m.state.Play.BallInPlay() {
-				m.state.Pitches += "X"
-			}
-			m.state.Modifiers = Modifiers(m.modifiers)
-			if m.state.Top() {
-				m.visitorPA++
-			} else {
-				m.homePA++
-			}
-		}
-		m.game.states = append(m.game.states, m.state)
-		m.state = &State{
-			InningNumber: m.state.InningNumber,
-			Outs:         m.state.Outs,
-			Half:         m.state.Half,
-			Score:        m.state.Score,
-		}
-		m.state.init()
+	m := &gameMachine{
+		lastState: lastState,
 	}
-	if m.game.Final != nil && (m.game.Final.Home != m.state.Score.Home ||
-		m.game.Final.Visitor != m.state.Score.Visitor) {
-		return fmt.Errorf("final score was %d-%d not %d-%d", m.state.Score.Visitor,
-			m.state.Score.Home, m.game.Final.Visitor, m.game.Final.Home)
-	}
-	return nil
+	return m
 }
 
-func (m *gameMachine) flipHalfInning() {
-	m.state.Outs = 0
-	m.state.Runners = make([]PlayerID, 3)
-	if m.state.Top() {
-		m.state.Half = Bottom
-		m.state.Pitcher = m.homePitcher
-	} else {
-		m.state.InningNumber++
-		m.state.Half = Top
-		m.state.Pitcher = m.visitorPitcher
+func (m *gameMachine) runOne(playCode string) (*State, error) {
+	m.state = &State{
+		InningNumber: m.lastState.InningNumber,
+		Outs:         m.lastState.Outs,
+		Half:         m.lastState.Half,
+		Score:        m.lastState.Score,
+		Pitcher:      m.pitcher,
+		Runners:      make([]PlayerID, 3),
 	}
+	if m.state.Outs == 3 {
+		m.state.Outs = 0
+		m.state.InningNumber++
+	}
+	m.playCode = playCode
+	m.playFields = strings.Split(m.playCode, ",")
+	if !IsPlayerID(m.getPlayField(0)) {
+		return nil, m.handleSpecial()
+	}
+	m.state.Batter = PlayerID(m.getPlayField(0))
+	if m.state.Batter == "" {
+		return nil, fmt.Errorf("no batter for %s", m.playCode)
+	}
+	m.state.Pitches = Pitches(m.getPlayField(1))
+	m.state.EventCode = m.getPlayField(2)
+	if m.state.EventCode == "" {
+		return nil, fmt.Errorf("empty event code in %s", m.playCode)
+	}
+	m.state.Comment = m.getPlayField(3)
+	m.basePutOuts = nil
+	m.parseEvent(m.state.EventCode)
+	if err := m.parseAdvances(); err != nil {
+		return nil, err
+	}
+	if err := m.handleEvent(); err != nil {
+		return nil, err
+	}
+	if err := m.moveRunners(); err != nil {
+		return nil, err
+	}
+	if m.state.Outs == 3 && !m.state.Complete {
+		// inning ended
+		m.state.Incomplete = true
+	}
+	if m.state.Complete {
+		if !strings.HasSuffix(string(m.state.Pitches), "X") &&
+			m.state.Play.BallInPlay() {
+			m.state.Pitches += "X"
+		}
+		m.PA++
+		m.state.Modifiers = Modifiers(m.modifiers)
+	}
+	m.state.PlateAppearance.Number = m.PA
+	m.lastState = m.state
+	return m.state, nil
+}
+
+func (m *gameMachine) parseAdvances() error {
+	var err error
+	var runners []PlayerID
+	if m.lastState.InningNumber == m.state.InningNumber {
+		runners = m.lastState.Runners
+	}
+	m.state.Advances, err = parseAdvances(m.advancesCode, m.state.Batter, runners)
+	if err != nil {
+		return fmt.Errorf("%w in %s", err, m.playCode)
+	}
+	return nil
 }
 
 func (m *gameMachine) handleSpecial() error {
 	switch m.getPlayField(0) {
 	case "pitcher":
-		if m.state.Top() {
-			m.homePitcher = PlayerID(m.getPlayField(1))
-		} else {
-			m.visitorPitcher = PlayerID(m.getPlayField(1))
-		}
+		m.pitcher = PlayerID(m.getPlayField(1))
 	case "inn":
 		inning, err := strconv.Atoi(m.getPlayField(1))
 		if err != nil || inning != m.state.InningNumber {
 			return fmt.Errorf("inning %d is not %s", m.state.InningNumber, m.getPlayField(1))
 		}
-		runs := m.state.Score.Home
-		if m.state.Top() {
-			runs = m.state.Score.Visitor
-		}
 		score, err := strconv.Atoi(m.getPlayField(2))
-		if err != nil || runs != score {
-			return fmt.Errorf("at inning %d # runs is %d not %s", m.state.InningNumber, runs, m.getPlayField(2))
+		if err != nil || m.state.Score != score {
+			return fmt.Errorf("at inning %d # runs is %d not %s", m.state.InningNumber, m.state.Score, m.getPlayField(2))
 		}
 		var outs int
 		if len(m.playFields) > 3 {
@@ -188,17 +126,17 @@ func (m *gameMachine) handleSpecial() error {
 		if runner == "" || !(base == "1" || base == "2" || base == "3") {
 			return fmt.Errorf("radj must be runner,base")
 		}
-		if m.lastState != nil {
+		if m.lastState.InningNumber == m.state.InningNumber {
 			return fmt.Errorf("radj must be at the inning start")
 		}
 		m.lastState = &State{
 			InningNumber: m.state.InningNumber,
 			Half:         m.state.Half,
 			Outs:         m.state.Outs,
+			Score:        m.state.Score,
+			Runners:      make([]PlayerID, 3),
 		}
-		m.lastState.init()
 		m.lastState.Runners[BaseNumber[base]] = runner
-		m.state.Comment = m.getPlayField(3)
 	default:
 		return fmt.Errorf("unknown special play %s", m.playCode)
 	}
@@ -481,7 +419,7 @@ func (m *gameMachine) getBaseRunner(base string) (runner PlayerID, err error) {
 		err = fmt.Errorf("a runner cannot be at H")
 		return
 	}
-	if m.lastState == nil {
+	if m.lastState.InningNumber != m.state.InningNumber {
 		err = fmt.Errorf("no runners are on base at the start of a half-inning")
 		return
 	}
@@ -505,7 +443,7 @@ func (m *gameMachine) moveRunners() error {
 		if advance == nil {
 			if m.basePutOuts[base] {
 				// runner was put out
-			} else if base != "B" && m.lastState != nil {
+			} else if base != "B" && m.lastState.InningNumber == m.state.InningNumber {
 				// runner did not move
 				number := BaseNumber[base]
 				m.state.Runners[number] = m.lastState.Runners[number]
@@ -515,7 +453,7 @@ func (m *gameMachine) moveRunners() error {
 		from := BaseNumber[advance.From]
 		to := BaseNumber[advance.To]
 		switch {
-		case m.lastState == nil && advance.From != "B":
+		case m.lastState.InningNumber != m.state.InningNumber && advance.From != "B":
 			return fmt.Errorf("cannot advance a runner from %s to %s in %s at start of half-inning",
 				advance.From, advance.To, m.playCode)
 		case advance.From != "B" && m.lastState.Runners[from] == "":
@@ -542,10 +480,6 @@ func (m *gameMachine) moveRunners() error {
 }
 
 func (m *gameMachine) scoreRun(runner PlayerID) {
-	if m.state.Top() {
-		m.state.Score.Visitor++
-	} else {
-		m.state.Score.Home++
-	}
+	m.state.Score++
 	m.state.ScoringRunners = append(m.state.ScoringRunners, runner)
 }

@@ -18,6 +18,7 @@ type Player struct {
 	PlayerID `yaml:"-"`
 	Name     string
 	Number   string
+	Active   bool
 }
 
 var playerNumberRegexp = regexp.MustCompile(`\d+`)

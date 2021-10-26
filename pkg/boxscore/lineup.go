@@ -14,7 +14,7 @@ type Lineup struct {
 	Team             *game.Team
 	Order            []game.PlayerID
 	Pitchers         []game.PlayerID
-	Stats            *stats.Stats
+	Stats            *stats.TeamStats
 	TeamLOB          int
 	Errors           int
 	ErrorsByPosition []int `yaml:",flow"`

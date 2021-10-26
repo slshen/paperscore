@@ -15,10 +15,8 @@ const (
 type State struct {
 	InningNumber int
 	Half
-	Outs  int
-	Score struct {
-		Home, Visitor int
-	}
+	Outs       int
+	Score      int
 	OutsOnPlay int `yaml:",omitempty"`
 	Pitcher    PlayerID
 	PlateAppearance
@@ -38,10 +36,6 @@ type PlateAppearance struct {
 	Complete     bool `yaml:",omitempty"`
 	Incomplete   bool `yaml:",omitempty"`
 	Modifiers    `yaml:",omitempty,flow"`
-}
-
-func (state *State) init() {
-	state.Runners = make([]PlayerID, 3)
 }
 
 func (state *State) Top() bool {

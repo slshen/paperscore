@@ -13,6 +13,9 @@ type Generator struct {
 	Game        *game.Game
 	ScoringOnly bool
 
+	score struct {
+		home, visitor int
+	}
 	scoringInning                             int
 	scoringHalf                               game.Half
 	scoringVisitorPitcher, scoringHomePitcher game.PlayerID
@@ -91,7 +94,13 @@ func (gen *Generator) Generate(w io.Writer) error {
 				}
 			}
 			if len(state.ScoringRunners) > 0 {
-				fmt.Fprintf(line, ". %d %s, %d %s", state.Score.Visitor, gen.Game.Visitor, state.Score.Home, gen.Game.Home)
+				if state.Top() {
+					gen.score.visitor += len(state.ScoringRunners)
+				} else {
+					gen.score.home += len(state.ScoringRunners)
+				}
+				fmt.Fprintf(line, ". %d %s, %d %s", gen.score.visitor, gen.Game.Visitor,
+					gen.score.home, gen.Game.Home)
 			}
 		}
 		if state.Comment != "" {
