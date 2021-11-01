@@ -31,5 +31,6 @@ SacrificeFlys
 RE24
 CalledStrikes
 Strikes
-SB2Opportunities
+SB2PitchOpp
 SB2
+SB2Opp

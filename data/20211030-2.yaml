@@ -1,0 +1,105 @@
+date: 10/30/21
+game: 2
+visitor: Pride 14u 07
+visitorid: pride-fall-2021
+home: Nor Cal Blast Reyes
+start: 3:01PM
+timelimit: 80m
+league: pgf
+#final:
+#  visitor: 
+#  home: 
+#comments:
+#  - 
+visitorplays:
+  - pitcher,17
+  - mf17,BBBCB,W.B-1
+  - aw6,B,SB2.1-H,ball thrown to 2 bounced off Miya's helmet into center
+  - aw6,BBCBB,W.B-1
+  - cm22,CB,SB2
+  - cm22,CBX,4/P4
+  - kg2,CBCBX,S9/F9.B-2;2-H(E9/TH)
+  - ms11,X,E4/G4.B-2;2-H
+  - bj00,X,3/G3
+  - mj18,BX,S9/L9.B-1;2-H
+  - le13,BBB,WP.1-2
+  - le13,BBBB,W.B-1
+  - ss16,X,E6/P1.B-1;1-2;2-3
+  - kn21,BFFBX,HP.B-1;1-2;2-3;3-H
+  - rv10,FX,E4.B-1;1X2(4);2-3;3-H
+  - inn,2,6
+  - as7,X,6/P6
+  - mf17,CBX,6/P6
+  - aw6,CBBBCX,D7/L7
+  - cm22,BX,S8/L8.B-1;2-H
+  - kg2,BBBB,W.B-1;1-2
+  - ms11,X,S7/L7.B-1;1-3;2-H
+  - bj00,FX,8/F8
+  - inn,3,8
+  - mj18,X,T7/L7.B-H(E7)
+  - le13,X,S4/P4D
+  - ss16,SBX,63/G.1-3
+  - kn21,FSX,S8/L89.B-1;3-H
+  - rv10,BX,8/F8
+  - as7,X,2/P2
+  - inn,4,10
+  - mf17,FBFBBX,5/P5
+  - aw6,X,7/L7
+  - cm22,X,HP
+  - kg2,BCBX,S7/G7.B-1;1-2
+  - ms11,X,FC6.B-1;1X2(64);2-3
+  - inn,5,10
+  - bj00,X,S7/L78
+  - mj18,BX,8/F8
+  - le13,BBBB,W.B-1;1-2
+  - ss16,BBBB,W.B-1;1-2;2-3
+  - pitcher,44
+  - kn21,CBX,6/L6
+  - rv10,CBCX,D8/L8.B-2;1-3;2-H;3-H
+  - as7,BBX,53/G
+  - inn,6,12
+homeplays:
+  - pitcher,ms11
+  - 1,CFX,143/G
+  - 21,BX,E6/G6
+  - err,E6,cm22
+  - 28,X,S6/P6.B-1;1-2
+  - 7,X,S7/L7.B-1;1-2;2-3
+  - 16,FX,34/G3.1-2;2-3;3-H
+  - 18,SBB,WP.2-3;3-H,catcher could have tagged runner out at home by herself
+  - 18,SBBX,S7/L7.B-1;3-H
+  - 17,B,SB2
+  - 17,BSX,4/P4
+  - inn,2,3
+  - 42,CFBBX,S8/G8.B-3(E8)
+  - err,E8,cm22
+  - 77,SBFBS,K+WP.B-1;3-H
+  - 6,BFBSBB,W.B-1;1-2
+  - pitcher,bj00
+  - 1,CSBBBS,K
+  - 21,X,S9/L9.B-3(E9);1-H;2-H
+  - err,E9,kn21
+  - 28,X,S6/G6.B-1;3-H
+  - 7,B,WP.1-2
+  - 7,BX,S8/G8.B-1;2-3
+  - 16,X,43/G.3-H(E3/TH)
+  - err,E3,le13
+  - 18,BFCS,K
+  - inn,3,8
+  - 17,CSS,K
+  - 42,BFSBX,43/G4
+  - 77,SBFX,E9/F9.B-2
+  - err,E9,kn21
+  - 6,FSC,K
+  - inn,4,8
+  - 1,FCBS,K
+  - 21,BFSBSS,K
+  - 28,BX,63/G6
+  - inn,5,8
+  - 7,FBBSX,S6/G6
+  - 00,B,SB2
+  - 00,BX,T7/L7.B-3;2-H
+  - 18,BBCSBS,K
+  - 44,SSFBFS,K
+  - 42,B,WP.3-H
+  - 42,BBX,13/G1

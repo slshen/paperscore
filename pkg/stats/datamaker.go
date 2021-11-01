@@ -21,6 +21,9 @@ func newDataMaker(name string) *dataMaker {
 		columnIndexes: make(map[string]int),
 		data: &Data{
 			Name: name,
+			Width: map[string]int{
+				"Name": 12,
+			},
 		},
 	}
 	cols, err := columnsFS.ReadFile(fmt.Sprintf("%s_columns.txt", strings.ToLower(name)))

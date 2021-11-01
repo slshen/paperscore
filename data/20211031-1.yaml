@@ -1,0 +1,81 @@
+date: 10/31/21
+game: 1
+visitor: Pride 14u 07
+visitorid: pride-fall-2021
+home: AASA Escobar 08
+start: 9:36AM
+timelimit: 80m
+league: pgf
+visitorplays:
+  - pitcher,9
+  - mf17,BX,S1/B.B-1
+  - aw6,B,SB2
+  - aw6,BCCX,S1/B.B-1;2-3
+  - cm22,B,SB2
+  - cm22,BCFS,K
+  - mj18,BX,53/G5.2-3;3-H
+  - kg2,CX,6/P6
+  - inn,2,1
+  - bj00,BBCX,63/G6
+  - ms11,BX,8/F78
+  - le13,X,3/P3
+  - inn,3,1
+  - ss16,X,13/G1
+  - mf17,SFS,K
+  - aw6,CX,5/P5
+  - inn,4,1
+  - cm22,X,D7/F7
+  - mj18,BX,43/G4.2-3
+  - kg2,FX,4/P4
+  - bj00,X,T9/L9.B-3;3-H
+  - ms11,X,6/P6D
+  - inn,5,2
+  - le13,X,HP
+  - ss16,FBCFFFFBBB,W.B-1;1-2
+  - mf17,X,HP.B-1;1-2;2-3
+  - aw6,BBFBFB,W.B-1;1-2;2-3;3-H
+  - cm22,BCCX,S3/G3.B-1;1-2;2-3;3-H
+  - mj18,BFCBFBFX,S7/L7.B-1;1-2;2-3;3-H
+  - kg2,CBX,FC6.B-1;1X2(64);2-H;3-H
+  - bj00,X,9/F9
+  - ms11,X,D7/L7.B-2;1-H
+  - le13,X,S9/F9S.B-1;2-H
+  - ss16,FX,5/P5
+  - inn,6,9
+homeplays:
+  - pitcher,ms11
+  - 28,BFCBFBFX,S7/G6
+  - 11,B,SB2
+  - 11,BBX,E5/G5.B-2(E7);2-3
+  - 9,BBBB,W.B-1
+  - pitcher,bj00
+  - 20,BBB,PO3(25)
+  - 20,BBBCB,W.B-1;1-2;2-3
+  - 15,FSBX,8/L8/SF.3-H
+  - 48,FFB,CS3(25)
+  - inn,2,1
+  - pitcher,ms11
+  - 48,BBBB,W.B-1
+  - 21,BCX,E7/L7.B-2;1-3
+  - 16,BCFFBC,K
+  - 10,BBCBCB,W.B-1
+  - 28,BX,S9/L9.B-2(E9);1-3;2-H;3-H
+  - 11,SCBFFBX,T8/L8.B-3;2-H;3-H
+  - 9,X,63/G6.3-H
+  - 20,X,63/G6
+  - inn,3,6
+  - 15,FBBFX,9/L89
+  - 48,SBCFS,K
+  - 21,X,63/G
+  - inn,4,6
+  - 16,BBBCX,13/G1
+  - 00,BBSBSFFX,63/G6
+  - 28,CSX,E5/G5/TH.B-1
+  - 11,SFX,6/P64
+  - inn,5,6
+  - 9,BX,63/G6
+  - 20,BX,8/L8
+  - 15,BBCBB,W.B-1
+  - 48,CBX,S8/F8S.B-2;1-3
+  - pitcher,bj00
+  - 21,CCS,K

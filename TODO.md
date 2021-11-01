@@ -6,6 +6,8 @@
 
 * Record defensive positions
 
-* Generate run expectancy matrix
-
 * Count hard hit balls (foul or in-play)
+
+* Implement "final" and "err" specials.  Remove final score.
+
+* Upload game logs.  Add per-game RE24.

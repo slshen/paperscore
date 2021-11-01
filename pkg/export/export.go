@@ -2,6 +2,7 @@ package export
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/slshen/sb/pkg/game"
 	"github.com/slshen/sb/pkg/stats"
@@ -31,10 +32,7 @@ func NewExport(sheets *SheetExport) (*Export, error) {
 }
 
 func (export *Export) Export(games []*game.Game) error {
-	re := &stats.RunExpectancy{Filter: stats.Filter{
-		League: export.League,
-		Team:   export.Us,
-	}}
+	re := &stats.RunExpectancy{}
 	if err := export.readGames(games, []StatsGenerator{re}); err != nil {
 		return err
 	}
@@ -70,7 +68,7 @@ func (export *Export) Export(games []*game.Game) error {
 			get:  gameStatsUs.GetBattingData,
 		},
 		&GameStatsGenerator{
-			get: gameStatsUs.GetPitchingData,
+			get: func() *stats.Data { return export.getUsPitchingData(gameStats) },
 		},
 	}
 	if err := export.readGames(games, generators); err != nil {
@@ -83,6 +81,31 @@ func (export *Export) Export(games []*game.Game) error {
 		}
 	}
 	return nil
+}
+
+func (export *Export) getUsPitchingData(gs *stats.GameStats) *stats.Data {
+	alldata := gs.GetPitchingData()
+	data := &stats.Data{
+		Name:    "PIT",
+		Columns: alldata.Columns,
+		Width:   alldata.Width,
+	}
+	for _, row := range alldata.Rows {
+		name := row[0].(string)
+		if strings.HasPrefix(strings.ToLower(name), export.Us) {
+			slash := strings.Index(name, "/")
+			row2 := make([]interface{}, len(row))
+			for i := range row {
+				if i == 0 {
+					row2[0] = name[slash+1:]
+				} else {
+					row2[i] = row[i]
+				}
+			}
+			data.Rows = append(data.Rows, row2)
+		}
+	}
+	return data
 }
 
 func (export *Export) readGames(games []*game.Game, generators []StatsGenerator) error {

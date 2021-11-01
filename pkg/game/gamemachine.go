@@ -107,7 +107,7 @@ func (m *gameMachine) handleSpecial() error {
 	case "inn":
 		inning, err := strconv.Atoi(m.getPlayField(1))
 		if err != nil || inning != m.state.InningNumber {
-			return fmt.Errorf("inning %d is not %s", m.state.InningNumber, m.getPlayField(1))
+			return fmt.Errorf("inning %d is not %s after %s", m.state.InningNumber, m.getPlayField(1), m.lastState.EventCode)
 		}
 		score, err := strconv.Atoi(m.getPlayField(2))
 		if err != nil || m.state.Score != score {
@@ -120,6 +120,10 @@ func (m *gameMachine) handleSpecial() error {
 		if err != nil || outs != m.state.Outs {
 			return fmt.Errorf("at inning %d # outs is %d not %d", m.state.InningNumber, m.state.Outs, outs)
 		}
+	case "err":
+		// todo
+	case "final":
+		// todo
 	case "radj":
 		runner := PlayerID(m.getPlayField(1))
 		base := m.getPlayField(2)
@@ -255,6 +259,12 @@ func (m *gameMachine) handleEvent() error {
 		}
 		m.impliedAdvance("B-2")
 		m.state.Complete = true
+	case m.eventIs("DGR"):
+		m.state.Play = &Play{
+			Type: Double,
+		}
+		m.impliedAdvance("B-2")
+		m.state.Complete = true
 	case m.eventIs("T$"):
 		m.state.Play = &Play{
 			Type:     Triple,
@@ -358,10 +368,15 @@ func (m *gameMachine) handleEvent() error {
 		m.putOut(base)
 		m.state.Complete = true
 	case m.eventIs("$(B)$(%)"):
-		if !m.modifiers.Contains("LDP") {
-			return fmt.Errorf("play should contain LDP modifier in %s (%v)", m.playCode, m.state.Modifiers)
+		fallthrough
+	case m.eventIs("$(B)$$(%)"):
+		if !m.modifiers.Contains("LDP", "FDP") {
+			return fmt.Errorf("play should contain LDP or FDP modifier in %s (%v)", m.playCode, m.state.Modifiers)
 		}
 		base := m.eventMatches[2]
+		if len(m.eventMatches) == 4 {
+			base = m.eventMatches[3]
+		}
 		runner, err := m.getBaseRunner(base)
 		if err != nil {
 			return fmt.Errorf("no runner in lineout double play %s - %w", m.playCode, err)
@@ -375,6 +390,10 @@ func (m *gameMachine) handleEvent() error {
 		m.putOut(base)
 		m.state.Complete = true
 	case m.eventIs("CS%($$)"):
+		fallthrough
+	case m.eventIs("CS%($$$)"):
+		fallthrough
+	case m.eventIs("CS%($$$$)"):
 		to := m.eventMatches[0]
 		if !(to == "2" || to == "3" || to == "H") {
 			return fmt.Errorf("illegal caught stealing base code %s", m.playCode)

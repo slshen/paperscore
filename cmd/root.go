@@ -146,7 +146,8 @@ func playByPlayCommand() *cobra.Command {
 
 func statsCommand(statsType string) *cobra.Command {
 	var (
-		csv bool
+		csv             bool
+		restrictColumns []string
 	)
 	mg := stats.NewGameStats(nil)
 	c := &cobra.Command{
@@ -181,6 +182,7 @@ func statsCommand(statsType string) *cobra.Command {
 			} else {
 				data = mg.GetPitchingData()
 			}
+			data.RestrictColumns = restrictColumns
 			if csv {
 				return data.RenderCSV(os.Stdout)
 			} else {
@@ -192,6 +194,7 @@ func statsCommand(statsType string) *cobra.Command {
 	c.Flags().BoolVar(&csv, "csv", false, "Print in CSV format")
 	c.Flags().StringVar(&mg.Team, "team", "", "Limit stats to `team`")
 	c.Flags().StringVar(&mg.League, "league", "", "Limit stats to `league`")
+	c.Flags().StringSliceVar(&restrictColumns, "select", nil, "Only print columns that start with `prefix`")
 	return c
 }
 

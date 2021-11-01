@@ -1,6 +1,8 @@
 package stats
 
-import "github.com/slshen/sb/pkg/game"
+import (
+	"github.com/slshen/sb/pkg/game"
+)
 
 type TeamStats struct {
 	Batting  map[game.PlayerID]*Batting
@@ -28,40 +30,6 @@ func (stats *TeamStats) RecordBatting(g *game.Game, state, lastState *game.State
 		batting.RecordRE24(state, lastState, re)
 	}
 	batting.Games[g.ID] = true
-	if lastState != nil {
-		// look for a lead runner on first
-		var runner game.PlayerID
-		if lastState.Runners[2] == "" && lastState.Runners[1] == "" {
-			runner = lastState.Runners[0]
-		}
-		if runner != "" {
-			// count stolen base opportunties
-			runnerStats := stats.GetBatting(runner)
-			i := 0
-			if lastState.Play.Is(game.StolenBase, game.CaughtStealing, game.NoPlay, game.PickedOff,
-				game.WildPitch, game.PassedBall) {
-				i = len(lastState.Pitches)
-			}
-			if i < len(state.Pitches) {
-				for j, pitch := range state.Pitches[i:] {
-					if pitch == 'S' || pitch == 'C' || pitch == 'B' {
-						if j == len(state.Pitches)-1 {
-							// this is the last pitch, so it's not a steal opportunity if it
-							// was a walk, or a strikeout to end the inning
-							if state.Play.Type == game.Walk {
-								continue
-							}
-							if state.Play.Is(game.StrikeOut, game.StrikeOutPassedBall, game.StrikeOutWildPitch) &&
-								state.Outs == 3 {
-								continue
-							}
-						}
-						runnerStats.SB2Opportunities++
-					}
-				}
-			}
-		}
-	}
 	switch state.Play.Type {
 	case game.CaughtStealing:
 		if !state.NotOutOnPlay {
@@ -72,11 +40,46 @@ func (stats *TeamStats) RecordBatting(g *game.Game, state, lastState *game.State
 		for _, runnerID := range state.Play.Runners {
 			runner := stats.GetBatting(runnerID)
 			runner.StolenBases++
-			if len(state.Play.StolenBases) == 1 && state.Play.StolenBases[0] == "2" {
+		}
+	}
+	if lastState != nil {
+		// look for a lead runnerID on first
+		var runnerID game.PlayerID
+		if lastState.Runners[2] == "" && lastState.Runners[1] == "" {
+			runnerID = lastState.Runners[0]
+		}
+		if runnerID != "" {
+			// count SB2 and stolen base opportunties
+			runner := stats.GetBatting(runnerID)
+			if state.Play.Type == game.StolenBase {
 				runner.SB2++
+			}
+			i := 0
+			if !(lastState.Complete || lastState.Incomplete) {
+				i = len(lastState.Pitches)
+			}
+			one := false
+			for j, pitch := range state.Pitches[i:] {
+				if pitch == 'S' || pitch == 'C' || pitch == 'B' {
+					lastPitch := j == len(state.Pitches[i:])-1
+					if lastPitch {
+						if pitch == 'B' && state.Play.Type == game.Walk {
+							continue
+						}
+						if (pitch == 'S' || pitch == 'C') && state.Play.Type == game.StrikeOut && state.Outs == 3 {
+							continue
+						}
+					}
+					if !one {
+						runner.SB2Opp++
+						one = true
+					}
+					runner.SB2PitchOpp++
+				}
 			}
 		}
 	}
+
 	for _, runnerID := range state.ScoringRunners {
 		runner := stats.GetBatting(runnerID)
 		runner.RunsScored++

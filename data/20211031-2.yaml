@@ -1,0 +1,85 @@
+date: 10/31/21
+game: 2
+visitor: Pride 14u 07
+visitorid: pride-fall-2021
+home: Ohana Tigers 08
+start: 11:44AM
+timelimit: 80m
+league: pgf
+visitorplays:
+  - pitcher,77
+  - mf17,BBBCB,W.B-1
+  - aw6,BB,SB2
+  - aw6,BBBB,W.B-1
+  - cm22,CBCFBBB,W.B-1;1-2;2-3
+  - mj18,CBX,FC5.B-1;1-2;2-3;3XH(52)
+  - kg2,CCX,8/L8/SF.3-H
+  - bj00,X,43/G
+  - inn,2,1
+  - ms11,BX,63/G
+  - le13,BBX,3/G
+  - ss16,BFBBB,W.B-1
+  - mf17,CBCBX,S6/P6S.B-1;1-2
+  - aw6,BBBX,E4/P4D.B-1;1-3;2-H
+  - cm22,B,SB2
+  - cm22,BBX,43/L4
+  - inn,3,2
+  - mj18,BX,6/P64D
+  - kg2,BBBCB,W.B-1
+  - bj00,FCS,K
+  - ms11,BX,E4/G4.B-1;1-2
+  - le13,BBCBCX,13/G
+  - inn,4,2
+  - ss16,CX,7/F7
+  - mf17,BCCFX,9/F9
+  - aw6,FCBX,6/P6
+  - inn,5,2
+  - cm22,BX,S8/L4.B-1
+  - mj18,CBX,S8/L8.B-1;1-3
+  - kg2,CX,S6/L8.B-2(E8);1-3;3-H
+  - pitcher,28
+  - bj00,CBFBX,S7/F8.B-2;2-3(E8);3-H
+  - ms11,BCX,S1/G1.B-1
+  - le13,X,FC8/P8.B-1;1X2(84);2-3;3-H
+  - ss16,CX,S6/G6.B-1;1-2;3-H
+  - mf17,CCBBBX,FC4.B-1;1X2(46);2-3
+  - aw6,X,S6/G6.B-1;1-3;3-H
+  - cm22,BX,13/G1
+  - inn,6,7
+homeplays:
+  - pitcher,ms11
+  - 25,BCFS,K23
+  - 44,BBCBCC,K
+  - 00,BBBCB,W.B-1
+  - 9,CX,S7/L7.B-1;1-2
+  - 42,BCSBFBFFB,W.B-1;1-2;2-3
+  - 3,BCBBX,5/L5
+  - inn,2,0
+  - pitcher,cm22
+  - 23,BBX,7/F7
+  - 12,CBX,8/F8
+  - 77,BBX,43/G4
+  - inn,3,0
+  - 25,BX,S8/G64.B-1
+  - 44,C,SB2
+  - 44,CX,S8/P8S.B-2;2-3
+  - 00,FX,HP.B-1
+  - 9,X,HP.B-1;1-2;2-3;3-H
+  - 42,BBFX,S8/L8.B-1;1-2;2-H;3-H
+  - 3,BBX,S8/P4D.B-1;1-2;2-H
+  - pitcher,bj00
+  - 23,X,7/P46D
+  - 12,CX,S2/B.B-1;1-2;2-3
+  - 77,CX,S4/P4D.B-1;1-2;2-3;3-H
+  - 25,FBBFBB,W.B-1;1-2;2-3;3-H
+  - 44,BBCX,2(B)23(1)/FDP,popup double play
+  - inn,4,6
+  - 00,BBX,S7/L7.B-1
+  - 9,BX,S7/G7.B-1;1-2
+  - 42,X,7/F7
+  - 3,SBFBBX,5/P5
+  - 88,BCBBB,W.B-1;1-2;2-3
+  - 12,CBSBX,S7/L7.B-2;1-3;2-H;3-H
+  - 77,CX,T8/G8.B-3;2-H;3-H,ball kicked off lip over shoulder of CF
+  - 25,CFX,S9/G9.B-1;3-H
+  - 44,FFFFFX,9/F9
