@@ -4,15 +4,17 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/slshen/sb/pkg/text"
 )
 
 type Data struct {
-	Name    string
-	Columns []string
-	Rows    []Row
-	Width   map[string]int
+	Name            string
+	Columns         []string
+	Rows            []Row
+	Width           map[string]int
+	RestrictColumns []string
 }
 
 type Row []interface{}
@@ -20,6 +22,9 @@ type Row []interface{}
 func (d *Data) RenderTable(w io.Writer) {
 	tab := text.Table{}
 	for _, col := range d.Columns {
+		if !d.includeColmumn(col) {
+			continue
+		}
 		var w int
 		if d.Width != nil {
 			w = d.Width[col]
@@ -37,20 +42,60 @@ func (d *Data) RenderTable(w io.Writer) {
 			})
 	}
 	fmt.Fprint(w, tab.Header())
-	for _, row := range d.Rows {
+	for i := range d.Rows {
+		row := d.getRow(i)
 		fmt.Fprintf(w, tab.Format(), row...)
 	}
 }
 
+func (d *Data) includeColmumn(col string) bool {
+	if len(d.RestrictColumns) == 0 {
+		return true
+	}
+	col = strings.ToLower(col)
+	for _, r := range d.RestrictColumns {
+		if strings.HasPrefix(col, strings.ToLower(r)) {
+			return true
+		}
+	}
+	return false
+}
+
+func (d *Data) getRow(i int) Row {
+	if len(d.RestrictColumns) == 0 {
+		return d.Rows[i]
+	}
+	var row Row
+	for j := range d.Rows[i] {
+		if d.includeColmumn(d.Columns[j]) {
+			row = append(row, d.Rows[i][j])
+		}
+	}
+	return row
+}
+
 func (d *Data) RenderCSV(w io.Writer) error {
 	csv := csv.NewWriter(w)
-	if err := csv.Write(d.Columns); err != nil {
+	columns := d.Columns
+	if len(d.RestrictColumns) > 0 {
+		columns = nil
+		for _, col := range d.Columns {
+			if d.includeColmumn(col) {
+				columns = append(columns, col)
+			}
+		}
+	}
+	if err := csv.Write(columns); err != nil {
 		return err
 	}
-	record := make([]string, len(d.Columns))
+	record := make([]string, len(columns))
 	for _, row := range d.Rows {
-		for i := range row {
-			record[i] = fmt.Sprintf("%v", row[i])
+		i := 0
+		for j := range d.Columns {
+			if d.includeColmumn(d.Columns[j]) {
+				record[i] = fmt.Sprintf("%v", row[j])
+				i++
+			}
 		}
 		if err := csv.Write(record); err != nil {
 			return err

@@ -53,7 +53,7 @@ func (p *eventCodeParser) eventIs(pattern string) bool {
 		str := strings.ReplaceAll(pattern, "(", `\(`)
 		str = strings.ReplaceAll(str, "+", `\+`)
 		str = strings.ReplaceAll(str, ")", `\)`)
-		str = strings.ReplaceAll(strings.ReplaceAll(str, "$", "([123456789])"),
+		str = strings.ReplaceAll(strings.ReplaceAll(str, "$", "([0123456789])"),
 			"%", "([B123H])")
 		re = regexp.MustCompile("^" + str + "$")
 		eventCodeRegexps[pattern] = re

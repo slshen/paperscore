@@ -1,0 +1,84 @@
+date: 10/30/21
+game: 3
+visitor: Pride 14u 07
+visitorid: pride-fall-2021
+home: Nor Cal Firecrackers E/P
+start: 5:35PM
+timelimit: 80m
+league: pgf
+#final:
+#  visitor: 
+#  home: 
+#comments:
+#  - 
+visitorplays:
+  - pitcher,48
+  - mf17,CX,S7/L7.B-1
+  - aw6,CC,SB2
+  - aw6,CCBX,S7/L7.B-1;2-H
+  - cm22,BFBX,S6/P6D.B-2;1-3
+  - kg2,BCBX,E4/P4.B-1;2-3;3-H
+  - ms11,B,SB2
+  - ms11,BX,8/F89/SF.2-3;3-H
+  - bj00,FFBX,7/F7/SF.3-H
+  - mj18,FX,63/G
+  - inn,2,4
+  - le13,BBX,S7/L7.B-1
+  - ss16,BB,SB2
+  - ss16,BBBB,W.B-1
+  - kn21,SX,HP.B-1;1-2;2-3
+  - rv10,FCX,S9/F9.B-2(E9);2-H;3-H
+  - as7,BSBBX,43/P45.1-2;2-3
+  - pitcher,2
+  - mf17,FX,S1/B.B-2;2-H;3-H
+  - aw6,CBSBC,K
+  - cm22,BBCX,S9/P3D.B-1;2-3
+  - kg2,C,SB2
+  - kg2,CX,63/G
+  - inn,3,8
+  - ms11,FBBFC,K23
+  - bj00,CSS,K
+  - mj18,CBCBX,53/G
+  - inn,4,8
+  - le13,X,63/G
+  - ss16,SFX,63/G
+  - kn21,BBFX,53/G
+  - inn,5,8
+  - rv10,BSBSBC,K
+  - as7,FX,6/P6
+  - mf17,BFCS,K
+  - inn,6,8
+homeplays:
+  - pitcher,ms11
+  - 48,BSCFX,43/G
+  - 6,CCBX,E4/G4.B-1
+  - 9,CSS,K
+  - 2,FFBBBB,W.B-1;1-2
+  - 8,BBC,CS3(2546)
+  - inn,2,0
+  - 8,BBSCC,K
+  - 99,BX,7/F7
+  - 17,CBSFFFB,S9/G9.B-2(E9/TH)
+  - 7,B,WP.2-3
+  - 7,BBX,13/G1
+  - inn,3,0
+  - 11,BCBCBS,K
+  - 3,SBSBC,K
+  - 1,CSX,63/G
+  - inn,4,0
+  - 48,FFFBBBB,W.B-1
+  - 6,BBFX,6(B)63(1)/LDP
+  - 9,BCX,E3/G4.B-1
+  - err,E3,kg2
+  - 2,BX,53/G
+  - inn,5,0
+  - 8,BFBFX,3/G3
+  - 99,SBBFBB,W.B-1
+  - 17,BBCFBX,E6/G6.B-1;1-2,easy double play
+  - err,E6,mf17
+  - 7,BBBCB,W.B-1;1-2;2-3
+  - 11,BBCX,S8/G8.B-1;1-2;2-3;3-H
+  - 3,SX,T7/F78D.B-3;1-H;2-H;3-H
+  - 1,SBSBFFFFS,K
+  - 48,BFBFS,K
+  - inn,6,4

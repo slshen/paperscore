@@ -1,0 +1,81 @@
+date: 10/30/21
+game: 1
+visitor: Pride 14u 07
+visitorid: pride-fall-2021
+home: Sorcerer Davis/Ricks
+start: 11:13A
+timelimit: 80m
+league: pgf
+#final:
+#  visitor: 
+#  home: 
+#comments:
+#  - 
+visitorplays:
+  - pitcher,9
+  - mf17,CCBX,7/L7
+  - aw6,CSFBBC,K
+  - cm22,SFFS,K
+  - inn,2,0
+  - kg2,CFBX,S4/P4D.B-1
+  - ms11,BB,WP.1-2
+  - ms11,BBCX,3/L3
+  - bj00,BB,SB3,delayed steal
+  - bj00,BBSCSC,K
+  - mj18,CBBBFX,E6/G6.B-1;3-H
+  - le13,BB,WP.1-2
+  - le13,BBCX,S6/G6.2X3(RINT)
+  - inn,3,1
+  - le13,FBX,13/G1,Lana bats out of order by umpire ruling
+  - ss16,BX,DGR/F7
+  - kn21,B,WP.2-3
+  - kn21,BSFBX,HP
+  - rv10,CFX,8/F8/SF.3-H
+  - as7,FFX,3/P3
+  - inn,4,2
+  - mf17,CBX,43/G
+  - aw6,CX,S2/B.B-1
+  - cm22,CX,53/G.B-1;1-2
+  - kg2,CCX,S8/L8.B-1;1-2;2-H
+  - ms11,X,HP.B-1;1-2;2-3
+  - bj00,X,D8/F89.B-2;1-H;2-H
+  - mj18,CFFX,9/F9
+  - inn,5,5
+  - le13,X,S9/F9
+  - ss16,BX,FC6/P6.B-1;1X2(64)
+  - kn21,SX,13/G.1-2
+  - rv10,BFFB,WP.2-3
+  - rv10,BFFBBFFB,W.B-1
+  - as7,SB,SB2
+  - as7,SBFX,3/P3
+  - final,5
+homeplays:
+  - pitcher,cm22
+  - 11,CCBFFX,13/G
+  - 3,BX,S1/B.B-1
+  - 31,BSB,SB2
+  - 31,BSBBB,W.B-1
+  - 10,X,1/P1
+  - 00,X,146/L1
+  - inn,2,0
+  - 45,BSCS,K
+  - 9,CBBCBS,K
+  - 5,X,6/P6
+  - inn,3,0
+  - 1,BX,E6/TH.B-2
+  - err,E6,mf17
+  - 2,FBBX,13/G.2-3
+  - 17,CFX,8/F8/SF.3-H
+  - 11,BBFX,13/G
+  - inn,4,1
+  - 3,FBX,E5/G5
+  - err,E5,bj00
+  - 31,B,SB2
+  - 31,BFX,8/F78
+  - 10,BX,4/P4
+  - 00,FFFS,K
+  - inn,5,1
+  - 45,SCBBFS,K
+  - 9,X,7/F6D
+  - 5,FBSFFS,K
+  - final,1

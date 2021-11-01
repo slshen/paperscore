@@ -1,6 +1,7 @@
 package stats
 
 import (
+	"path/filepath"
 	"testing"
 
 	"github.com/slshen/sb/pkg/game"
@@ -10,11 +11,17 @@ import (
 func TestGameStats(t *testing.T) {
 	assert := assert.New(t)
 	gs := NewGameStats(nil)
-	g, err := game.ReadGameFile("../../data/20210911-1.yaml")
+	files, err := filepath.Glob("../../data/2021*.yaml")
 	if !assert.NoError(err) {
 		return
 	}
-	assert.NoError(gs.Read(g))
+	games, err := game.ReadGameFiles(files)
+	if !assert.NoError(err) {
+		return
+	}
+	for _, g := range games {
+		assert.NoError(gs.Read(g))
+	}
 	assert.NotNil(gs.GetBattingData())
 	assert.NotNil(gs.GetPitchingData())
 }
