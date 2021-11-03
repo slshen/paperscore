@@ -159,7 +159,7 @@ func statsCommand(statsType string) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			re := &stats.RunExpectancy{
+			re := &stats.ObservedRunExpectancy{
 				Filter: stats.Filter{
 					NotTeam: mg.Team,
 					League:  mg.League,
@@ -199,8 +199,11 @@ func statsCommand(statsType string) *cobra.Command {
 }
 
 func reCommand() *cobra.Command {
-	var csv bool
-	re24 := &stats.RunExpectancy{}
+	var (
+		csv        bool
+		yamlFormat bool
+	)
+	re24 := &stats.ObservedRunExpectancy{}
 	c := &cobra.Command{
 		Use:   "re",
 		Short: "Determine the run expectancy matrix",
@@ -214,7 +217,10 @@ func reCommand() *cobra.Command {
 					return err
 				}
 			}
-			data := re24.GetData()
+			if yamlFormat {
+				return re24.WriteYAML(os.Stdout)
+			}
+			data := stats.GetRunExpectancyData(re24)
 			if csv {
 				return data.RenderCSV(os.Stdout)
 			}
@@ -226,6 +232,7 @@ func reCommand() *cobra.Command {
 	c.Flags().StringVar(&re24.NotTeam, "not-team", "", "Inlucde only states that are not `team`")
 	c.Flags().StringVar(&re24.League, "league", "", "Inlucde only games in `league`")
 	c.Flags().BoolVar(&csv, "csv", false, "Print in CSV format")
+	c.Flags().BoolVar(&yamlFormat, "yaml", false, "Print in YAML format")
 	return c
 }
 

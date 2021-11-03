@@ -23,7 +23,7 @@ func NewStats(players PlayerLookup) *TeamStats {
 	}
 }
 
-func (stats *TeamStats) RecordBatting(g *game.Game, state, lastState *game.State, re *RunExpectancy) {
+func (stats *TeamStats) RecordBatting(g *game.Game, state, lastState *game.State, re RunExpectancy) {
 	batting := stats.GetBatting(state.Batter)
 	batting.Record(state)
 	if re != nil {
@@ -85,7 +85,7 @@ func (stats *TeamStats) RecordBatting(g *game.Game, state, lastState *game.State
 		runner.RunsScored++
 	}
 	if re != nil {
-		reChange := re.GetExpectedRuns(state) - re.GetExpectedRuns(lastState) + float64(len(state.ScoringRunners))
+		reChange := GetExpectedRuns(re, state) - GetExpectedRuns(re, lastState) + float64(len(state.ScoringRunners))
 		if state.Play.Is(game.StolenBase, game.CaughtStealing, game.PickedOff) {
 			perRunner := reChange / float64(len(state.Play.Runners))
 			for _, runnerID := range state.Play.Runners {

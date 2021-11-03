@@ -12,18 +12,18 @@ type Filter struct {
 }
 
 func (f *Filter) filterOut(g *game.Game, state *game.State) bool {
-	team := g.Home
+	teamName := g.Home
 	if state.Top() {
-		team = g.Visitor
+		teamName = g.Visitor
 	}
-	team = strings.ToLower(team)
+	teamName = strings.ToLower(teamName)
 	if f.Team != "" {
-		if !strings.HasPrefix(team, strings.ToLower(f.Team)) {
+		if !strings.HasPrefix(teamName, strings.ToLower(f.Team)) {
 			return true
 		}
 	}
 	if f.NotTeam != "" {
-		if strings.HasPrefix(team, strings.ToLower(f.NotTeam)) {
+		if strings.HasPrefix(teamName, strings.ToLower(f.NotTeam)) {
 			return true
 		}
 	}
