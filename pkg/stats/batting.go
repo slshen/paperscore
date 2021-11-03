@@ -30,10 +30,10 @@ type Batting struct {
 	Games                          map[string]bool
 }
 
-func (b *Batting) RecordRE24(state *game.State, lastState *game.State, re *RunExpectancy) {
+func (b *Batting) RecordRE24(state *game.State, lastState *game.State, re RunExpectancy) {
 	if state.Complete {
-		runsBefore := re.GetExpectedRuns(lastState)
-		runsAfter := re.GetExpectedRuns(state)
+		runsBefore := GetExpectedRuns(re, lastState)
+		runsAfter := GetExpectedRuns(re, state)
 		b.RE24 += runsAfter - runsBefore + float64(len(state.ScoringRunners))
 	}
 }

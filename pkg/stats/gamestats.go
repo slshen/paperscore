@@ -11,18 +11,24 @@ import (
 
 type GameStats struct {
 	TeamStats map[string]*TeamStats
-	RE        *RunExpectancy
+	RE        RunExpectancy
 	Filter
+	KeepInactiveBatters bool
+
+	teams map[string]*game.Team
 }
 
-func NewGameStats(re *RunExpectancy) *GameStats {
+func NewGameStats(re RunExpectancy) *GameStats {
 	return &GameStats{
 		TeamStats: make(map[string]*TeamStats),
 		RE:        re,
+		teams:     make(map[string]*game.Team),
 	}
 }
 
 func (gs *GameStats) Read(g *game.Game) error {
+	gs.teams[g.Home] = g.HomeTeam
+	gs.teams[g.Visitor] = g.VisitorTeam
 	states := g.GetStates()
 	for i, state := range states {
 		if gs.filterOut(g, state) {
@@ -68,7 +74,7 @@ func (gs *GameStats) GetStats(team *game.Team) *TeamStats {
 
 func (gs *GameStats) GetPitchingData() *Data {
 	dm := newDataMaker("PIT")
-	for team, stats := range gs.TeamStats {
+	for teamName, stats := range gs.TeamStats {
 		var players []game.PlayerID
 		for player := range stats.Pitching {
 			players = append(players, player)
@@ -79,7 +85,7 @@ func (gs *GameStats) GetPitchingData() *Data {
 			if err := mapstructure.Decode(pitching, &m); err != nil {
 				panic(err)
 			}
-			gs.adjustRowValues(len(pitching.Games), team, pitching.Player, m)
+			gs.adjustRowValues(len(pitching.Games), teamName, pitching.Player, m)
 			dm.addRow(m)
 		}
 	}
@@ -95,10 +101,15 @@ func sortPlayers(players []game.PlayerID) []game.PlayerID {
 
 func (gs *GameStats) GetBattingData() *Data {
 	dm := newDataMaker("BAT")
-	for team, stats := range gs.TeamStats {
+	for teamName, stats := range gs.TeamStats {
 		var players []game.PlayerID
-		for player := range stats.Batting {
-			players = append(players, player)
+		team := gs.teams[teamName]
+		for playerID := range stats.Batting {
+			player := team.GetPlayer(playerID)
+			if !gs.KeepInactiveBatters && player.Inactive {
+				continue
+			}
+			players = append(players, playerID)
 		}
 		for _, player := range sortPlayers(players) {
 			batting := stats.Batting[player]
@@ -106,7 +117,7 @@ func (gs *GameStats) GetBattingData() *Data {
 			if err := mapstructure.Decode(batting, &m); err != nil {
 				panic(err)
 			}
-			gs.adjustRowValues(len(batting.Games), team, batting.Player, m)
+			gs.adjustRowValues(len(batting.Games), teamName, batting.Player, m)
 			dm.addRow(m)
 		}
 	}
@@ -123,5 +134,5 @@ func (gs *GameStats) adjustRowValues(gameCount int, team string, player *game.Pl
 	}
 	delete(m, "PlayerID")
 	delete(m, "Number")
-	delete(m, "Active")
+	delete(m, "Inactive")
 }

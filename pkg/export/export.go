@@ -19,6 +19,11 @@ type StatsGenerator interface {
 	GetData() *stats.Data
 }
 
+type REStatsGenerator struct {
+	name string
+	*stats.ObservedRunExpectancy
+}
+
 type GameStatsGenerator struct {
 	read           func(*game.Game) error
 	get            func() *stats.Data
@@ -32,28 +37,26 @@ func NewExport(sheets *SheetExport) (*Export, error) {
 }
 
 func (export *Export) Export(games []*game.Game) error {
-	re := &stats.RunExpectancy{}
-	if err := export.readGames(games, []StatsGenerator{re}); err != nil {
+	re := &stats.ObservedRunExpectancy{}
+	if err := export.readGames(games, []StatsGenerator{&REStatsGenerator{"", re}}); err != nil {
 		return err
 	}
 	gameStats := stats.NewGameStats(re)
+	gameStats.KeepInactiveBatters = true
 	gameStats.League = export.League
 	gameStatsUs := stats.NewGameStats(re)
 	gameStatsUs.League = export.League
 	gameStatsUs.Team = export.Us
 	generators := []StatsGenerator{
-		&stats.RunExpectancy{
-			Name:   "RE",
+		&REStatsGenerator{"RE", &stats.ObservedRunExpectancy{
 			Filter: stats.Filter{League: export.League},
-		},
-		&stats.RunExpectancy{
-			Name:   "RE-Us",
+		}},
+		&REStatsGenerator{"RE-Us", &stats.ObservedRunExpectancy{
 			Filter: stats.Filter{League: export.League, Team: export.Us},
-		},
-		&stats.RunExpectancy{
-			Name:   "RE-Them",
+		}},
+		&REStatsGenerator{"RE-Them", &stats.ObservedRunExpectancy{
 			Filter: stats.Filter{League: export.League, NotTeam: export.Us},
-		},
+		}},
 		&GameStatsGenerator{
 			read:           gameStats.Read,
 			get:            gameStats.GetBattingData,
@@ -131,5 +134,11 @@ func (gen *GameStatsGenerator) GetData() *stats.Data {
 	if gen.dataNameSuffix != "" {
 		data.Name = fmt.Sprintf("%s%s", data.Name, gen.dataNameSuffix)
 	}
+	return data
+}
+
+func (gen *REStatsGenerator) GetData() *stats.Data {
+	data := stats.GetRunExpectancyData(gen)
+	data.Name = gen.name
 	return data
 }
