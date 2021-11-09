@@ -1,0 +1,97 @@
+date: 11/06/21
+game: 2
+visitor: Pride 14u 07
+visitorid: pride-fall-2021
+home: Nor Cal Blast
+start: 4:15PM
+timelimit: 90m
+tournament: Bat Busters Showcase
+league: PGF
+#final:
+#  visitor: 
+#  home: 
+#comments:
+#  - 
+visitorplays:
+  - pitcher,21
+  - mf17,BBBB,W.B-1
+  - aw6,CFB,SB2
+  - aw6,CFBFBX,7/F7
+  - cm22,X,S8/G8.B-1;2-H
+  - mj18,CBBSBFX,FC6.B-1;1-2(E6/TH)
+  - kg2,CX,FC4.B-1;1X2(46);2-3
+  - bj00,BB,SB2
+  - bj00,BBBFX,D7/L7.B-2;2-H;3-H
+  - ms11,FX,13/L1
+  - inn,2,3
+  - le13,BBBB,W.B-1
+  - rv10,B,SB2
+  - rv10,BCB,WP.2-3
+  - rv10,BCBSBX,63/G6
+  - ss16,CBCFFFFX,63/G6.3-H
+  - kn21,SX,8/F8S
+  - inn,3,4
+  - ac14,SFX,4/P4
+  - as7,FSFBS,K
+  - mf17,BBFBB,W.B-1
+  - aw6,CBB,SB2
+  - aw6,CBBCFBX,6/P5D
+  - inn,4,4
+  - cm22,BX,S6/P5D
+  - mj18,FX,FC6.B-1;1X2(64)
+  - kg2,BBFBB,W.B-1;1-2
+  - bj00,X,6/P56/IF
+  - ms11,FFBBX,D7/L78.B-2;1-H;2-H
+  - le13,CBBBB,W.B-1
+  - rv10,BX,S8/L78S.B-1;1-2;2-3
+  - pitcher,44
+  - ss16,FBX,E6/TH/G6.B-2;1-H;2-H;3-H
+  - kn21,CX,7/F7
+  - inn,5,9
+  - ac14,BX,5/P5
+  - as7,BX,8/P54D
+  - mf17,FBBBB,W.B-1
+  - aw6,X,53/G5
+  - inn,6,9
+  - cm22,BBX,53/G5
+  - mj18,BFBBB,W.B-1,time expired
+homeplays:
+  - pitcher,22
+  - 1,BBFCFFBX,E5/G5.B-1
+  - 42,X,13/G1
+  - 28,X,S9/P9S.B-1;1-2
+  - 7,X,HP.B-1;1-2;2-3
+  - 21,BCCX,D9/F9.B-2;1-3;2-H;3-H
+  - 16,BX,E5/G5/TH.B-1;2-3;3-H
+  - 17,X,D8/F8D.B-2;1-3;3-H
+  - 00,SBCBFC,K
+  - 9,BBCBB,W.B-1
+  - 25,X,E6/G6.B-1;1-2;2-3;3-H
+  - 1,BBCFFX,S7/L7S.B-1;1-2;2-3;3-H
+  - 42,BFBSBB,W.B-1;1-2;2-3;3-H
+  - 28,FBX,4/P4
+  - inn,2,7
+  - 7,X,9/F9S
+  - 21,CX,6/P64
+  - 16,X,53/G5
+  - inn,3,7
+  - 17,BBFX,63/G6
+  - 00,X,S7/L7S.B-1
+  - 9,BBBFFS,K
+  - 25,X,6/P56
+  - inn,4,7
+  - 1,BX,S6/G56.B-1
+  - 42,BX,2/G2,batter out of the box
+  - 28,X,E6/G6.B-1;1-2
+  - pitcher,00
+  - 7,BX,7/F7
+  - 21,X,D8/L8D.B-2;1-H;2-H
+  - 16,BFFBBX,HP.B-1
+  - 17,FX,53/G5
+  - inn,5,9
+  - 00,FX,13/G1
+  - 9,X,D7/L78.B-2
+  - 5,SB,SB3
+  - 5,SBX,9/F9/SF.3-H
+  - 1,FBFFCBX,53/G5
+  - inn,6,10

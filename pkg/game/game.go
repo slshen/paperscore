@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"time"
 
@@ -30,8 +31,25 @@ type Game struct {
 	Comments              []string
 	Venue                 string
 	League                string
+	Tournament            string
 
 	states []*State
+}
+
+var gameFileRegexp = regexp.MustCompile(`\d\d\d\d\d\d\d\d-\d.yaml`)
+
+func ReadGamesDir(dir string) ([]*Game, error) {
+	files, err := filepath.Glob(filepath.Join(dir, "*.yaml"))
+	if err != nil {
+		return nil, err
+	}
+	var gameFiles []string
+	for _, f := range files {
+		if gameFileRegexp.MatchString(f) {
+			gameFiles = append(gameFiles, f)
+		}
+	}
+	return ReadGameFiles(gameFiles)
 }
 
 func ReadGameFiles(paths []string) (games []*Game, errs error) {

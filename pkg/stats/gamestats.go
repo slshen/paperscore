@@ -45,7 +45,7 @@ func (gs *GameStats) Read(g *game.Game) error {
 		battingTeamStats := gs.GetStats(battingTeam)
 		fieldingTeamStats := gs.GetStats(fieldingTeam)
 		lastState := getLastState(states, i)
-		battingTeamStats.RecordBatting(g, state, lastState, gs.RE)
+		battingTeamStats.RecordBatting(g, state, lastState)
 		fieldingTeamStats.RecordPitching(g, state, lastState)
 	}
 	return nil
@@ -66,7 +66,7 @@ func getLastState(states []*game.State, i int) *game.State {
 func (gs *GameStats) GetStats(team *game.Team) *TeamStats {
 	stats := gs.TeamStats[team.Name]
 	if stats == nil {
-		stats = NewStats(team)
+		stats = NewStats(team, gs.RE)
 		gs.TeamStats[team.Name] = stats
 	}
 	return stats
@@ -135,4 +135,9 @@ func (gs *GameStats) adjustRowValues(gameCount int, team string, player *game.Pl
 	delete(m, "PlayerID")
 	delete(m, "Number")
 	delete(m, "Inactive")
+	for k, v := range m {
+		if f, ok := v.(float64); ok {
+			m[k] = fmt.Sprintf("%.3f", f)
+		}
+	}
 }

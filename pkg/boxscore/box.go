@@ -9,6 +9,7 @@ import (
 
 	"github.com/slshen/sb/pkg/game"
 	"github.com/slshen/sb/pkg/playbyplay"
+	"github.com/slshen/sb/pkg/stats"
 	"github.com/slshen/sb/pkg/text"
 )
 
@@ -38,11 +39,11 @@ type BoxScore struct {
 	IncludePlays        bool
 }
 
-func NewBoxScore(g *game.Game) (*BoxScore, error) {
+func NewBoxScore(g *game.Game, re stats.RunExpectancy) (*BoxScore, error) {
 	boxscore := &BoxScore{
 		Game:          g,
-		HomeLineup:    newLineup(g.Home, g.HomeTeam),
-		VisitorLineup: newLineup(g.Visitor, g.VisitorTeam),
+		HomeLineup:    newLineup(g.Home, g.HomeTeam, re),
+		VisitorLineup: newLineup(g.Visitor, g.VisitorTeam, re),
 	}
 	if err := boxscore.run(); err != nil {
 		return nil, err

@@ -23,6 +23,7 @@ func newDataMaker(name string) *dataMaker {
 			Name: name,
 			Width: map[string]int{
 				"Name": 12,
+				"RE24": 6,
 			},
 		},
 	}

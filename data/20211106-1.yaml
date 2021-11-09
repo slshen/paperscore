@@ -1,0 +1,103 @@
+date: 11/06/21
+game: 1
+visitor: Pride 14u 07
+visitorid: pride-fall-2021
+home: Cal A's Salter
+start: 12:55PM
+timelimit: 90m
+tournament: Bat Busters Showcase
+league: PGF
+#final:
+#  visitor: 
+#  home: 
+#comments:
+#  - 
+visitorplays:
+  - pitcher,2
+  - mf17,CBBCBFC,K
+  - aw6,CFFBFBFBX,7/F7
+  - cm22,FFBBC,K
+  - inn,2,0
+  - mj18,BCSS,K
+  - kg2,X,S8/L8
+  - bj00,FS,SB2
+  - bj00,FSS,K+PB.B-1
+  - ms11,BBCBSS,K
+  - le13,FX,9/F9
+  - inn,3,0
+  - rv10,BFBCC,K
+  - ss16,SBBX,5/P5
+  - kn21,BCCS,K
+  - inn,4,0
+  - ac14,SX,5/P5
+  - as7,SX,24/B
+  - mf17,CX,S2/B
+  - aw6,BBS,SB2
+  - aw6,BBSFX,S7/L7.B-2;2-H
+  - cm22,BX,43/G
+  - inn,5,1
+  - mj18,X,D9/F9D
+  - kg2,SB,PB.2-3
+  - kg2,SBX,93/L9.3-H
+  - bj00,X,63/G6
+  - ms11,BBSX,13/B/G3
+  - inn,6,2
+  - le13,CBBBCB,W.B-1
+  - rv10,CB,CS2(26)
+  - rv10,CBBBB,W.B-1
+  - ss16,CBX,3/P3
+  - kn21,SCBS,K
+  - inn,7,2
+  - ac14,X,13/G1
+  - as7,BBX,S2/B,Aoife touched ball out of the box
+  - mf17,BX,FC6.1X2(64);B-1
+  - aw6,BBX,T8/L9.B-3;1-H
+  - cm22,BSCFBFX,E6/G6.B-1;3-H,time expires
+  - final,4
+homeplays:
+  - pitcher,ms11
+  - 73,FBX,S3/G13
+  - 88,BC,SB2
+  - 88,BCFS,K
+  - 11,BBBCX,S7/G56.B-1;2-3
+  - 5,B,SB2
+  - 5,BSX,E5/G5.B-1;2-3;3-H
+  - 70,S,SB2
+  - 70,SBBBB,W.B-1
+  - 4,CX,7/L7
+  - 2,X,4/P4
+  - inn,2,1
+  - 42,BCFS,K
+  - 12,BX,53/G5
+  - 9,BFFFFFX,S7/G4
+  - 73,X,E4/G4.B-1;1-2
+  - 88,BSBFBX,53/G5
+  - inn,3,1
+  - 11,X,3/G
+  - 5,X,D8/F8D
+  - 70,FX,53/B/SH.2-3
+  - 4,CBX,E5/G5.B-1;3-H
+  - 2,B,SB2
+  - 2,BBBCB,W.B-1
+  - 42,CSX,E1/G1/TH.B-1;1-3;2-H
+  - 12,FB,SB2
+  - 12,FBX,5/P5
+  - inn,4,3
+  - 9,X,S7/G4
+  - 73,BX,S5/B/G5.B-1;1-2
+  - 88,X,53/G5.1-2;2-3
+  - 11,BCFBS,K
+  - 5,BX,53/G5
+  - inn,5,3
+  - 70,X,4/P3D,nice catch by Aoife
+  - 4,BBBCB,W.B-1
+  - 2,FFFBX,FC9.B-1;1X2(96)
+  - 42,FBFS,K23
+  - inn,6,3
+  - 12,BBCX,S8/G4
+  - 9,X,FC4.B-1;1X2(46)
+  - 73,FX,S8/L8.B-1;1-2
+  - 88,BBX,S6/G6.B-1;1-2;2-3
+  - 11,BBX,FC1.B-1;1-2;2-3;3XH(12)
+  - 5,BX,FC6.B-1;1-2;2X3(65)
+  - final,3

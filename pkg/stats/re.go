@@ -17,10 +17,10 @@ type RunExpectancyCounts interface {
 var reRunnersKey = []string{"___", "__1", "_2_", "_21", "3__", "3_1", "32_", "321"}
 
 func GetExpectedRuns(re RunExpectancy, state *game.State) float64 {
-	if state == nil {
+	if state == nil || state.Outs == 3 {
 		return re.GetExpectedRuns(0, false, false, false)
 	}
-	return re.GetExpectedRuns(state.Outs-state.OutsOnPlay,
+	return re.GetExpectedRuns(state.Outs,
 		state.Runners[0] != "", state.Runners[1] != "", state.Runners[2] != "")
 }
 
