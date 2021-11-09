@@ -16,7 +16,7 @@ func TestBox(t *testing.T) {
 		if !assert.Nil(err) {
 			return
 		}
-		box, err := NewBoxScore(g)
+		box, err := NewBoxScore(g, nil)
 		assert.NoError(err)
 		assert.NotNil(box)
 		assert.NoError(box.Render(os.Stdout))

@@ -88,7 +88,7 @@ func boxCommand() *cobra.Command {
 				out = os.Stdout
 			}
 			for i, g := range games {
-				box, err := boxscore.NewBoxScore(g)
+				box, err := boxscore.NewBoxScore(g, nil)
 				if err != nil {
 					return err
 				}
@@ -148,6 +148,7 @@ func statsCommand(statsType string) *cobra.Command {
 	var (
 		csv             bool
 		restrictColumns []string
+		re              reArgs
 	)
 	mg := stats.NewGameStats(nil)
 	c := &cobra.Command{
@@ -159,18 +160,10 @@ func statsCommand(statsType string) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			re := &stats.ObservedRunExpectancy{
-				Filter: stats.Filter{
-					NotTeam: mg.Team,
-					League:  mg.League,
-				},
+			mg.RE, err = re.getRunExpectancy()
+			if err != nil {
+				return err
 			}
-			for _, g := range games {
-				if err := re.Read(g); err != nil {
-					return err
-				}
-			}
-			mg.RE = re
 			for _, g := range games {
 				if err := mg.Read(g); err != nil {
 					return err
@@ -191,6 +184,7 @@ func statsCommand(statsType string) *cobra.Command {
 			return nil
 		},
 	}
+	re.registerFlags(c.Flags())
 	c.Flags().BoolVar(&csv, "csv", false, "Print in CSV format")
 	c.Flags().StringVar(&mg.Team, "team", "", "Limit stats to `team`")
 	c.Flags().StringVar(&mg.League, "league", "", "Limit stats to `league`")
@@ -241,6 +235,7 @@ func exportCommand() *cobra.Command {
 		us            string
 		league        string
 		spreadsheetID string
+		re            reArgs
 	)
 	c := &cobra.Command{
 		Use:   "export",
@@ -260,7 +255,11 @@ func exportCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			export, err := export.NewExport(sheets)
+			re, err := re.getRunExpectancy()
+			if err != nil {
+				return err
+			}
+			export, err := export.NewExport(sheets, re)
 			if err != nil {
 				return err
 			}
@@ -273,6 +272,7 @@ func exportCommand() *cobra.Command {
 			return export.Export(games)
 		},
 	}
+	re.registerFlags(c.Flags())
 	c.Flags().StringVar(&us, "us", "", "Our `team`")
 	c.Flags().StringVar(&league, "league", "", "Include only games in `league`")
 	c.Flags().StringVar(&spreadsheetID, "spreadsheet-id", "", "The spreadsheet to use")

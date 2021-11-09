@@ -20,11 +20,11 @@ type Lineup struct {
 	ErrorsByPosition []int `yaml:",flow"`
 }
 
-func newLineup(teamName string, team *game.Team) *Lineup {
+func newLineup(teamName string, team *game.Team, re stats.RunExpectancy) *Lineup {
 	return &Lineup{
 		TeamName: teamName,
 		Team:     team,
-		Stats:    stats.NewStats(team),
+		Stats:    stats.NewStats(team, re),
 	}
 }
 

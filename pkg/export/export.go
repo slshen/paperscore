@@ -12,6 +12,7 @@ type Export struct {
 	Us     string
 	League string
 	sheets *SheetExport
+	re     stats.RunExpectancy
 }
 
 type StatsGenerator interface {
@@ -30,21 +31,18 @@ type GameStatsGenerator struct {
 	dataNameSuffix string
 }
 
-func NewExport(sheets *SheetExport) (*Export, error) {
+func NewExport(sheets *SheetExport, re stats.RunExpectancy) (*Export, error) {
 	return &Export{
 		sheets: sheets,
+		re:     re,
 	}, nil
 }
 
 func (export *Export) Export(games []*game.Game) error {
-	re := &stats.ObservedRunExpectancy{}
-	if err := export.readGames(games, []StatsGenerator{&REStatsGenerator{"", re}}); err != nil {
-		return err
-	}
-	gameStats := stats.NewGameStats(re)
+	gameStats := stats.NewGameStats(export.re)
 	gameStats.KeepInactiveBatters = true
 	gameStats.League = export.League
-	gameStatsUs := stats.NewGameStats(re)
+	gameStatsUs := stats.NewGameStats(export.re)
 	gameStatsUs.League = export.League
 	gameStatsUs.Team = export.Us
 	generators := []StatsGenerator{

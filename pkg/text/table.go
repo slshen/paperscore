@@ -14,8 +14,9 @@ type Column struct {
 }
 
 type Table struct {
-	Columns []Column
-	format  string
+	Markdown bool
+	Columns  []Column
+	format   string
 }
 
 func (t *Table) Header() string {

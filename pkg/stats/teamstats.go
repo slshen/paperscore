@@ -9,25 +9,27 @@ type TeamStats struct {
 	Pitching map[game.PlayerID]*Pitching
 
 	players PlayerLookup
+	re      RunExpectancy
 }
 
 type PlayerLookup interface {
 	GetPlayer(game.PlayerID) *game.Player
 }
 
-func NewStats(players PlayerLookup) *TeamStats {
+func NewStats(players PlayerLookup, re RunExpectancy) *TeamStats {
 	return &TeamStats{
 		players:  players,
+		re:       re,
 		Batting:  make(map[game.PlayerID]*Batting),
 		Pitching: make(map[game.PlayerID]*Pitching),
 	}
 }
 
-func (stats *TeamStats) RecordBatting(g *game.Game, state, lastState *game.State, re RunExpectancy) {
+func (stats *TeamStats) RecordBatting(g *game.Game, state, lastState *game.State) {
 	batting := stats.GetBatting(state.Batter)
 	batting.Record(state)
-	if re != nil {
-		batting.RecordRE24(state, lastState, re)
+	if stats.re != nil {
+		batting.RecordRE24(state, lastState, stats.re)
 	}
 	batting.Games[g.ID] = true
 	switch state.Play.Type {
@@ -84,8 +86,8 @@ func (stats *TeamStats) RecordBatting(g *game.Game, state, lastState *game.State
 		runner := stats.GetBatting(runnerID)
 		runner.RunsScored++
 	}
-	if re != nil {
-		reChange := GetExpectedRuns(re, state) - GetExpectedRuns(re, lastState) + float64(len(state.ScoringRunners))
+	if stats.re != nil {
+		reChange := GetExpectedRuns(stats.re, state) - GetExpectedRuns(stats.re, lastState) + float64(len(state.ScoringRunners))
 		if state.Play.Is(game.StolenBase, game.CaughtStealing, game.PickedOff) {
 			perRunner := reChange / float64(len(state.Play.Runners))
 			for _, runnerID := range state.Play.Runners {

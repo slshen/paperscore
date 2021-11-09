@@ -1,4 +1,5 @@
-{{.Game.Date}} game {{.Game.Number}} {{.Game.Visitor}} at {{.Game.Home}} 
+# {{.Game.Visitor}} at {{.Game.Home}} 
+{{.Game.Date}} game {{.Game.Number}}
 
 {{.InningScoreTable}}
 {{paste .VisitorLineup.BattingTable .HomeLineup.BattingTable 1 44}}
@@ -8,13 +9,13 @@
 {{if (not (or .IncludePlays .IncludeScoringPlays))}}
 {{- range .Comments}}{{.Half}} {{ordinal .Inning}}, {{.Outs}} Outs, {{.Batter}} at bat - {{.Text}}
 {{end}}{{end}}
-{{- range .Game.Comments}}Comment - {{.}}
+{{- range .Game.Comments}}* {{.}}
 {{end}}
 {{- if (or .IncludeScoringPlays .IncludePlays)}}
 {{.ScoringPlays}}{{end}}
 {{- with .Game}}
-Start - {{.Start}}
-Time Limit - {{.TimeLimit}}
-{{if .Venue}}Venue - {{.Venue}}{{end}}
+* Start - {{.Start}}
+* Time Limit - {{.TimeLimit}}
+{{if .Venue}}* Venue - {{.Venue}}{{end}}
 {{end}}
 

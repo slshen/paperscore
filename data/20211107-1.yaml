@@ -1,0 +1,94 @@
+date: 11/07/21
+game: 1
+visitor: Pride 14u 07
+visitorid: pride-fall-2021
+home: Lady Wolfpack
+start: 9:36A
+timelimit: 90m
+tournament: Bat Busters Showcase
+league: PGF
+#final:
+#  visitor: 
+#  home: 
+#comments:
+#  - 
+visitorplays:
+  - mf17,BCSBBX,E3/G5.B-1
+  - aw6,BBS,PB.1-2
+  - aw6,BBSBB,W.B-1
+  - cm22,BX,13/G1.1-2;2-3
+  - mj18,FBX,63/G6.3-H
+  - kg2,CFBX,63/G6
+  - inn,2,1
+  - bj00,BCSBS,K
+  - ms11,BFBFS,K
+  - le13,BBBCX,53/G5
+  - inn,3,1
+  - ss16,FBSBS,K
+  - mf17,BFBBX,7/L7
+  - aw6,BCSBBFX,3/G3
+  - inn,4,1
+  - cm22,X,S8/G45.B-1
+  - mj18,BFCX,8/F8
+  - kg2,BBCSBC,K
+  - bj00,BX,S7/G56.B-1;1-2
+  - ms11,BSBBC,43/G46
+  - inn,5,1
+  - le13,CFC,K
+  - ss16,FFBBX,9/F89S
+  - mf17,X,3/G3
+  - inn,6,1
+  - aw6,CCBS,K23
+  - cm22,CX,8/F78S
+  - mj18,X,9/F89S
+  - inn,7,1
+  - kg2,X,E1/G1/TH.B-1
+  - bj00,FX,D9/L89.1-H;B-3(E9/TH)
+  - ms11,FBBBX,S7/L7S.B-1;3-H
+  - le13,BBX,3/P3
+  - ss16,X,S7/L78S.B-1;1-3
+  - mf17,FCX,D8/L8.B-2;1-3;3-H
+  - aw6,BX,6/P6
+  - cm22,FBFX,6/L6
+  - final,4
+homeplays:
+  - pitcher,ms11
+  - 22,BBCFX,E6/G6
+  - 12,B,SB2
+  - 12,BX,53/G5/NDP.2XH(372)
+  - 15,BX,43/G4
+  - inn,2,0
+  - 40,BBBCB,W.B-1
+  - 99,BBBCX,FC6.B-1;1X2(64)
+  - 30,FBX,E5/TH.B-1;1-3
+  - 8,S,PO3(23).3-H(E2/TH);1-2
+  - 8,SX,7/F7
+  - 21,B,PB.2-3
+  - 21,BX,4/P4
+  - inn,3,1
+  - 35,SX,S7/L7
+  - 22,B,CS2(26)
+  - 22,BX,13/B/G1
+  - 12,BBBCCX,S6/G6.B-1
+  - 15,CFB,WP.1-2
+  - 15,CFBS,K23
+  - inn,4,1
+  - 40,BX,D8/L78.B-2
+  - 99,FCBBFS,K
+  - 30,X,6/P6
+  - 8,BX,8/F8
+  - inn,5,1
+  - 21,CBX,8/F8
+  - 35,BX,53/B/G5
+  - 22,CX,63/G6
+  - inn,6,1
+  - 12,BBBB,W.B-1
+  - 15,X,S7/L7S.B-1;1-2
+  - 40,SCX,FC9.B-1;1X2(96);2-3
+  - 99,X,9/F9/SF.3-H
+  - 30,SBBX,4/P4
+  - inn,7,2
+  - 8,BCX,4/P4
+  - 21,CFX,63/G6
+  - 35,BBSFS,K
+  - final,2

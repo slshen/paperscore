@@ -20,7 +20,7 @@ func TestExport(t *testing.T) {
 	if !assert.NoError(err) {
 		return
 	}
-	export, err := NewExport(sheets)
+	export, err := NewExport(sheets, nil)
 	if !assert.NoError(err) {
 		return
 	}
