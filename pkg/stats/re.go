@@ -1,8 +1,7 @@
 package stats
 
 import (
-	"fmt"
-
+	"github.com/slshen/sb/pkg/dataframe"
 	"github.com/slshen/sb/pkg/game"
 )
 
@@ -24,34 +23,39 @@ func GetExpectedRuns(re RunExpectancy, state *game.State) float64 {
 		state.Runners[0] != "", state.Runners[1] != "", state.Runners[2] != "")
 }
 
-func GetRunExpectancyData(re RunExpectancy) *Data {
-	data := &Data{
-		Columns: []string{"Runners", "0Out", "1Out", "2Out"},
-		Width:   map[string]int{"0Out": 5, "1Out": 5, "2Out": 5},
+func GetRunExpectancyData(re RunExpectancy) *dataframe.Data {
+	var (
+		runners    = &dataframe.Column{Name: "Runr", Format: "%4s"}
+		_0out      = &dataframe.Column{Name: "0Out", Format: "%5.3f"}
+		_1out      = &dataframe.Column{Name: "1Out", Format: "%5.3f"}
+		_2out      = &dataframe.Column{Name: "2Out", Format: "%5.3f"}
+		_0outCount *dataframe.Column
+		_1outCount *dataframe.Column
+		_2outCount *dataframe.Column
+	)
+	dat := &dataframe.Data{
+		Columns: []*dataframe.Column{runners, _0out, _1out, _2out},
 	}
 	count, _ := re.(RunExpectancyCounts)
 	if count != nil {
-		data.Columns = append(data.Columns, "0OutCount", "1OutCount", "2OutCount")
+		_0outCount = &dataframe.Column{Name: "0OutCount"}
+		_1outCount = &dataframe.Column{Name: "1OutCount"}
+		_2outCount = &dataframe.Column{Name: "2OutCount"}
+		dat.Columns = append(dat.Columns, _0outCount, _1outCount, _2outCount)
 	}
 	for i := 0; i < 8; i++ {
-		runners := reRunnersKey[i]
+		runners.AppendString(reRunnersKey[i])
 		first := (i & 1) != 0
 		second := (i & 2) != 0
 		third := (i & 4) != 0
-		row := Row{
-			runners,
-			fmt.Sprintf("%0.3f", re.GetExpectedRuns(0, first, second, third)),
-			fmt.Sprintf("%0.3f", re.GetExpectedRuns(1, first, second, third)),
-			fmt.Sprintf("%0.3f", re.GetExpectedRuns(2, first, second, third)),
-		}
+		_0out.AppendFloats(re.GetExpectedRuns(0, first, second, third))
+		_1out.AppendFloats(re.GetExpectedRuns(1, first, second, third))
+		_2out.AppendFloats(re.GetExpectedRuns(2, first, second, third))
 		if count != nil {
-			row = append(row,
-				count.GetExpectedRunsCount(0, first, second, third),
-				count.GetExpectedRunsCount(1, first, second, third),
-				count.GetExpectedRunsCount(2, first, second, third),
-			)
+			_0outCount.AppendInts(count.GetExpectedRunsCount(0, first, second, third))
+			_1outCount.AppendInts(count.GetExpectedRunsCount(1, first, second, third))
+			_2outCount.AppendInts(count.GetExpectedRunsCount(2, first, second, third))
 		}
-		data.Rows = append(data.Rows, row)
 	}
-	return data
+	return dat
 }

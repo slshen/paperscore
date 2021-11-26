@@ -1,0 +1,76 @@
+date: 11/21/21
+game: 3
+visitor: Pride 14u 07
+visitorid: pride-fall-2021
+home: Victory USA
+start: 2:06PM
+timelimit: 80m
+tournament: Early Thanksgiving Showcase
+league: PGF
+visitorplays:
+  - pitcher,24
+  - mf17,SBX,S9/G9
+  - aw6,B,SB2
+  - aw6,BBX,5/P5
+  - cm22,CB,SB3
+  - cm22,CBBX,S9/L9.B-1;3-H
+  - kg2,BCX,D8/L78.B-2;1XH(862),bad call - runner was safe at H
+  - mj18,CFC,K
+  - inn,1
+  - ms11,X,S9/P4D.B-1
+  - bj00,B,SB2
+  - bj00,BBCBCFX,8/P8S
+  - rv10,CBBBB,W.B-1
+  - le13,CBBBFX,3/G3.1-2;2-3
+  - ss16,CX,S6/P6D.B-1;2-H;3-H
+  - kn21,X,9/F9
+  - inn,3
+  - pitcher,5
+  - as7,FBFBBB,W.B-1
+  - mf17,FBFX,T8/L8.B-3;1-H
+  - aw6,BFBX,S6/P7S.BX2(64);3-H,no need to stretch single to double
+  - cm22,X,E3/G5
+  - kg2,X,FC6.B-1;1X2(64)
+  - mj18,BB,SB2.1-3(WP)
+  - mj18,BBX,S7/G7.B-1;3-H
+  - ms11,BX,D8/G5.B-2;1-H
+  - rv10,BX,43/G4
+  - inn,7
+  - le13,SFBBX,1/P1
+  - ss16,X,S7/L7.B-1
+  - kn21,X,S2/G2.B-1;1-2,fielders left ball to run foul and was fair
+  - as7,X,S5/G5.B-1;1-2;2-3
+  - mf17,BBBCB,W.B-1;1-2;2-3;3-H
+  - aw6,BFX,4/P4
+  - cm22,BBX,FC6.1X2(64)
+  - inn,8
+  - final,8
+homeplays:
+  - pitcher,cm22
+  - 67,CBBBX,53/G5
+  - 24,X,E1/G1
+  - 17,BB,CS2(26)
+  - 17,BBBX,43/G4
+  - inn,0
+  - 5,BBBCCFB,W.B-1
+  - 21,BBFBFC,K
+  - 13,X,2/P2
+  - 30,FS,PB.1-2
+  - 30,FSC,K
+  - inn,0
+  - 8,BFBCFBB,W.B-1
+  - 23,X,14/G1/B/SH.1-2
+  - 4,SFBBB,CS3(245)
+  - 4,SFBBBB,W.B-1
+  - 25,X,S8/L8.B-2;1-H
+  - 67,BX,34/G3,Sorcha in at SS - Miya out
+  - inn,1
+  - 24,BX,13/G1
+  - 17,BFFFBX,S8/G8
+  - 5,BBCCBX,FC6.B-1;1X2(64)
+  - 21,CBX,S7/G6.B-1;1-2
+  - 13,BB,WP.1-2;2-3
+  - 13,BBX,63/G6
+  - inn,1
+  - 30,BCFS,K,time expires
+  - final,1

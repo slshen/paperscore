@@ -77,12 +77,8 @@ func (player *Player) NameOrNumber() string {
 	if player.Name != "" {
 		return player.Name
 	}
-	return fmt.Sprintf("#%s", player.Number)
-}
-
-func (player *Player) NameOrQ() string {
-	if player.Name != "" {
-		return player.Name
+	if player.Number != "" {
+		return fmt.Sprintf("#%s", player.Number)
 	}
 	return "?"
 }

@@ -1,4 +1,4 @@
 {{- if .PitcherHPs}}HP - {{.PitcherHPs}}
 {{end}}
 {{- if .PitcherWPs}}WP - {{.PitcherWPs}}
-{{end}}Pitches-Strikes - {{range .Stats.Pitching}}{{.Player.NameOrNumber}}({{.Pitches}}-{{.Strikes}}) {{end}}
+{{end}}Pitches-Strikes - {{range .Pitching}}{{.Name}}({{.Pitches}}-{{.Strikes}}) {{end}}

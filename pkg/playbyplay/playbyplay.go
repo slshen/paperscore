@@ -212,6 +212,8 @@ func batterPlayDescription(state *game.State) string {
 	case game.Triple:
 		return hitTrajectory(state, "triples", play.Fielders)
 	case game.Walk:
+		fallthrough
+	case game.WalkWildPitch:
 		return "walks"
 	case game.HomeRun:
 		return hitTrajectory(state, "hits a home run", nil)

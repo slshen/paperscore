@@ -2,18 +2,15 @@ package stats
 
 import (
 	"fmt"
-	"sort"
 	"strings"
 
-	"github.com/mitchellh/mapstructure"
+	"github.com/slshen/sb/pkg/dataframe"
 	"github.com/slshen/sb/pkg/game"
 )
 
 type GameStats struct {
 	TeamStats map[string]*TeamStats
 	RE        RunExpectancy
-	Filter
-	KeepInactiveBatters bool
 
 	teams map[string]*game.Team
 }
@@ -31,9 +28,6 @@ func (gs *GameStats) Read(g *game.Game) error {
 	gs.teams[g.Visitor] = g.VisitorTeam
 	states := g.GetStates()
 	for i, state := range states {
-		if gs.filterOut(g, state) {
-			continue
-		}
 		var battingTeam, fieldingTeam *game.Team
 		if state.Top() {
 			battingTeam = g.VisitorTeam
@@ -46,7 +40,7 @@ func (gs *GameStats) Read(g *game.Game) error {
 		fieldingTeamStats := gs.GetStats(fieldingTeam)
 		lastState := getLastState(states, i)
 		battingTeamStats.RecordBatting(g, state, lastState)
-		fieldingTeamStats.RecordPitching(g, state, lastState)
+		fieldingTeamStats.RecordFielding(g, state, lastState)
 	}
 	return nil
 }
@@ -72,72 +66,51 @@ func (gs *GameStats) GetStats(team *game.Team) *TeamStats {
 	return stats
 }
 
-func (gs *GameStats) GetPitchingData() *Data {
-	dm := newDataMaker("PIT")
-	for teamName, stats := range gs.TeamStats {
-		var players []game.PlayerID
-		for player := range stats.Pitching {
-			players = append(players, player)
-		}
-		for _, player := range sortPlayers(players) {
-			pitching := stats.Pitching[player]
-			var m map[string]interface{}
-			if err := mapstructure.Decode(pitching, &m); err != nil {
-				panic(err)
-			}
-			gs.adjustRowValues(len(pitching.Games), teamName, pitching.Player, m)
-			dm.addRow(m)
+func (gs *GameStats) GetPitchingData() *dataframe.Data {
+	var dat *dataframe.Data
+	for _, stats := range gs.TeamStats {
+		if dat == nil {
+			dat = stats.GetPitchingData()
+		} else {
+			dat.Append(stats.GetPitchingData())
 		}
 	}
-	return dm.data
-}
-
-func sortPlayers(players []game.PlayerID) []game.PlayerID {
-	sort.Slice(players, func(i, j int) bool {
-		return strings.Compare(string(players[i]), string(players[j])) < 0
+	idx := dat.GetIndex()
+	return dat.RSort(func(r1, r2 []interface{}) bool {
+		return comparePlayers(idx, r1, r2)
 	})
-	return players
 }
 
-func (gs *GameStats) GetBattingData() *Data {
-	dm := newDataMaker("BAT")
-	for teamName, stats := range gs.TeamStats {
-		var players []game.PlayerID
-		team := gs.teams[teamName]
-		for playerID := range stats.Batting {
-			player := team.GetPlayer(playerID)
-			if !gs.KeepInactiveBatters && player.Inactive {
-				continue
-			}
-			players = append(players, playerID)
-		}
-		for _, player := range sortPlayers(players) {
-			batting := stats.Batting[player]
-			var m map[string]interface{}
-			if err := mapstructure.Decode(batting, &m); err != nil {
-				panic(err)
-			}
-			gs.adjustRowValues(len(batting.Games), teamName, batting.Player, m)
-			dm.addRow(m)
-		}
-	}
-	return dm.data
+func comparePlayers(idx *dataframe.Index, r1, r2 []interface{}) bool {
+	n1 := fmt.Sprintf("%v/%v", idx.GetValue(r1, "Team"), idx.GetValue(r1, "Name"))
+	n2 := fmt.Sprintf("%v/%v", idx.GetValue(r2, "Team"), idx.GetValue(r2, "Name"))
+	return strings.Compare(n1, n2) < 0
 }
 
-func (gs *GameStats) adjustRowValues(gameCount int, team string, player *game.Player, m map[string]interface{}) {
-	delete(m, "Games")
-	m["Games"] = gameCount
-	if gs.Team != "" {
-		m["Name"] = player.NameOrNumber()
-	} else {
-		m["Name"] = fmt.Sprintf("%s/%s", team, player.NameOrNumber())
-	}
-	delete(m, "PlayerID")
-	delete(m, "Number")
-	delete(m, "Inactive")
-	for k, v := range m {
-		if f, ok := v.(float64); ok {
-			m[k] = fmt.Sprintf("%.3f", f)
+func (gs *GameStats) GetBattingData() *dataframe.Data {
+	return gs.getBattingData(false)
+}
+
+func (gs *GameStats) GetAllBattingData() *dataframe.Data {
+	return gs.getBattingData(true)
+}
+
+func (gs *GameStats) getBattingData(includeInactiveBatters bool) *dataframe.Data {
+	var dat *dataframe.Data
+	for _, stats := range gs.TeamStats {
+		if dat == nil {
+			dat = stats.GetBattingData()
+		} else {
+			dat.Append(stats.GetBattingData())
 		}
 	}
+	idx := dat.GetIndex()
+	if !includeInactiveBatters {
+		dat = dat.RFilter(func(row []interface{}) bool {
+			return idx.GetValue(row, "Inactive").(int) == 0
+		})
+	}
+	return dat.RSort(func(r1, r2 []interface{}) bool {
+		return comparePlayers(idx, r1, r2)
+	})
 }

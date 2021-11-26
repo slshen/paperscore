@@ -1,0 +1,81 @@
+date: 11/21/21
+game: 2
+visitor: Pride 14u 07
+visitorid: pride-fall-2021
+home: Corona Angels McCullough
+start: 12:32PM
+timelimit: 80m
+tournament: Early Thanksgiving Showcase
+league: PGF
+visitorplays:
+  - pitcher,2
+  - mf17,BCFS,K23
+  - aw6,SBSBFBB,W.B-1
+  - cm22,CFS,K
+  - kg2,SCBBX,S1/G1.B-1;1-2
+  - mj18,B,WP.1-2;2-3
+  - mj18,BX,E6/G6.B-1;2-3;3-H
+  - ms11,SSX,S8/P4D.B-1;1-2;3-H
+  - bj00,BBBB,W.B-1;1-2;2-3
+  - rv10,BBBCB,W.B-1;1-2;2-3;3-H
+  - le13,BBCSF,53/G5
+  - inn,3
+  - ss16,BBBCB,W.B-1
+  - pitcher,6
+  - kn21,CBCBX,FC6.B-1;1X2(64)
+  - as7,CBBBB,W.B-1
+  - mf17,SBX,7/P6D
+  - aw6,CCS,K
+  - inn,3
+  - cm22,BBBB,W.B-1
+  - kg2,X,5/P5
+  - mj18,X,S7/L7.B-1;1-2
+  - ms11,X,D7/L7.B-2;1-H;2-H
+  - bj00,BX,4/P4
+  - rv10,CCS,K
+  - inn,5
+  - le13,CBBCBFB,W.B-1
+  - ss16,BFFBFBFFX,FC6.B-1;1X2(64)
+  - kn21,FSFBS,K
+  - as7,SBFBX,4/P4
+  - inn,5
+  - mf17,BBX,S6/P6
+  - aw6,SFBBFFS,K
+  - cm22,X,FC1.B-1;1X2(15)
+  - kg2,CBX,3/P3
+  - inn,5
+  - final,5
+homeplays:
+  - pitcher,ms11
+  - 22,BBCX,T9/F9
+  - 13,BFB,WP.3-H
+  - 13,BFBSS,K
+  - 5,X,53/G5
+  - 42,CX,S8/G56
+  - 26,BCBBCFB,W.B-1;1-2
+  - 50,FCBC,K
+  - inn,1
+  - 6,FBBBFX,E5/G5
+  - 32,X,S8/G8.B-1;1-2
+  - 1,BBCCBB,W.B-1;1-2;2-3
+  - 34,X,7/F7/SF.3-H
+  - 25,CB,WP.1-2;2-3
+  - 25,CBCBC,K
+  - 22,CX,D8/F8D.B-2;2-H;3-H
+  - 13,B,WP.2-3
+  - 13,BX,3/G3
+  - inn,4
+  - 5,X,53/G5
+  - 42,BBCX,S9/G4
+  - 26,BSCS,K
+  - 24,X,43/G4
+  - inn,4
+  - 6,BX,53/G5
+  - 32,BBCBCX,1/P1
+  - 1,CFX,9/F9
+  - inn,4
+  - 34,CSS,K
+  - 5,CX,3/P3
+  - 22,BX,34/G3
+  - inn,4
+  - final,4

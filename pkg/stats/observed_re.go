@@ -8,8 +8,6 @@ import (
 )
 
 type ObservedRunExpectancy struct {
-	Filter
-
 	states []*stateObservation
 }
 
@@ -36,9 +34,6 @@ func (re *ObservedRunExpectancy) Read(g *game.Game) error {
 	states := g.GetStates()
 	observed := re.reset()
 	for _, state := range states {
-		if re.filterOut(g, state) {
-			continue
-		}
 		if state.Outs == 3 {
 			observed = re.reset()
 			continue

@@ -10,6 +10,7 @@ const (
 	CaughtStealing
 	HitByPitch
 	Walk
+	WalkWildPitch
 	StolenBase
 	PickedOff
 	CatcherInterference

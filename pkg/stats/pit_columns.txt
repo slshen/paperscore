@@ -1,21 +1,24 @@
-Name
+Name %-12s
 Balls
-BattersFaced
+BattersFaced %3d
 Doubles
 FlyOuts
 Games
 GroundOuts
-HP
+HP %2d
 HRs
-Hits
+Hits %3d
 Misses
 Outs
 Pitches
 StolenBases
-StrikeOuts
+StrikeOuts %3d
 StrikeOutsLooking
 Strikes
 Swings
 Triples
-WP
-Walks
+WP %2d
+Walks %3d
+IP %4s
+SwStr %3d
+Whiff

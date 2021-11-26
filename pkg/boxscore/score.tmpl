@@ -7,7 +7,7 @@
 {{- paste .VisitorLineup.PitchingTable .HomeLineup.PitchingTable 1 -44}}
 {{paste (execute "pitching.tmpl" .VisitorLineup) (execute "pitching.tmpl" .HomeLineup) 1 44}}
 {{if (not (or .IncludePlays .IncludeScoringPlays))}}
-{{- range .Comments}}{{.Half}} {{ordinal .Inning}}, {{.Outs}} Outs, {{.Batter}} at bat - {{.Text}}
+{{- range .Comments}}{{.Half}} {{ordinal .Inning}}, {{.Outs}} Outs - {{.Text}}
 {{end}}{{end}}
 {{- range .Game.Comments}}* {{.}}
 {{end}}

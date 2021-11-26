@@ -105,11 +105,20 @@ func (m *gameMachine) handleSpecial() error {
 	case "pitcher":
 		m.pitcher = PlayerID(m.getPlayField(1))
 	case "inn":
-		inning, err := strconv.Atoi(m.getPlayField(1))
-		if err != nil || inning != m.state.InningNumber {
-			return fmt.Errorf("inning %d is not %s after %s", m.state.InningNumber, m.getPlayField(1), m.lastState.EventCode)
+		if len(m.playFields) > 2 {
+			inning, err := strconv.Atoi(m.getPlayField(1))
+			if err != nil || inning != m.state.InningNumber {
+				return fmt.Errorf("inning %d is not %s after %s", m.state.InningNumber, m.getPlayField(1), m.lastState.EventCode)
+			}
 		}
-		score, err := strconv.Atoi(m.getPlayField(2))
+		scoreField := 2
+		if len(m.playFields) == 2 {
+			scoreField = 1
+			if m.lastState.Outs != 3 {
+				return fmt.Errorf("the inning with %d outs has not ended after %s", m.lastState.Outs, m.lastState.EventCode)
+			}
+		}
+		score, err := strconv.Atoi(m.getPlayField(scoreField))
 		if err != nil || m.state.Score != score {
 			return fmt.Errorf("at inning %d # runs is %d not %s", m.state.InningNumber, m.state.Score, m.getPlayField(2))
 		}
@@ -192,6 +201,12 @@ func (m *gameMachine) handleEvent() error {
 			Type: StrikeOut,
 		}
 		m.state.recordOut()
+		m.state.Complete = true
+	case m.eventIs("W+WP"):
+		m.state.Play = &Play{
+			Type: WalkWildPitch,
+		}
+		m.impliedAdvance("B-1")
 		m.state.Complete = true
 	case m.eventIs("W"):
 		m.state.Play = &Play{
@@ -370,13 +385,12 @@ func (m *gameMachine) handleEvent() error {
 	case m.eventIs("$(B)$(%)"):
 		fallthrough
 	case m.eventIs("$(B)$$(%)"):
+		fallthrough
+	case m.eventIs("$(B)$$$(%)"):
 		if !m.modifiers.Contains("LDP", "FDP") {
 			return fmt.Errorf("play should contain LDP or FDP modifier in %s (%v)", m.playCode, m.state.Modifiers)
 		}
-		base := m.eventMatches[2]
-		if len(m.eventMatches) == 4 {
-			base = m.eventMatches[3]
-		}
+		base := m.eventMatches[len(m.eventMatches)-1]
 		runner, err := m.getBaseRunner(base)
 		if err != nil {
 			return fmt.Errorf("no runner in lineout double play %s - %w", m.playCode, err)

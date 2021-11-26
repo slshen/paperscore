@@ -5,8 +5,10 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/slshen/sb/pkg/boxscore"
+	"github.com/slshen/sb/pkg/dataframe"
 	"github.com/slshen/sb/pkg/export"
 	"github.com/slshen/sb/pkg/game"
 	"github.com/slshen/sb/pkg/playbyplay"
@@ -169,25 +171,27 @@ func statsCommand(statsType string) *cobra.Command {
 					return err
 				}
 			}
-			var data *stats.Data
+			var data *dataframe.Data
 			if statsType == "batting" {
 				data = mg.GetBattingData()
 			} else {
 				data = mg.GetPitchingData()
 			}
-			data.RestrictColumns = restrictColumns
+			if len(restrictColumns) > 0 {
+				data = data.SelectFunc(func(name string) bool {
+					return true
+				})
+			}
 			if csv {
 				return data.RenderCSV(os.Stdout)
 			} else {
-				data.RenderTable(os.Stdout)
+				fmt.Println(data)
 			}
 			return nil
 		},
 	}
 	re.registerFlags(c.Flags())
 	c.Flags().BoolVar(&csv, "csv", false, "Print in CSV format")
-	c.Flags().StringVar(&mg.Team, "team", "", "Limit stats to `team`")
-	c.Flags().StringVar(&mg.League, "league", "", "Limit stats to `league`")
 	c.Flags().StringSliceVar(&restrictColumns, "select", nil, "Only print columns that start with `prefix`")
 	return c
 }
@@ -218,13 +222,10 @@ func reCommand() *cobra.Command {
 			if csv {
 				return data.RenderCSV(os.Stdout)
 			}
-			data.RenderTable(os.Stdout)
+			fmt.Println(data)
 			return nil
 		},
 	}
-	c.Flags().StringVar(&re24.Team, "team", "", "Include only states with `team`")
-	c.Flags().StringVar(&re24.NotTeam, "not-team", "", "Inlucde only states that are not `team`")
-	c.Flags().StringVar(&re24.League, "league", "", "Inlucde only games in `league`")
 	c.Flags().BoolVar(&csv, "csv", false, "Print in CSV format")
 	c.Flags().BoolVar(&yamlFormat, "yaml", false, "Print in YAML format")
 	return c
@@ -264,7 +265,7 @@ func exportCommand() *cobra.Command {
 				return err
 			}
 			export.Us = us
-			export.League = league
+			export.League = strings.ToLower(league)
 			games, err := game.ReadGameFiles(args)
 			if err != nil {
 				return err

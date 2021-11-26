@@ -1,0 +1,103 @@
+date: 11/20/21
+game: 2
+home: Pride 14u 07
+homeid: pride-fall-2021
+visitor: Grind Time
+start: 9:43AM
+timelimit: 90m
+tournament: Early Thanksgiving Showcase
+league: PGF
+visitorplays:
+  - pitcher,ms11
+  - 4,BBSX,43/G4
+  - 9,FBSS,K
+  - 00,FX,S7/G56
+  - 12,FC,SB2
+  - 12,FCBX,S8/G56.B-1;2-H
+  - 10,BFX,53/G5
+  - inn,1
+  - 15,X,S7/G56
+  - 74,X,53/G5/B/SH.1-2
+  - 44,FB,SB3
+  - 44,FBBS,PO3(E2).3-H
+  - 44,FBBSFBS,K
+  - u1,X,13/G1,scoring error - missing batter
+  - inn,2
+  - 6,CX,53/G5
+  - 10,CCB,K23
+  - 9,FBCX,K+WP
+  - 00,X,D7/F7.B-2;1XH(762)
+  - inn,2
+  - 12,X,S4/L4
+  - 10,BCCB,WP.1-2
+  - 10,BCCBC,K
+  - 15,SBSS,K
+  - 74,BFBBS,PB.2-3
+  - 74,BFBBSB,W+WP.B-1;3-H,wild pitch ball 4
+  - 44,BBCX,S9/L9.B-1;1-3
+  - 11,CFB,K
+  - inn,3
+  - 13,FBX,43/G45
+  - 55,FSBFS,K
+  - 00,X,E4/G4
+  - u2,BB,SB2,scoring error - missing batter
+  - u2,BBFX,S7/G6.B-2;2-H
+  - 10,BB,PO2(E2).2-3
+  - 10,BBCBX,S7/L7.B-1;3-H
+  - 15,SB,PO1(E2).1-2
+  - 15,SBCBX,E4/G4.B-1;2-H
+  - 74,SBX,4/P4
+  - inn,6
+  - 44,BSFFBX,4/P4
+  - 11,X,53/G5
+  - 27,SX,53/G5
+  - inn,6
+  - final,6
+homeplays:
+  - pitcher,12
+  - mf17,BBBB,W.B-1
+  - aw6,B,SB2
+  - aw6,BFBSB,WP.2-3
+  - aw6,BFBSBB,W.B-1
+  - pitcher,4
+  - cm22,FX,S9/P3D.B-2;1-3;3-H
+  - kg2,BBCFS,K+WP.B-1;2-3;3-H
+  - mj18,B,SB2
+  - mj18,BFFX,6/P6
+  - ms11,BBX,S8/G64.B-1;2-H;3-H
+  - rv10,BSB,SB2
+  - rv10,BSBCB,WP.2-3
+  - rv10,BSBCBX,53/G5.3-H
+  - le13,FBBBF,S7/L7.B-2(E7)
+  - ss16,FS,PB.2-3
+  - ss16,FSBFBFFX,6/P6
+  - inn,5
+  - kn21,BX,43/G4
+  - as7,FX,S7/G56
+  - bj00,BBCX,S9/L9.B-1;1-3
+  - mf17,CFS,K
+  - aw6,X,S7/G5.B-1;1-H;3-H
+  - pitcher,13
+  - cm22,BB,SB2
+  - cm22,BBBCFFX,E3/P1.B-2;2-H
+  - kg2,BBX,D7/L7.B-2;2-H
+  - mj18,CCX,S9/G4.B-1;2-H
+  - ms11,BFX,13/G1
+  - inn,10
+  - rv10,BX,13/G1
+  - le13,BFBX,63/G6
+  - ss16,BFBX,S9/P4D
+  - kn21,FFFBBC,K
+  - inn,10
+  - as7,BCSX,S6/G5
+  - bj00,BX,63/G6.1-2
+  - mf17,BBX,S1/G1/B.B-1;2-3
+  - aw6,B,SB2
+  - aw6,BX,4/P4
+  - cm22,BX,6/P6
+  - inn,10
+  - kg2,BCBX,63/G6
+  - mj18,BBFBX,63/G6
+  - ms11,X,43/G4
+  - inn,10
+  - final,10

@@ -7,7 +7,7 @@ import (
 )
 
 type Pitching struct {
-	Player                             *game.Player `yaml:"-" mapstructure:",squash"`
+	PlayerData                         `mapstructure:",squash"`
 	Pitches, Strikes, Balls            int
 	Swings, Misses                     int
 	Hits, Doubles, Triples, HRs, Walks int
@@ -16,29 +16,33 @@ type Pitching struct {
 	WP, HP                             int
 	BattersFaced                       int
 	StolenBases                        int
-	Games                              map[string]bool
+	Whiff                              int
+	SwStr                              int
+	IP                                 string
 }
 
-func (p *Pitching) Whiff() string {
-	// misses/swings
+func (p *Pitching) Update() {
+	p.PlayerData.Update()
+	p.Whiff = 0
 	if p.Swings > 0 {
-		return fmt.Sprintf("%.03f", float64(p.Misses)/float64(p.Swings))[1:]
+		p.Whiff = int(1000.0 * float64(p.Misses) / float64(p.Swings))
 	}
-	return ""
-}
-
-func (p *Pitching) SwStr() string {
-	// % pitches swung & miss
+	p.SwStr = 0
 	if p.Pitches > 0 {
-		return fmt.Sprintf("%.03f", float64(p.Misses)/float64(p.Pitches))[1:]
+		p.SwStr = int(1000.0 * float64(p.Misses) / float64(p.Pitches))
 	}
-	return ""
+	p.IP = fmt.Sprintf("%d.%d", p.Outs/3, p.Outs%3)
 }
 
 func (p *Pitching) Record(state *game.State, lastState *game.State) {
 	p.Outs += state.OutsOnPlay
 	if lastState == nil || lastState.Batter != state.Batter || lastState.Pitcher != state.Pitcher {
 		p.BattersFaced++
+	}
+	for _, adv := range state.Advances {
+		if adv.WildPitch {
+			p.WP++
+		}
 	}
 	switch state.Play.Type {
 	case game.WildPitch:
@@ -65,12 +69,19 @@ func (p *Pitching) Record(state *game.State, lastState *game.State) {
 		}
 		switch state.Play.Type {
 		case game.StrikeOut:
+			fallthrough
+		case game.StrikeOutPassedBall:
+			fallthrough
+		case game.StrikeOutWildPitch:
 			p.StrikeOuts++
 			if state.Pitches.Last() == "C" {
 				p.StrikeOutsLooking++
 			}
 		case game.Walk:
 			p.Walks++
+		case game.WalkWildPitch:
+			p.Walks++
+			p.WP++
 		case game.HitByPitch:
 			p.HP++
 		case game.Double:

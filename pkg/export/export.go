@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/slshen/sb/pkg/dataframe"
 	"github.com/slshen/sb/pkg/game"
 	"github.com/slshen/sb/pkg/stats"
 )
@@ -17,7 +18,7 @@ type Export struct {
 
 type StatsGenerator interface {
 	Read(*game.Game) error
-	GetData() *stats.Data
+	GetData() *dataframe.Data
 }
 
 type REStatsGenerator struct {
@@ -27,7 +28,7 @@ type REStatsGenerator struct {
 
 type GameStatsGenerator struct {
 	read           func(*game.Game) error
-	get            func() *stats.Data
+	get            func() *dataframe.Data
 	dataNameSuffix string
 }
 
@@ -40,21 +41,8 @@ func NewExport(sheets *SheetExport, re stats.RunExpectancy) (*Export, error) {
 
 func (export *Export) Export(games []*game.Game) error {
 	gameStats := stats.NewGameStats(export.re)
-	gameStats.KeepInactiveBatters = true
-	gameStats.League = export.League
-	gameStatsUs := stats.NewGameStats(export.re)
-	gameStatsUs.League = export.League
-	gameStatsUs.Team = export.Us
 	generators := []StatsGenerator{
-		&REStatsGenerator{"RE", &stats.ObservedRunExpectancy{
-			Filter: stats.Filter{League: export.League},
-		}},
-		&REStatsGenerator{"RE-Us", &stats.ObservedRunExpectancy{
-			Filter: stats.Filter{League: export.League, Team: export.Us},
-		}},
-		&REStatsGenerator{"RE-Them", &stats.ObservedRunExpectancy{
-			Filter: stats.Filter{League: export.League, NotTeam: export.Us},
-		}},
+		&REStatsGenerator{"RE", &stats.ObservedRunExpectancy{}},
 		&GameStatsGenerator{
 			read:           gameStats.Read,
 			get:            gameStats.GetBattingData,
@@ -65,12 +53,20 @@ func (export *Export) Export(games []*game.Game) error {
 			dataNameSuffix: "-ALL",
 		},
 		&GameStatsGenerator{
-			read: gameStatsUs.Read,
-			get:  gameStatsUs.GetBattingData,
+			get: func() *dataframe.Data { return export.getUsBattingData(gameStats) },
 		},
 		&GameStatsGenerator{
-			get: func() *stats.Data { return export.getUsPitchingData(gameStats) },
+			get: func() *dataframe.Data { return export.getUsPitchingData(gameStats) },
 		},
+	}
+	if export.League != "" {
+		var leagueGames []*game.Game
+		for _, g := range games {
+			if strings.HasPrefix(strings.ToLower(g.League), export.League) {
+				leagueGames = append(leagueGames, g)
+			}
+		}
+		games = leagueGames
 	}
 	if err := export.readGames(games, generators); err != nil {
 		return err
@@ -84,29 +80,22 @@ func (export *Export) Export(games []*game.Game) error {
 	return nil
 }
 
-func (export *Export) getUsPitchingData(gs *stats.GameStats) *stats.Data {
-	alldata := gs.GetPitchingData()
-	data := &stats.Data{
-		Name:    "PIT",
-		Columns: alldata.Columns,
-		Width:   alldata.Width,
-	}
-	for _, row := range alldata.Rows {
-		name := row[0].(string)
-		if strings.HasPrefix(strings.ToLower(name), export.Us) {
-			slash := strings.Index(name, "/")
-			row2 := make([]interface{}, len(row))
-			for i := range row {
-				if i == 0 {
-					row2[0] = name[slash+1:]
-				} else {
-					row2[i] = row[i]
-				}
-			}
-			data.Rows = append(data.Rows, row2)
-		}
-	}
-	return data
+func (export *Export) getUsBattingData(gs *stats.GameStats) *dataframe.Data {
+	dat := gs.GetBattingData()
+	idx := dat.GetIndex()
+	return dat.RFilter(func(row []interface{}) bool {
+		team := strings.ToLower(idx.GetValue(row, "Team").(string))
+		return strings.HasPrefix(team, export.Us)
+	})
+}
+
+func (export *Export) getUsPitchingData(gs *stats.GameStats) *dataframe.Data {
+	dat := gs.GetPitchingData()
+	idx := dat.GetIndex()
+	return dat.RFilter(func(row []interface{}) bool {
+		team := strings.ToLower(idx.GetValue(row, "Team").(string))
+		return strings.HasPrefix(team, export.Us)
+	})
 }
 
 func (export *Export) readGames(games []*game.Game, generators []StatsGenerator) error {
@@ -127,7 +116,7 @@ func (gen *GameStatsGenerator) Read(g *game.Game) error {
 	return nil
 }
 
-func (gen *GameStatsGenerator) GetData() *stats.Data {
+func (gen *GameStatsGenerator) GetData() *dataframe.Data {
 	data := gen.get()
 	if gen.dataNameSuffix != "" {
 		data.Name = fmt.Sprintf("%s%s", data.Name, gen.dataNameSuffix)
@@ -135,7 +124,7 @@ func (gen *GameStatsGenerator) GetData() *stats.Data {
 	return data
 }
 
-func (gen *REStatsGenerator) GetData() *stats.Data {
+func (gen *REStatsGenerator) GetData() *dataframe.Data {
 	data := stats.GetRunExpectancyData(gen)
 	data.Name = gen.name
 	return data

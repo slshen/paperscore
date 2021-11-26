@@ -29,6 +29,7 @@ func newBatter(b *stats.Batting) *Batter {
 			{game.Triple, float64(b.Triples) / pa},
 			{game.HomeRun, float64(b.HRs) / pa},
 			{game.StrikeOut, float64(b.StrikeOuts) / pa},
+			// should be Walk + WalkWildPitch
 			{game.Walk, float64(b.Walks) / pa},
 			{game.ReachedOnError, float64(b.ReachedOnError) / pa},
 			{game.StolenBase, prSB2},
