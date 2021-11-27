@@ -35,6 +35,7 @@ type Game struct {
 	Tournament            string
 
 	states []*State
+	date   time.Time
 }
 
 var gameFileRegexp = regexp.MustCompile(`\d\d\d\d\d\d\d\d-\d.yaml`)
@@ -114,10 +115,23 @@ func ReadGame(path string, in io.Reader) (*Game, error) {
 	if g.ID == "" {
 		g.ID = filepath.Base(path)
 	}
+	var err error
+	g.date, err = parseGameDate(g.Date)
+	if err != nil {
+		errs = multierror.Append(errs, err)
+	}
 	if err := g.generateStates(); err != nil {
 		errs = multierror.Append(errs, err)
 	}
 	return g, errs
+}
+
+func parseGameDate(d string) (time.Time, error) {
+	t, err := time.Parse("1/2/06", d)
+	if err != nil {
+		t, err = time.Parse("1/2/2006", d)
+	}
+	return t, err
 }
 
 func (g *Game) GetStates() []*State {
@@ -188,4 +202,8 @@ func (g *Game) runPlays(half Half, playCodes []string) (states []*State, errs er
 		}
 	}
 	return
+}
+
+func (g *Game) GetDate() time.Time {
+	return g.date
 }

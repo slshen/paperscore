@@ -17,20 +17,20 @@ func (lineup *Lineup) BattingTable() string {
 	if len(lineup.Batters) == 0 {
 		return ""
 	}
-	dat := lineup.GetBattingData().SelectRename([]dataframe.ColumnRename{
-		{"Name", "#"},
-		{"AB", "AB"},
-		{"Hits", "H"},
-		{"LOH", "LOH"},
-		{"StrikeOuts", "K"},
-		{"Walks", "BB"},
-	})
+	dat := lineup.GetBattingData().Select(
+		dataframe.Rename("Name", "#"),
+		dataframe.Col("AB"),
+		dataframe.Rename("Hits", "H"),
+		dataframe.Col("LOPH"),
+		dataframe.Rename("StrikeOuts", "K"),
+		dataframe.Rename("Walks", "BB"),
+	)
 	idx := dat.GetIndex()
 	idx.GetColumn("AB").Summary = dataframe.Sum
 	idx.GetColumn("H").Summary = dataframe.Sum
 	idx.GetColumn("K").Summary = dataframe.Sum
 	idx.GetColumn("BB").Summary = dataframe.Sum
-	idx.GetColumn("LOH").Summary = dataframe.Sum
+	idx.GetColumn("LOPH").Summary = dataframe.Sum
 	return dat.String()
 }
 
@@ -38,17 +38,17 @@ func (lineup *Lineup) PitchingTable() string {
 	if len(lineup.Pitchers) == 0 {
 		return ""
 	}
-	dat := lineup.GetPitchingData().SelectRename([]dataframe.ColumnRename{
-		{"Name", "Pitcher"},
-		{"IP", "IP"},
-		{"BattersFaced", "BF"},
-		{"Hits", "H"},
-		{"Walks", "BB"},
-		{"StrikeOuts", "K"},
-		{"HP", "HP"},
-		{"WP", "WP"},
-		{"SwStr", "SWS"},
-	})
+	dat := lineup.GetPitchingData().Select(
+		dataframe.Rename("Name", "Pitcher"),
+		dataframe.Col("IP"),
+		dataframe.Rename("BattersFaced", "BF"),
+		dataframe.Rename("Hits", "H"),
+		dataframe.Rename("Walks", "BB"),
+		dataframe.Rename("StrikeOuts", "K"),
+		dataframe.Col("HP"),
+		dataframe.Col("WP"),
+		dataframe.Rename("SwStr", "SWS"),
+	)
 	return dat.String()
 }
 

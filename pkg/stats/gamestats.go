@@ -76,12 +76,12 @@ func (gs *GameStats) GetPitchingData() *dataframe.Data {
 		}
 	}
 	idx := dat.GetIndex()
-	return dat.RSort(func(r1, r2 []interface{}) bool {
+	return dat.RSort(func(r1, r2 int) bool {
 		return comparePlayers(idx, r1, r2)
 	})
 }
 
-func comparePlayers(idx *dataframe.Index, r1, r2 []interface{}) bool {
+func comparePlayers(idx *dataframe.Index, r1, r2 int) bool {
 	n1 := fmt.Sprintf("%v/%v", idx.GetValue(r1, "Team"), idx.GetValue(r1, "Name"))
 	n2 := fmt.Sprintf("%v/%v", idx.GetValue(r2, "Team"), idx.GetValue(r2, "Name"))
 	return strings.Compare(n1, n2) < 0
@@ -106,11 +106,11 @@ func (gs *GameStats) getBattingData(includeInactiveBatters bool) *dataframe.Data
 	}
 	idx := dat.GetIndex()
 	if !includeInactiveBatters {
-		dat = dat.RFilter(func(row []interface{}) bool {
+		dat = dat.RFilter(func(row int) bool {
 			return idx.GetValue(row, "Inactive").(int) == 0
 		})
 	}
-	return dat.RSort(func(r1, r2 []interface{}) bool {
+	return dat.RSort(func(r1, r2 int) bool {
 		return comparePlayers(idx, r1, r2)
 	})
 }

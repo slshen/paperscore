@@ -30,10 +30,11 @@ var (
 )
 
 type Column struct {
-	Name    string
-	Format  string
-	Summary SummaryType
-	Values  interface{}
+	Name          string
+	Format        string
+	Summary       SummaryType
+	SummaryFormat string
+	Values        interface{}
 }
 
 func (col *Column) GetType() Type {
@@ -163,19 +164,22 @@ func (col *Column) GetFormat() string {
 }
 
 func (col *Column) GetSummaryFormat() string {
+	if col.SummaryFormat != "" {
+		return col.SummaryFormat
+	}
 	if col.GetType() == Int && col.Summary == Average {
-		return fmt.Sprintf("%%%d.1f", col.GetWidth())
+		return fmt.Sprintf("%%%d.1f", col.GetWidth()-2)
 	}
 	return col.GetFormat()
 }
 
-var widthRegexp = regexp.MustCompile(`^%[-+]?(\d*)`)
+var widthRegexp = regexp.MustCompile(`^%([-+ ])?(\d*)`)
 
 func (col *Column) GetWidth() int {
 	if col.Format != "" {
 		m := widthRegexp.FindStringSubmatch(col.Format)
 		if m != nil {
-			w, _ := strconv.Atoi(m[1])
+			w, _ := strconv.Atoi(m[2])
 			if w != 0 {
 				return w
 			}
@@ -186,4 +190,42 @@ func (col *Column) GetWidth() int {
 		w = len(col.Name)
 	}
 	return w
+}
+
+func (col *Column) GetValue(row int) interface{} {
+	if row >= col.Len() {
+		return nil
+	}
+	switch col.GetType() {
+	case Int:
+		return col.GetInts()[row]
+	case Float:
+		return col.GetFloats()[row]
+	case String:
+		return col.GetStrings()[row]
+	}
+	panic("unknown type")
+}
+
+func (col *Column) GetInt(row int) int {
+	val := col.GetValue(row)
+	if val != nil {
+		return val.(int)
+	}
+	return 0
+}
+func (col *Column) GetFloat(row int) float64 {
+	val := col.GetValue(row)
+	if val != nil {
+		return val.(float64)
+	}
+	return 0
+}
+
+func (col *Column) GetString(row int) string {
+	val := col.GetValue(row)
+	if val != nil {
+		return val.(string)
+	}
+	return ""
 }

@@ -64,8 +64,8 @@ func (ex *SheetExport) ExportData(data *dataframe.Data) error {
 		headerRow[i] = col.Name
 	}
 	values := [][]interface{}{headerRow}
-	data.RApply(func(row []interface{}) {
-		values = append(values, row)
+	data.RApply(func(row int) {
+		values = append(values, data.GetRow(row))
 	})
 	vrange := fmt.Sprintf("%s!A1:%s%d", data.Name, columnLetters(len(data.Columns)-1),
 		data.Columns[0].Len()+1)

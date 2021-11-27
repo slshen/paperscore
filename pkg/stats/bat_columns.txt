@@ -11,7 +11,7 @@ Hits %3d
 LOB
 LineDrives
 Misses
-PA
+PA %3d
 PickedOff
 PitchesSeen
 RunsScored
@@ -28,12 +28,12 @@ ReachedOnError
 FieldersChoice
 ReachedOnK
 SacrificeFlys
-RE24 %4.2f
+RE24 % 6.2f
 CalledStrikes
 Strikes
 SB2PitchOpp
 SB2
 SB2Opp
-LOH %3d
+LOPH %4d
 LineDriveOuts
 Inactive
