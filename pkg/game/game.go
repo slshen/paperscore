@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/go-multierror"
@@ -53,11 +54,18 @@ func ReadGamesDir(dir string) ([]*Game, error) {
 }
 
 func ReadGameFiles(paths []string) (games []*Game, errs error) {
+	if len(paths) == 1 && strings.Contains(paths[0], "*") {
+		g, err := filepath.Glob(paths[0])
+		if err != nil {
+			return nil, err
+		}
+		paths = g
+	}
 	sort.Strings(paths)
 	for _, path := range paths {
 		g, err := ReadGameFile(path)
 		if err != nil {
-			errs = multierror.Append(errs, err)
+			errs = multierror.Append(errs, fmt.Errorf("in game %s - %w", path, err))
 		}
 		games = append(games, g)
 	}

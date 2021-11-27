@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/slshen/sb/pkg/stats"
+	"github.com/slshen/sb/pkg/dataframe"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
 	sheets "google.golang.org/api/sheets/v4"
@@ -46,7 +46,7 @@ func (ex *SheetExport) reload() error {
 	return err
 }
 
-func (ex *SheetExport) ExportData(data *stats.Data) error {
+func (ex *SheetExport) ExportData(data *dataframe.Data) error {
 	_, err := ex.findOrCreateSheet(data.Name)
 	if err != nil {
 		return err
@@ -61,14 +61,14 @@ func (ex *SheetExport) ExportData(data *stats.Data) error {
 	}
 	headerRow := make([]interface{}, len(data.Columns))
 	for i, col := range data.Columns {
-		headerRow[i] = col
+		headerRow[i] = col.Name
 	}
 	values := [][]interface{}{headerRow}
-	for _, row := range data.Rows {
+	data.RApply(func(row []interface{}) {
 		values = append(values, row)
-	}
+	})
 	vrange := fmt.Sprintf("%s!A1:%s%d", data.Name, columnLetters(len(data.Columns)-1),
-		len(data.Rows)+1)
+		data.Columns[0].Len()+1)
 	log.Default().Printf("Updated values of %s in range %s", data.Name, vrange)
 	_, err = ex.service.Spreadsheets.Values.Update(ex.SpreadsheetID, vrange, &sheets.ValueRange{
 		Values: values,

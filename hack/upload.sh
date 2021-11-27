@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+set -x
 go run main.go export --re-matrix data/tweaked_re.csv \
     --us pride data/2021*.yaml
 go run main.go export --re-matrix data/tweaked_re.csv \

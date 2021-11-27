@@ -14,6 +14,8 @@ type Advance struct {
 	RunnerInterference bool  `yaml:",omitempty"`
 	Implied            bool
 	Runner             PlayerID
+	WildPitch          bool
+	PassedBall         bool
 	*FieldingError     `yaml:",omitempty"`
 }
 
@@ -52,7 +54,8 @@ func parseAdvance(s string) (*Advance, error) {
 		To:   m[3],
 		Out:  m[2] == "X",
 	}
-	if a.Out {
+	switch {
+	case a.Out:
 		if m[4] == "RINT" {
 			a.RunnerInterference = true
 		} else {
@@ -67,7 +70,11 @@ func parseAdvance(s string) (*Advance, error) {
 				return nil, fmt.Errorf("no fielders for put out in advancde code %s", s)
 			}
 		}
-	} else if m[4] != "" {
+	case m[4] == "WP":
+		a.WildPitch = true
+	case m[4] == "PB":
+		a.PassedBall = true
+	case m[4] != "":
 		var err error
 		a.FieldingError, err = parseFieldingError(m[4])
 		if err != nil {

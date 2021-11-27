@@ -1,0 +1,75 @@
+date: 11/19/21
+game: 1
+visitor: Pride 14u 07
+visitorid: pride-fall-2021
+home: Colorado Angels
+start: 3:30PM
+timelimit: 80m
+tournament: Early Thanksgiving Showcase
+league: PGF
+visitorplays:
+  - pitcher,22
+  - mf17,BBFCFBS,K
+  - aw6,BBX,34/G3
+  - cm22,BX,E5/G5
+  - kg2,BCBX,S8/L8
+  - mj18,BCCX,3/G3
+  - inn,0
+  - ms11,CX,3/G3
+  - le13,BFX,53/G5
+  - rv10,CBBBB,W.B-1
+  - ss16,FBCB,FC6.1X2(64)
+  - inn,0
+  - kn21,BBBB,W.B-1
+  - as7,X,FC5.B-1;1X2(14)
+  - mf17,BBX,8/F8
+  - aw6,CB,SB2
+  - aw6,CBFBS,K
+  - inn,0
+  - cm22,CBX,8/L8
+  - kg2,BBCX,E8/F8.B-2
+  - mj18,X,8/F8
+  - ms11,X,8/F8
+  - inn,0
+  - le13,BBBB,W.B-1
+  - rv10,X,S8/G56.B-1;1-2
+  - ss16,CBSX,1/P1/IF
+  - kn21,CBX,HP.B-1;1-2;2-3
+  - as7,X,HP.B-1;1-2;2-3;3-H
+  - mf17,BBBB,W.B-1;1-2;2-3;3-H
+  - aw6,BX,FC5.B-1;1-2;2-3;3XH(52)
+  - cm22,CBBCFC,K
+  - final,2
+homeplays:
+  - pitcher,ms11
+  - 22,X,E1/G1.B-1
+  - 24,CCX,FC6.B-1;1X2(64)
+  - 23,X,S7/L7.B-1;1-2
+  - 27,BCSB,CS3(285).1-2
+  - 27,BCSBFBS,K
+  - inn,0
+  - 12,BCCS,K
+  - 5,FSX,43/G4
+  - 7,SBFX,S7/G54.B-2(E7/TH)
+  - 19,SBBBSFFFX,E3/G6.B-1;2-3
+  - 15,CB,SB2
+  - 15,CBX,53/G5
+  - inn,0
+  - 1,X,13/G1
+  - 2,X,63/G5
+  - 14,SSS,K
+  - inn,0
+  - 4,FBFFBBFB,W.B-1
+  - 22,X,S7/L7.B-2;1-3(E7)
+  - 24,BB,PO3(25)
+  - 24,BBSB,WP.2-3
+  - 24,BBSBB,W.B-1
+  - 23,FFS,K
+  - 27,FFB,SB2
+  - 27,FFBS,K23
+  - 12,BBSFX,23/G2
+  - 5,CSC,K
+  - 7,BSFX,S9/L9.B-2(E9)
+  - 19,S,PO2(E8).2-3
+  - 19,SX,43/G4
+  - final,0

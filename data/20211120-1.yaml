@@ -1,0 +1,89 @@
+date: 11/20/21
+game: 1
+visitor: Pride 14u 07
+visitorid: pride-fall-2021
+home: SoCal Athletics Fausett 13u
+start: 7:55AM
+timelimit: 90m
+tournament: Early Thanksgiving Showcase
+league: PGF
+visitorplays:
+  - pitcher,20
+  - mf17,BBFCBB,W.B-1
+  - aw6,B,SB2
+  - aw6,BCFX,53/G5.2-3
+  - cm22,SX,3/G3.3-H
+  - kg2,BBFBB,W.B-1
+  - mj18,X,7/P6D
+  - inn,1
+  - ms11,X,S7/P5D
+  - rv10,B,SB2
+  - rv10,BCBX,9/L9
+  - le13,X,63/G6
+  - ss16,FBFFBFX,63/G6
+  - inn,1
+  - kn21,SCFX,HP
+  - as7,CFX,6/P6
+  - bj00,BBBB,W.B-1;1-2
+  - mf17,BCCFBX,S4/G4.B-1;1-2;2-3
+  - aw6,BFBSBB,W.B-1;1-2;2-3;3-H
+  - pitcher,84
+  - cm22,X,8/F8
+  - kg2,CFX,D7/L7.B-2;1-H;2-H;3-H
+  - mj18,BSFBBX,S7/L7.B-1;2-3
+  - ms11,CB,SB2.3-H
+  - ms11,CBX,43/G4
+  - inn,6
+  - rv10,BCFBS,K
+  - le13,CBFBFBX,S9/G4
+  - ss16,BSFC,K
+  - kn21,BBS,CS2(295)
+  - inn,6
+  - kn21,SX,S7/F7.B-2(E7)
+  - as7,X,1/P2
+  - bj00,BBFCF,9/L9
+  - mf17,X,S1/G1/B.B-3;2-H,no one covering either 1 or 2 on bunt
+  - aw6,X,1/P1
+  - inn,7
+  - cm22,BBBB,W.B-1
+  - pitcher,28
+  - kg2,BBCBX,S7/G56.B-1;1-2
+  - mj18,BX,S7/G56.B-1;1-2;2-3
+  - ms11,CX,43/G4.1-2;2-3;3-H
+  - rv10,BBBB,W.B-1
+  - le13,CCX,13/G1.1-2;2-3;3-H
+  - ss16,CSX,13/G1
+  - inn,9
+  - final,9
+homeplays:
+  - pitcher,ms11
+  - 4,BCBSX,43/G4
+  - 5,CX,6/L6
+  - 50,X,S5/G5.B-1
+  - 20,SSFX,S9/P3D
+  - 31,CFBC,K
+  - inn,0
+  - 18,BFCX,53/G5
+  - 17,X,13/G1
+  - 6,FBSX,S1/G5
+  - 27,BSFC,K
+  - inn,0
+  - 10,FX,53/G5
+  - 4,BX,S7/G56
+  - 5,BX,FC6.B-1;1X2(64)
+  - 50,BBFBX,S1/G4.B-1;1-2
+  - 20,SBC,SB3
+  - 20,SBCS,K
+  - inn,0
+  - 31,X,S5/G5
+  - 18,S,PB.1-2
+  - 18,SFBX,53/G5.2-3
+  - 17,FCBBB,PO3(E2).3-H
+  - 17,FCBBBFX,53/G5
+  - 6,CSX,13/G1
+  - inn,1
+  - 27,BSCBC,K
+  - 10,X,23/G2
+  - 7,SBSFBBC,K
+  - inn,1
+  - final,1

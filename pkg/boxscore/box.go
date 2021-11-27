@@ -7,6 +7,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/slshen/sb/pkg/dataframe"
 	"github.com/slshen/sb/pkg/game"
 	"github.com/slshen/sb/pkg/playbyplay"
 	"github.com/slshen/sb/pkg/stats"
@@ -23,7 +24,6 @@ type Score struct {
 type Comment struct {
 	Half         game.Half
 	Inning, Outs int
-	Batter       string
 	Text         string
 }
 
@@ -40,10 +40,14 @@ type BoxScore struct {
 }
 
 func NewBoxScore(g *game.Game, re stats.RunExpectancy) (*BoxScore, error) {
+	gs := stats.NewGameStats(re)
+	if err := gs.Read(g); err != nil {
+		return nil, err
+	}
 	boxscore := &BoxScore{
 		Game:          g,
-		HomeLineup:    newLineup(g.Home, g.HomeTeam, re),
-		VisitorLineup: newLineup(g.Visitor, g.VisitorTeam, re),
+		HomeLineup:    &Lineup{gs.TeamStats[g.Home]},
+		VisitorLineup: &Lineup{gs.TeamStats[g.Visitor]},
 	}
 	if err := boxscore.run(); err != nil {
 		return nil, err
@@ -53,21 +57,12 @@ func NewBoxScore(g *game.Game, re stats.RunExpectancy) (*BoxScore, error) {
 
 func (box *BoxScore) run() error {
 	states := box.Game.GetStates()
-	for i, state := range states {
-		var lineup, defense *Lineup
-		if state.Top() {
-			lineup = box.VisitorLineup
-			defense = box.HomeLineup
-		} else {
-			lineup = box.HomeLineup
-			defense = box.VisitorLineup
-		}
+	for _, state := range states {
 		if state.Comment != "" {
 			box.Comments = append(box.Comments, Comment{
 				Half:   state.Half,
 				Inning: state.InningNumber,
 				Outs:   state.Outs,
-				Batter: lineup.Team.GetPlayer(state.Batter).NameOrNumber(),
 				Text:   state.Comment,
 			})
 		}
@@ -79,71 +74,60 @@ func (box *BoxScore) run() error {
 		for len(box.InningScore) < state.InningNumber {
 			box.InningScore = append(box.InningScore, Score{})
 		}
-		var lastState *game.State
-		if i > 0 {
-			lastState = states[i-1]
+		for _, adv := range state.Advances {
+			if adv.To == "H" && !adv.Out {
+				score := &box.InningScore[state.InningNumber-1]
+				if state.Top() {
+					score.Visitor++
+				} else {
+					score.Home++
+				}
+			}
 		}
-		lineup.insertBatter(state.Batter)
-		defense.insertPitcher(state.Pitcher)
-		box.handleAdvances(state, lineup, defense)
-		lineup.recordOffense(state, lastState)
-		if err := defense.recordDefense(state); err != nil {
-			return err
-		}
-		defense.recordPitching(state, lastState)
 	}
 	return nil
 }
 
-func (box *BoxScore) handleAdvances(state *game.State, lineup, defense *Lineup) {
-	for _, adv := range state.Advances {
-		if adv.FieldingError != nil {
-			defense.recordError(adv.FieldingError)
-		}
-		if adv.To == "H" && !adv.Out {
-			score := &box.InningScore[state.InningNumber-1]
-			if state.Top() {
-				score.Visitor++
-			} else {
-				score.Home++
-			}
-		}
-	}
-}
-
 func (box *BoxScore) InningScoreTable() string {
-	tab := &text.Table{
-		Columns: []text.Column{
-			{Header: "", Width: 20, Left: true},
+	tab := &dataframe.Data{
+		Columns: []*dataframe.Column{
+			{
+				Name:   "",
+				Format: "%-20s",
+				Values: []string{
+					firstWord(box.Game.Visitor, 20),
+					firstWord(box.Game.Home, 20),
+				},
+			},
 		},
 	}
-	for i := range box.InningScore {
-		tab.Columns = append(tab.Columns, text.Column{
-			Header: fmt.Sprintf("%2d", i+1),
-			Width:  2,
+	for i, score := range box.InningScore {
+		tab.Columns = append(tab.Columns, &dataframe.Column{
+			Name:   fmt.Sprintf("%2d", i+1),
+			Format: "%2d",
+			Values: []int{score.Visitor, score.Home},
 		})
 	}
 	tab.Columns = append(tab.Columns,
-		text.Column{Header: "  ", Width: 2},
-		text.Column{Header: " R", Width: 2},
-		text.Column{Header: " H", Width: 2},
-		text.Column{Header: " E", Width: 2},
+		&dataframe.Column{
+			Name:   " |",
+			Format: "%2s",
+			Values: []string{" |", " |"},
+		},
+		&dataframe.Column{
+			Name: " R", Format: "%2d",
+			Values: []int{box.Score.Visitor, box.Score.Home},
+		},
+		&dataframe.Column{
+			Name: " H", Format: "%2d",
+			Values: []int{box.VisitorLineup.TotalHits(), box.HomeLineup.TotalHits()},
+		},
+		&dataframe.Column{
+			Name: " E", Format: "%2d",
+			Values: []int{box.VisitorLineup.Errors, box.HomeLineup.Errors},
+		},
 	)
-	s := &strings.Builder{}
-	s.WriteString(tab.Header())
-	argsV := []interface{}{firstWord(box.Game.Visitor, 20)}
-	argsH := []interface{}{firstWord(box.Game.Home, 20)}
-	for _, score := range box.InningScore {
-		argsV = append(argsV, score.Visitor)
-		argsH = append(argsH, score.Home)
-	}
-	argsV = append(argsV, "--", box.Score.Visitor, box.VisitorLineup.TotalHits(),
-		box.VisitorLineup.Errors)
-	argsH = append(argsH, "--", box.Score.Home, box.HomeLineup.TotalHits(),
-		box.HomeLineup.Errors)
-	fmt.Fprintf(s, tab.Format(), argsV...)
-	fmt.Fprintf(s, tab.Format(), argsH...)
-	return s.String()
+	return tab.String()
 }
 
 func (box *BoxScore) ScoringPlays() (string, error) {

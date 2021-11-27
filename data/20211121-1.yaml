@@ -1,0 +1,85 @@
+date: 11/21/21
+game: 1
+home: Pride 14u 07
+homeid: pride-fall-2021
+visitor: Washington Angels Camp
+start: 9:33AM
+timelimit: 80m
+tournament: Early Thanksgiving Showcase
+league: PGF
+visitorplays:
+  - pitcher,ms11
+  - 3,SBFS,K+WP
+  - 24,B,CS2(25)
+  - 24,BX,53/G5
+  - 21,BSSS,K
+  - inn,0
+  - 6,SSFS,K
+  - 14,BCSBFX,E5/G5,Sorcha should have backhanded the ball
+  - 23,FX,5/P5
+  - 99,S,SB2
+  - 99,SSBFFFBS,K
+  - inn,0
+  - 40,BX,6/P6
+  - 1,BX,5/P5
+  - 3,BX,S8/G4
+  - 24,SBX,2/P2
+  - inn,0
+  - 21,CSX,E4/G4
+  - 7,BCSX,D7/F7D.B-2;1-3
+  - 8,SFFBS,K23.3-H
+  - 23,CCB,PB.2-3
+  - 23,CCBC,K
+  - 11,CSFFX,53/G5
+  - inn,1
+  - 22,BBX,43/G4
+  - 1,FBBBFB,W.B-1
+  - 3,X,4(B)43(1)/LDP
+  - inn,1
+  - 24,FX,53/G5
+  - 21,CSFFBFX,5/L5
+  - 7,SX,D8/F78D
+  - 14,CB,WP.2-3
+  - 14,CBSFBX,143/G4
+  - inn,1
+  - final,1
+homeplays:
+  - pitcher,40
+  - mf17,BSX,S7/L7
+  - aw6,BC,SB2
+  - aw6,BCBBX,63/G6.2-3
+  - cm22,X,13/G1.3-H
+  - kg2,BCBBX,S8/G56
+  - mj18,X,S8/G56.B-1;1X3(85)
+  - inn,1
+  - ms11,X,8/L8
+  - bj00,BBBFX,D8/L8
+  - rv10,BCB,PB.2-3
+  - rv10,BCBBX,43/G4.3-H
+  - pitcher,8
+  - le13,BX,S9/L9
+  - ss16,B,WP.1-2
+  - ss16,BX,1/L1
+  - inn,2
+  - kn21,SBBBX,63/G6
+  - as7,X,2/B/G2
+  - mf17,BBBB,W.B-1
+  - aw6,C,SB2.1-H(E2)
+  - aw6,CSS,K
+  - inn,3
+  - cm22,BBBB,W.B-1
+  - kg2,CX,HP.B-1;1-2
+  - mj18,BBCFX,FC4.B-1;1X2(46);2-3
+  - ms11,B,SB2
+  - ms11,BX,S7/L7.B-2(E2);2-3;3-H
+  - bj00,BX,63/G6.2-3;3-H
+  - rv10,CBBSB,PO3(E2).3-H
+  - rv10,CBBSBX,53/G5
+  - inn,6
+  - le13,SCSX,K23
+  - ss16,CX,S8/L8
+  - kn21,BBX,43/G4.1-2
+  - as7,C,PB.2-3
+  - as7,CBBX,53/G5
+  - inn,6
+  - final,6

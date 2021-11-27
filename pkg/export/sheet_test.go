@@ -3,7 +3,7 @@ package export
 import (
 	"testing"
 
-	"github.com/slshen/sb/pkg/stats"
+	"github.com/slshen/sb/pkg/dataframe"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -19,12 +19,12 @@ func TestSheets(t *testing.T) {
 		return
 	}
 	assert.NotNil(s)
-	data := &stats.Data{
-		Name:    "test",
-		Columns: []string{"one", "two", "three"},
-		Rows: []stats.Row{
-			{1, 2, 3},
-			{"four", "five", "six"},
+	data := &dataframe.Data{
+		Name: "test",
+		Columns: []*dataframe.Column{
+			{Name: "one", Values: []int{1, 10}},
+			{Name: "two", Values: []string{"2", "20"}},
+			{Name: "three", Values: []float64{3.0, 33.0}},
 		},
 	}
 	assert.NoError(s.ExportData(data))

@@ -4,54 +4,99 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/slshen/sb/pkg/game"
+	"github.com/slshen/sb/pkg/dataframe"
 	"github.com/slshen/sb/pkg/stats"
 	"github.com/slshen/sb/pkg/text"
 )
 
 type Lineup struct {
-	TeamName         string
-	Team             *game.Team
-	Order            []game.PlayerID
-	Pitchers         []game.PlayerID
-	Stats            *stats.TeamStats
-	TeamLOB          int
-	Errors           int
-	ErrorsByPosition []int `yaml:",flow"`
+	*stats.TeamStats
 }
 
-func newLineup(teamName string, team *game.Team, re stats.RunExpectancy) *Lineup {
-	return &Lineup{
-		TeamName: teamName,
-		Team:     team,
-		Stats:    stats.NewStats(team, re),
+func (lineup *Lineup) BattingTable() string {
+	if len(lineup.Batters) == 0 {
+		return ""
 	}
+	dat := lineup.GetBattingData().SelectRename([]dataframe.ColumnRename{
+		{"Name", "#"},
+		{"AB", "AB"},
+		{"Hits", "H"},
+		{"LOH", "LOH"},
+		{"StrikeOuts", "K"},
+		{"Walks", "BB"},
+	})
+	idx := dat.GetIndex()
+	idx.GetColumn("AB").Summary = dataframe.Sum
+	idx.GetColumn("H").Summary = dataframe.Sum
+	idx.GetColumn("K").Summary = dataframe.Sum
+	idx.GetColumn("BB").Summary = dataframe.Sum
+	idx.GetColumn("LOH").Summary = dataframe.Sum
+	return dat.String()
 }
 
-func (lineup *Lineup) insertBatter(batter game.PlayerID) {
-	for _, player := range lineup.Order {
-		if player == batter {
-			return
+func (lineup *Lineup) PitchingTable() string {
+	if len(lineup.Pitchers) == 0 {
+		return ""
+	}
+	dat := lineup.GetPitchingData().SelectRename([]dataframe.ColumnRename{
+		{"Name", "Pitcher"},
+		{"IP", "IP"},
+		{"BattersFaced", "BF"},
+		{"Hits", "H"},
+		{"Walks", "BB"},
+		{"StrikeOuts", "K"},
+		{"HP", "HP"},
+		{"WP", "WP"},
+		{"SwStr", "SWS"},
+	})
+	return dat.String()
+}
+
+func (lineup *Lineup) ErrorsList() string {
+	s := &strings.Builder{}
+	for i, count := range lineup.ErrorsByPosition {
+		if count > 0 {
+			fmt.Fprintf(s, " E%d:%d", i+1, count)
 		}
 	}
-	lineup.Order = append(lineup.Order, batter)
-	if len(lineup.Team.Players) > 0 && lineup.Team.Players[batter] == nil {
-		fmt.Printf("batter %s does not have a team entry\n", batter)
-	}
+	return s.String()
 }
 
-func (lineup *Lineup) insertPitcher(pitcher game.PlayerID) {
+func (lineup *Lineup) battingCounts(get func(*stats.Batting) int) string {
+	var counts []string
+	for _, player := range lineup.Batters {
+		data := lineup.GetBatting(player)
+		n := get(data)
+		if n > 0 {
+			if n == 1 {
+				counts = append(counts, data.Name)
+			} else {
+				counts = append(counts, fmt.Sprintf("%s(%d)", data.Name, n))
+			}
+		}
+	}
+	return text.Wrap(strings.Join(counts, ", "), 30)
+}
+
+func (lineup *Lineup) pitchingCounts(get func(*stats.Pitching) int) string {
+	var counts []string
 	for _, player := range lineup.Pitchers {
-		if player == pitcher {
-			return
+		data := lineup.GetPitching(player)
+		n := get(data)
+		if n > 0 {
+			if n == 1 {
+				counts = append(counts, data.Name)
+			} else {
+				counts = append(counts, fmt.Sprintf("%s(%d)", data.Name, n))
+			}
 		}
 	}
-	lineup.Pitchers = append(lineup.Pitchers, pitcher)
+	return text.Wrap(strings.Join(counts, ", "), 30)
 }
 
 func (lineup *Lineup) battingSum(get func(*stats.Batting) int) int {
 	sum := 0
-	for _, data := range lineup.Stats.Batting {
+	for _, data := range lineup.Batting {
 		sum += get(data)
 	}
 	return sum
@@ -79,104 +124,6 @@ func (lineup *Lineup) TotalLineDrives() int {
 	return lineup.battingSum(func(b *stats.Batting) int { return b.LineDrives })
 }
 
-func (lineup *Lineup) BattingTable() string {
-	s := &strings.Builder{}
-	tab := text.Table{
-		Columns: []text.Column{
-			{Header: " #", Width: 2},
-			{Header: firstWord(lineup.TeamName, 20), Width: 20, Left: true},
-			{Header: "AB", Width: 2},
-			{Header: " H", Width: 2},
-			{Header: " K", Width: 2},
-			{Header: "BB", Width: 2},
-			{Header: " L", Width: 2},
-			{Header: "GO", Width: 2},
-		},
-	}
-	s.WriteString(tab.Header())
-	for _, player := range lineup.Order {
-		data := lineup.Stats.GetBatting(player)
-		fmt.Fprintf(s, tab.Format(), data.Player.Number, data.Player.NameOrQ(), data.AB, data.Hits,
-			data.StrikeOuts, data.Walks, data.LineDrives, data.GroundOuts)
-	}
-	fmt.Fprintf(s, tab.Format(), "", "", "--", "--", "--", "--", "--", "--")
-	fmt.Fprintf(s, tab.Format(), "", "",
-		lineup.TotalAB(), lineup.TotalHits(), lineup.TotalStrikeOuts(),
-		lineup.TotalWalks(), lineup.TotalLineDrives(), lineup.TotalGroundOuts())
-	return strings.TrimRight(s.String(), "\n")
-}
-
-func (lineup *Lineup) PitchingTable() string {
-	s := &strings.Builder{}
-	tab := text.Table{
-		Columns: []text.Column{
-			{Header: " #", Width: 2},
-			{Header: "  IP", Width: 4},
-			{Header: "BF", Width: 2},
-			{Header: " H", Width: 2},
-			{Header: "BB", Width: 2},
-			{Header: " K", Width: 2},
-			{Header: "GO", Width: 2},
-			{Header: "FO", Width: 2},
-			{Header: "XBH", Width: 3},
-			{Header: "SWST", Width: 4},
-			{Header: "SB", Width: 2},
-		},
-	}
-	s.WriteString(tab.Header())
-	for _, pitcher := range lineup.Pitchers {
-		data := lineup.Stats.GetPitching(pitcher)
-		ip := fmt.Sprintf("%d.%d", data.Outs/3, data.Outs%3)
-		fmt.Fprintf(s, tab.Format(), data.Player.Number, ip, data.BattersFaced,
-			data.Hits, data.Walks, data.StrikeOuts, data.GroundOuts, data.FlyOuts,
-			data.Doubles+data.Triples+data.HRs,
-			data.SwStr(), data.StolenBases)
-	}
-	return strings.TrimRight(s.String(), "\n")
-}
-
-func (lineup *Lineup) ErrorsList() string {
-	s := &strings.Builder{}
-	for i, count := range lineup.ErrorsByPosition {
-		if count > 0 {
-			fmt.Fprintf(s, " E%d:%d", i+1, count)
-		}
-	}
-	return s.String()
-}
-
-func (lineup *Lineup) battingCounts(get func(*stats.Batting) int) string {
-	var counts []string
-	for _, player := range lineup.Order {
-		data := lineup.Stats.GetBatting(player)
-		n := get(data)
-		if n > 0 {
-			if n == 1 {
-				counts = append(counts, data.Player.NameOrNumber())
-			} else {
-				counts = append(counts, fmt.Sprintf("%s(%d)", data.Player.NameOrNumber(), n))
-			}
-		}
-	}
-	return text.Wrap(strings.Join(counts, ", "), 30)
-}
-
-func (lineup *Lineup) pitchingCounts(get func(*stats.Pitching) int) string {
-	var counts []string
-	for _, player := range lineup.Pitchers {
-		data := lineup.Stats.GetPitching(player)
-		n := get(data)
-		if n > 0 {
-			if n == 1 {
-				counts = append(counts, data.Player.NameOrNumber())
-			} else {
-				counts = append(counts, fmt.Sprintf("%s(%d)", data.Player.NameOrNumber(), n))
-			}
-		}
-	}
-	return text.Wrap(strings.Join(counts, ", "), 30)
-}
-
 func (lineup *Lineup) Singles() string {
 	return lineup.battingCounts(func(pd *stats.Batting) int { return pd.Singles })
 }
@@ -202,7 +149,7 @@ func (lineup *Lineup) CaughtStealings() string {
 }
 
 func (lineup *Lineup) TotalLOB() int {
-	return lineup.battingSum(func(b *stats.Batting) int { return b.LOB }) + lineup.TeamLOB
+	return lineup.battingSum(func(b *stats.Batting) int { return b.LOB }) + lineup.LOB
 }
 
 func (lineup *Lineup) StrikeOuts() string {
@@ -223,61 +170,4 @@ func (lineup *Lineup) PitcherHPs() string {
 
 func (lineup *Lineup) PitcherWPs() string {
 	return lineup.pitchingCounts(func(pd *stats.Pitching) int { return pd.WP })
-}
-
-func (lineup *Lineup) recordSteal(runner game.PlayerID) {
-	data := lineup.Stats.GetBatting(runner)
-	data.StolenBases++
-}
-
-func (lineup *Lineup) recordError(e *game.FieldingError) {
-	for len(lineup.ErrorsByPosition) < e.Fielder {
-		lineup.ErrorsByPosition = append(lineup.ErrorsByPosition, 0)
-	}
-	lineup.ErrorsByPosition[e.Fielder-1]++
-	lineup.Errors++
-}
-
-func (lineup *Lineup) recordOffense(state, lastState *game.State) {
-	data := lineup.Stats.GetBatting(state.Batter)
-	lineup.TeamLOB += data.Record(state)
-	switch state.Play.Type {
-	case game.StolenBase:
-		for _, runner := range state.Play.Runners {
-			lineup.recordSteal(runner)
-		}
-	case game.CaughtStealing:
-		fallthrough
-	case game.PickedOff:
-		if !state.NotOutOnPlay {
-			runner := state.Play.Runners[0]
-			runnerData := lineup.Stats.GetBatting(runner)
-			if state.Play.Type == game.PickedOff {
-				runnerData.PickedOff++
-			} else {
-				runnerData.CaughtStealing++
-			}
-		}
-	}
-}
-
-func (lineup *Lineup) recordDefense(state *game.State) error {
-	switch state.Play.Type {
-	case game.ReachedOnError:
-		lineup.recordError(state.Play.FieldingError)
-	case game.PickedOff:
-		fallthrough
-	case game.CaughtStealing:
-		if state.NotOutOnPlay && state.Play.FieldingError != nil {
-			lineup.recordError(state.Play.FieldingError)
-		}
-	case game.FoulFlyError:
-		lineup.recordError(state.Play.FieldingError)
-	}
-	return nil
-}
-
-func (lineup *Lineup) recordPitching(state *game.State, lastState *game.State) {
-	data := lineup.Stats.GetPitching(state.Pitcher)
-	data.Record(state, lastState)
 }

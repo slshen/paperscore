@@ -56,7 +56,7 @@ visitorplays:
   - cm22,BBX,53/G5
   - mj18,BFBBB,W.B-1,time expired
 homeplays:
-  - pitcher,22
+  - pitcher,cm22
   - 1,BBFCFFBX,E5/G5.B-1
   - 42,X,13/G1
   - 28,X,S9/P9S.B-1;1-2
@@ -83,7 +83,7 @@ homeplays:
   - 1,BX,S6/G56.B-1
   - 42,BX,2/G2,batter out of the box
   - 28,X,E6/G6.B-1;1-2
-  - pitcher,00
+  - pitcher,bj00
   - 7,BX,7/F7
   - 21,X,D8/L8D.B-2;1-H;2-H
   - 16,BFFBBX,HP.B-1

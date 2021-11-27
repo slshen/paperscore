@@ -5,7 +5,7 @@ import (
 )
 
 type Batting struct {
-	Player                         *game.Player `yaml:"-" mapstructure:",squash"`
+	PlayerData                     `mapstructure:",squash"`
 	PA, AB, Hits, Walks            int
 	LineDrives                     int
 	StrikeOuts                     int
@@ -27,7 +27,13 @@ type Batting struct {
 	FieldersChoice                 int
 	ReachedOnK                     int
 	RE24                           float64
-	Games                          map[string]bool
+	LineDriveOuts                  int
+	LOH                            int
+}
+
+func (b *Batting) Update() {
+	b.PlayerData.Update()
+	b.LOH = b.LineDriveOuts + b.Hits
 }
 
 func (b *Batting) RecordRE24(state *game.State, lastState *game.State, re RunExpectancy) {
@@ -72,6 +78,8 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 				b.StrikeOutsLooking++
 			}
 		case game.Walk:
+			fallthrough
+		case game.WalkWildPitch:
 			b.Walks++
 		case game.GroundOut:
 			b.GroundOuts++
@@ -88,15 +96,18 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 		case game.StrikeOutWildPitch:
 			b.ReachedOnK++
 		}
-		if !(state.Play.Is(game.Walk, game.HitByPitch, game.CatcherInterference) ||
+		if !(state.Play.Is(game.Walk, game.HitByPitch, game.WalkWildPitch, game.CatcherInterference) ||
 			(state.Play.Type == game.ReachedOnError && state.Modifiers.Contains(game.Obstruction)) ||
 			state.Modifiers.Contains(game.SacrificeFly, game.SacrificeHit)) {
 			b.AB++
 		}
 		if state.Modifiers.Trajectory() == game.LineDrive {
 			b.LineDrives++
+			if !state.Play.Hit() {
+				b.LineDriveOuts++
+			}
 		}
-		if state.Play.Hit() || state.Play.Is(game.Walk, game.HitByPitch) {
+		if state.Play.Hit() || state.Play.Is(game.Walk, game.WalkWildPitch, game.HitByPitch) {
 			b.OnBase++
 		}
 		if state.Modifiers.Contains(game.SacrificeHit) {

@@ -1,5 +1,5 @@
-Name
-AB
+Name %-12s
+AB %3d
 CaughtStealing
 Doubles
 FlyOuts
@@ -7,7 +7,7 @@ Games
 GroundOuts
 HRs
 HitByPitch
-Hits
+Hits %3d
 LOB
 LineDrives
 Misses
@@ -17,20 +17,23 @@ PitchesSeen
 RunsScored
 Singles
 StolenBases
-StrikeOuts
+StrikeOuts %3d
 StrikeOutsLooking
 Swings
 Triples
-Walks
+Walks %3d
 OnBase
 SacrificeBunts
 ReachedOnError
 FieldersChoice
 ReachedOnK
 SacrificeFlys
-RE24
+RE24 %4.2f
 CalledStrikes
 Strikes
 SB2PitchOpp
 SB2
 SB2Opp
+LOH %3d
+LineDriveOuts
+Inactive
