@@ -22,12 +22,17 @@ func newData(name string) *dataframe.Data {
 		panic(err)
 	}
 	for scan := bufio.NewScanner(bytes.NewReader(cols)); scan.Scan(); {
-		parts := strings.Split(scan.Text(), " ")
-		col := &dataframe.Column{
-			Name: parts[0],
+		line := scan.Text()
+		space := strings.Index(line, " ")
+		name := line
+		format := ""
+		if space > 0 {
+			name = line[0:space]
+			format = line[space+1:]
 		}
-		if len(parts) == 2 {
-			col.Format = parts[1]
+		col := &dataframe.Column{
+			Name:   name,
+			Format: format,
 		}
 		dat.Columns = append(dat.Columns, col)
 	}

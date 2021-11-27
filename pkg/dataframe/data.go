@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/mitchellh/mapstructure"
+	"github.com/slshen/sb/pkg/text"
 )
 
 type Update interface {
@@ -122,60 +123,29 @@ func (dat *Data) GetIndex() *Index {
 	}
 }
 
-func (dat *Data) Select(names []string) *Data {
-	res := &Data{
-		Columns: make([]*Column, len(names)),
-	}
-	idx := dat.GetIndex()
-	for i, name := range names {
-		res.Columns[i] = idx.GetColumn(name)
-	}
-	return res
-}
-
-func (dat *Data) SelectFunc(f func(name string) bool) *Data {
-	var names []string
-	for _, col := range dat.Columns {
-		if f(col.Name) {
-			names = append(names, col.Name)
-		}
-	}
-	return dat.Select(names)
-}
-
-func (dat *Data) RApply(f func(row []interface{})) {
-	r := 0
-	for {
-		row := dat.Row(r)
-		if row == nil {
-			break
-		}
-		f(row)
-		r++
+func (dat *Data) RApply(f func(row int)) {
+	rc := dat.RowCount()
+	for r := 0; r < rc; r++ {
+		f(r)
 	}
 }
 
-func (dat *Data) Row(r int) []interface{} {
-	var row []interface{}
+func (dat *Data) GetRow(r int) []interface{} {
+	row := make([]interface{}, len(dat.Columns))
 	for i, col := range dat.Columns {
-		if r < col.Len() {
-			if row == nil {
-				row = make([]interface{}, len(dat.Columns))
-			}
-			switch col.GetType() {
-			case Int:
-				row[i] = col.GetInts()[r]
-			case Float:
-				row[i] = col.GetFloats()[r]
-			case String:
-				row[i] = col.GetStrings()[r]
-			}
+		switch col.GetType() {
+		case Int:
+			row[i] = col.GetInt(r)
+		case Float:
+			row[i] = col.GetFloat(r)
+		case String:
+			row[i] = col.GetString(r)
 		}
 	}
 	return row
 }
 
-func (dat *Data) RFilter(f func(row []interface{}) bool) *Data {
+func (dat *Data) RFilter(f func(row int) bool) *Data {
 	res := &Data{
 		Name:    dat.Name,
 		Columns: make([]*Column, len(dat.Columns)),
@@ -183,18 +153,18 @@ func (dat *Data) RFilter(f func(row []interface{}) bool) *Data {
 	for i := range dat.Columns {
 		res.Columns[i] = dat.Columns[i].EmptyCopy()
 	}
-	dat.RApply(func(row []interface{}) {
+	dat.RApply(func(row int) {
 		if f(row) {
 			for i := range dat.Columns {
 				col := dat.Columns[i]
 				rcol := res.Columns[i]
 				switch col.GetType() {
 				case Int:
-					rcol.AppendInts(row[i].(int))
+					rcol.AppendInts(col.GetInt(row))
 				case Float:
-					rcol.AppendFloats(row[i].(float64))
+					rcol.AppendFloats(col.GetFloat(row))
 				case String:
-					rcol.AppendString(row[i].(string))
+					rcol.AppendString(col.GetString(row))
 				}
 			}
 		}
@@ -212,42 +182,46 @@ func (dat *Data) RowCount() int {
 	return m
 }
 
-func (dat *Data) RSort(less func(r1 []interface{}, r2 []interface{}) bool) *Data {
-	rows := make([][]interface{}, dat.RowCount())
+func (dat *Data) RSort(less func(r1 int, r2 int) bool) *Data {
 	rc := dat.RowCount()
+	rowNumbers := make([]int, rc)
 	for i := 0; i < rc; i++ {
-		rows[i] = dat.Row(i)
+		rowNumbers[i] = i
 	}
-	sort.Slice(rows, func(i, j int) bool {
-		return less(rows[i], rows[j])
+	sort.Slice(rowNumbers, func(i, j int) bool {
+		ri := rowNumbers[i]
+		rj := rowNumbers[j]
+		return less(ri, rj)
 	})
 	res := &Data{
 		Name:    dat.Name,
 		Columns: make([]*Column, len(dat.Columns)),
 	}
-	for i, col := range dat.Columns {
+	for col, scol := range dat.Columns {
 		rcol := &Column{
-			Name:   col.Name,
-			Format: col.Format,
+			Name:          scol.Name,
+			Format:        scol.Format,
+			Summary:       scol.Summary,
+			SummaryFormat: scol.SummaryFormat,
 		}
-		res.Columns[i] = rcol
-		switch col.GetType() {
+		res.Columns[col] = rcol
+		switch scol.GetType() {
 		case Int:
-			values := make([]int, col.Len())
-			for j := range values {
-				values[j] = rows[j][i].(int)
+			values := make([]int, scol.Len())
+			for row := 0; row < scol.Len(); row++ {
+				values[row] = scol.GetInt(rowNumbers[row])
 			}
 			rcol.Values = values
 		case Float:
-			values := make([]float64, col.Len())
-			for j := range values {
-				values[j] = rows[j][i].(float64)
+			values := make([]float64, scol.Len())
+			for row := 0; row < scol.Len(); row++ {
+				values[row] = scol.GetFloat(rowNumbers[row])
 			}
 			rcol.Values = values
 		case String:
-			values := make([]string, col.Len())
-			for j := range values {
-				values[j] = rows[j][i].(string)
+			values := make([]string, scol.Len())
+			for row := 0; row < scol.Len(); row++ {
+				values[row] = scol.GetString(rowNumbers[row])
 			}
 			rcol.Values = values
 		}
@@ -274,6 +248,13 @@ func (dat *Data) Append(sdat *Data) {
 
 func (dat *Data) String() string {
 	s := &strings.Builder{}
+	if dat.Name != "" {
+		w := len(dat.Columns)
+		for _, col := range dat.Columns {
+			w += col.GetWidth()
+		}
+		fmt.Fprintln(s, text.Center(dat.Name, w))
+	}
 	f := &strings.Builder{}
 	var hasSummaryRow bool
 	for i, col := range dat.Columns {
@@ -282,13 +263,14 @@ func (dat *Data) String() string {
 			s.WriteRune(' ')
 			f.WriteRune(' ')
 		}
-		fmt.Fprintf(s, "%*s", col.GetWidth(), col.Name)
+		fmt.Fprintf(s, "%*s", col.GetWidth(), text.Center(col.Name, col.GetWidth()))
 		f.WriteString(col.GetFormat())
 	}
 	s.WriteRune('\n')
 	f.WriteRune('\n')
-	dat.RApply(func(row []interface{}) {
-		fmt.Fprintf(s, f.String(), row...)
+	dat.RApply(func(row int) {
+		r := dat.GetRow(row)
+		fmt.Fprintf(s, f.String(), r...)
 	})
 	if hasSummaryRow {
 		for i, col := range dat.Columns {
@@ -327,12 +309,12 @@ func (dat *Data) RenderCSV(w io.Writer) error {
 		return err
 	}
 	var err error
-	dat.RApply(func(row []interface{}) {
+	dat.RApply(func(row int) {
 		if err != nil {
 			return
 		}
-		for i := range row {
-			record[i] = fmt.Sprintf("%v", row[i])
+		for i, col := range dat.Columns {
+			record[i] = fmt.Sprintf("%v", col.GetValue(row))
 		}
 		err = cw.Write(record)
 	})
@@ -354,10 +336,10 @@ func (dat *Data) RenderMarkdown(w io.Writer) error {
 		fmt.Fprintf(w, "| %s ", strings.Repeat("-", col.GetWidth()))
 	}
 	fmt.Fprintln(w, "|")
-	dat.RApply(func(row []interface{}) {
-		for i, col := range dat.Columns {
+	dat.RApply(func(row int) {
+		for _, col := range dat.Columns {
 			fmt.Fprintf(w, "| ")
-			fmt.Fprintf(w, col.GetFormat(), row[i])
+			fmt.Fprintf(w, col.GetFormat(), col.GetValue(row))
 			fmt.Fprintf(w, " ")
 		}
 		fmt.Fprintln(w, "|")
@@ -377,24 +359,20 @@ func (dat *Data) RenderMarkdown(w io.Writer) error {
 	return nil
 }
 
-type ColumnRename [2]string
+type Selection func(*Index) *Column
 
-func (dat *Data) SelectRename(cols []ColumnRename) *Data {
+func (dat *Data) Select(sels ...Selection) *Data {
 	idx := dat.GetIndex()
 	res := &Data{
 		Name:    dat.Name,
-		Columns: make([]*Column, len(cols)),
+		Columns: make([]*Column, len(sels)),
 	}
-	for i, cr := range cols {
-		col := idx.GetColumn(cr[0])
+	for i, sel := range sels {
+		col := sel(idx)
 		if col == nil {
-			panic("no column " + cr[0])
+			panic("cannot select a column")
 		}
-		res.Columns[i] = &Column{
-			Name:   cr[1],
-			Format: col.Format,
-			Values: col.Values,
-		}
+		res.Columns[i] = col
 	}
 	return res
 }
@@ -407,10 +385,18 @@ func (idx *Index) GetColumn(name string) *Column {
 	return nil
 }
 
-func (idx *Index) GetValue(row []interface{}, name string) interface{} {
-	i, ok := idx.idx[name]
-	if ok {
-		return row[i]
-	}
-	return nil
+func (idx *Index) GetValue(row int, name string) interface{} {
+	return idx.GetColumn(name).GetValue(row)
+}
+
+func (idx *Index) GetInt(row int, name string) int {
+	return idx.GetColumn(name).GetInt(row)
+}
+
+func (idx *Index) GetFloat(row int, name string) float64 {
+	return idx.GetColumn(name).GetFloat(row)
+}
+
+func (idx *Index) GetString(row int, name string) string {
+	return idx.GetColumn(name).GetString(row)
 }
