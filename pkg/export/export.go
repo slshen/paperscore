@@ -6,6 +6,7 @@ import (
 
 	"github.com/slshen/sb/pkg/dataframe"
 	"github.com/slshen/sb/pkg/game"
+	"github.com/slshen/sb/pkg/report"
 	"github.com/slshen/sb/pkg/stats"
 )
 
@@ -39,6 +40,23 @@ func NewExport(sheets *SheetExport, re stats.RunExpectancy) (*Export, error) {
 	}, nil
 }
 
+func (export *Export) tournaments(games []*game.Game) ([]StatsGenerator, error) {
+	gens := []StatsGenerator{}
+	for _, gr := range report.GroupByTournament(games) {
+		rep := &report.Report{
+			Us:    export.Us,
+			Group: gr,
+		}
+		if err := rep.Run(export.re); err != nil {
+			return nil, err
+		}
+		gens = append(gens, &GameStatsGenerator{
+			get: rep.GetBattingData,
+		})
+	}
+	return gens, nil
+}
+
 func (export *Export) Export(games []*game.Game) error {
 	gameStats := stats.NewGameStats(export.re)
 	generators := []StatsGenerator{
@@ -58,6 +76,13 @@ func (export *Export) Export(games []*game.Game) error {
 		&GameStatsGenerator{
 			get: func() *dataframe.Data { return export.getUsPitchingData(gameStats) },
 		},
+	}
+	if export.League == "" {
+		tg, err := export.tournaments(games)
+		if err != nil {
+			return err
+		}
+		generators = append(generators, tg...)
 	}
 	if export.League != "" {
 		var leagueGames []*game.Game
@@ -83,7 +108,7 @@ func (export *Export) Export(games []*game.Game) error {
 func (export *Export) getUsBattingData(gs *stats.GameStats) *dataframe.Data {
 	dat := gs.GetBattingData()
 	idx := dat.GetIndex()
-	return dat.RFilter(func(row []interface{}) bool {
+	return dat.RFilter(func(row int) bool {
 		team := strings.ToLower(idx.GetValue(row, "Team").(string))
 		return strings.HasPrefix(team, export.Us)
 	})
@@ -92,7 +117,7 @@ func (export *Export) getUsBattingData(gs *stats.GameStats) *dataframe.Data {
 func (export *Export) getUsPitchingData(gs *stats.GameStats) *dataframe.Data {
 	dat := gs.GetPitchingData()
 	idx := dat.GetIndex()
-	return dat.RFilter(func(row []interface{}) bool {
+	return dat.RFilter(func(row int) bool {
 		team := strings.ToLower(idx.GetValue(row, "Team").(string))
 		return strings.HasPrefix(team, export.Us)
 	})
