@@ -246,6 +246,15 @@ func (dat *Data) Append(sdat *Data) {
 	}
 }
 
+func (dat *Data) HasSummary() bool {
+	for _, col := range dat.Columns {
+		if col.Summary != None {
+			return true
+		}
+	}
+	return false
+}
+
 func (dat *Data) String() string {
 	s := &strings.Builder{}
 	if dat.Name != "" {
@@ -256,9 +265,8 @@ func (dat *Data) String() string {
 		fmt.Fprintln(s, text.Center(dat.Name, w))
 	}
 	f := &strings.Builder{}
-	var hasSummaryRow bool
+	hasSummaryRow := dat.HasSummary()
 	for i, col := range dat.Columns {
-		hasSummaryRow = hasSummaryRow || col.Summary != None
 		if i > 0 {
 			s.WriteRune(' ')
 			f.WriteRune(' ')

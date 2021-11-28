@@ -45,7 +45,7 @@ visitorplays:
   - cm22,BX,S1/B.B-1
   - ss16,B,SB2
   - ss16,BBBFFFFFX,E6/G6(TH).B-1
-  - le13,X,4/P.2X3(RINT);B-1(E6)
+  - le13,X,4/P.2X3(RINT);1-2(E6)
   - sk12,X,13
 homeplays:
   - pitcher,cm22

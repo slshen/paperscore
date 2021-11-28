@@ -41,7 +41,7 @@ func (re *ObservedRunExpectancy) Read(g *game.Game) error {
 		for _, state24 := range observed {
 			state24.runs += len(state.ScoringRunners)
 		}
-		index := re.getIndex(state.Outs, state.Runners[0] != "", state.Runners[1] != "", state.Runners[2] != "")
+		index := re.getIndex(state.Outs, GetRunners(state))
 		state24 := re.states[index]
 		observed = append(observed, state24)
 		state24.count++
@@ -78,27 +78,27 @@ func (re *ObservedRunExpectancy) reset() []*stateObservation {
 	return []*stateObservation{nono}
 }
 
-func (re *ObservedRunExpectancy) getIndex(outs int, first, second, third bool) int {
+func (re *ObservedRunExpectancy) getIndex(outs int, runrs Runners) int {
 	index := outs * 8
-	if first {
+	if runrs[2] != '_' {
 		index |= 1
 	}
-	if second {
+	if runrs[1] != '_' {
 		index |= 2
 	}
-	if third {
+	if runrs[0] != '_' {
 		index |= 4
 	}
 	return index
 }
 
-func (re *ObservedRunExpectancy) GetExpectedRuns(outs int, first, second, third bool) float64 {
-	state24 := re.states[re.getIndex(outs, first, second, third)]
+func (re *ObservedRunExpectancy) GetExpectedRuns(outs int, runrs Runners) float64 {
+	state24 := re.states[re.getIndex(outs, runrs)]
 	return state24.getExpectedRuns()
 }
 
-func (re *ObservedRunExpectancy) GetExpectedRunsCount(outs int, first, second, third bool) int {
-	state24 := re.states[re.getIndex(outs, first, second, third)]
+func (re *ObservedRunExpectancy) GetExpectedRunsCount(outs int, runrs Runners) int {
+	state24 := re.states[re.getIndex(outs, runrs)]
 	return state24.count
 }
 

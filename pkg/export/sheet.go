@@ -67,8 +67,15 @@ func (ex *SheetExport) ExportData(data *dataframe.Data) error {
 	data.RApply(func(row int) {
 		values = append(values, data.GetRow(row))
 	})
+	if data.HasSummary() {
+		row := make([]interface{}, len(data.Columns))
+		for i, col := range data.Columns {
+			row[i] = col.GetSummary()
+		}
+		values = append(values, row)
+	}
 	vrange := fmt.Sprintf("%s!A1:%s%d", data.Name, columnLetters(len(data.Columns)-1),
-		data.Columns[0].Len()+1)
+		len(values)+1)
 	log.Default().Printf("Updated values of %s in range %s", data.Name, vrange)
 	_, err = ex.service.Spreadsheets.Values.Update(ex.SpreadsheetID, vrange, &sheets.ValueRange{
 		Values: values,

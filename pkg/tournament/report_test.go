@@ -1,4 +1,4 @@
-package report
+package tournament
 
 import (
 	"fmt"

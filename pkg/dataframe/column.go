@@ -214,6 +214,7 @@ func (col *Column) GetInt(row int) int {
 	}
 	return 0
 }
+
 func (col *Column) GetFloat(row int) float64 {
 	val := col.GetValue(row)
 	if val != nil {

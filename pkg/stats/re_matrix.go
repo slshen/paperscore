@@ -28,7 +28,7 @@ func ReadREMatrix(path string) (RunExpectancy, error) {
 			break
 		}
 		vals := make([]float64, 3)
-		rem[reRunnersKey[len(rem)]] = vals
+		rem[rec[0]] = vals
 		for i, field := range rec[1:4] {
 			vals[i], err = strconv.ParseFloat(strings.TrimSpace(field), 64)
 			if err != nil {
@@ -39,17 +39,7 @@ func ReadREMatrix(path string) (RunExpectancy, error) {
 	return rem, nil
 }
 
-func (rem reMatrix) GetExpectedRuns(outs int, first, second, third bool) float64 {
-	k := []rune{'_', '_', '_'}
-	if first {
-		k[2] = '1'
-	}
-	if second {
-		k[1] = '2'
-	}
-	if third {
-		k[0] = '3'
-	}
-	vals := rem[string(k)]
+func (rem reMatrix) GetExpectedRuns(outs int, runrs Runners) float64 {
+	vals := rem[string(runrs)]
 	return vals[outs]
 }
