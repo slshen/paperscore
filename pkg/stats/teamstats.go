@@ -126,7 +126,11 @@ func (stats *TeamStats) RecordBatting(g *game.Game, state, lastState *game.State
 		runner.RunsScored++
 	}
 	if stats.re != nil {
-		reChange := GetExpectedRuns(stats.re, state) - GetExpectedRuns(stats.re, lastState) + float64(len(state.ScoringRunners))
+		var afterRuns float64
+		if state.Outs != 3 {
+			afterRuns = GetExpectedRuns(stats.re, state)
+		}
+		reChange := afterRuns - GetExpectedRuns(stats.re, lastState) + float64(len(state.ScoringRunners))
 		if state.Play.Is(game.StolenBase, game.CaughtStealing, game.PickedOff) {
 			perRunner := reChange / float64(len(state.Play.Runners))
 			for _, runnerID := range state.Play.Runners {

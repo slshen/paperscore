@@ -13,6 +13,7 @@ import (
 	"github.com/slshen/sb/pkg/game"
 	"github.com/slshen/sb/pkg/playbyplay"
 	"github.com/slshen/sb/pkg/stats"
+	"github.com/slshen/sb/pkg/tournament"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
@@ -22,7 +23,7 @@ func Root() *cobra.Command {
 	root.SilenceUsage = true
 	root.AddCommand(readCommand(), boxCommand(), playByPlayCommand(),
 		statsCommand("batting"), statsCommand("pitching"), reCommand(),
-		exportCommand())
+		exportCommand(), tournamentCommand())
 	return root
 }
 
@@ -270,5 +271,43 @@ func exportCommand() *cobra.Command {
 	c.Flags().StringVar(&us, "us", "", "Our `team`")
 	c.Flags().StringVar(&league, "league", "", "Include only games in `league`")
 	c.Flags().StringVar(&spreadsheetID, "spreadsheet-id", "", "The spreadsheet to use")
+	return c
+}
+
+func tournamentCommand() *cobra.Command {
+	var (
+		us string
+		re reArgs
+	)
+	c := &cobra.Command{
+		Use:   "tournament",
+		Short: "Report on tournament results",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if us == "" {
+				return fmt.Errorf("--us is required")
+			}
+			re, err := re.getRunExpectancy()
+			if err != nil {
+				return err
+			}
+			games, err := game.ReadGameFiles(args)
+			if err != nil {
+				return err
+			}
+			for _, gr := range tournament.GroupByTournament(games) {
+				rep := &tournament.Report{
+					Us:    us,
+					Group: gr,
+				}
+				if err := rep.Run(re); err != nil {
+					return err
+				}
+				fmt.Println(rep.GetBattingData())
+			}
+			return nil
+		},
+	}
+	re.registerFlags(c.Flags())
+	c.Flags().StringVar(&us, "us", "", "Our `team`")
 	return c
 }

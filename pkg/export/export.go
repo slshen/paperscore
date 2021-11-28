@@ -6,8 +6,8 @@ import (
 
 	"github.com/slshen/sb/pkg/dataframe"
 	"github.com/slshen/sb/pkg/game"
-	"github.com/slshen/sb/pkg/report"
 	"github.com/slshen/sb/pkg/stats"
+	"github.com/slshen/sb/pkg/tournament"
 )
 
 type Export struct {
@@ -42,8 +42,8 @@ func NewExport(sheets *SheetExport, re stats.RunExpectancy) (*Export, error) {
 
 func (export *Export) tournaments(games []*game.Game) ([]StatsGenerator, error) {
 	gens := []StatsGenerator{}
-	for _, gr := range report.GroupByTournament(games) {
-		rep := &report.Report{
+	for _, gr := range tournament.GroupByTournament(games) {
+		rep := &tournament.Report{
 			Us:    export.Us,
 			Group: gr,
 		}

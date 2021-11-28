@@ -1,4 +1,4 @@
-package report
+package tournament
 
 import (
 	"strings"
@@ -47,8 +47,9 @@ func (r *Report) GetBattingData() *dataframe.Data {
 		dataframe.Col("LOPH").WithSummary(dataframe.Sum),
 		dataframe.DeriveInts("XBH", func(idx *dataframe.Index, i int) int {
 			return idx.GetInt(i, "Doubles") + idx.GetInt(i, "Triples") + idx.GetInt(i, "HRs")
-		}).WithFormat("%3d"),
+		}).WithFormat("%3d").WithSummary(dataframe.Sum),
 		dataframe.Rename("Walks", "BB").WithSummary(dataframe.Sum),
+		dataframe.Rename("StrikeOuts", "K").WithSummary(dataframe.Sum),
 		dataframe.Col("RE24").WithSummary(dataframe.Average),
 		dataframe.DeriveInts("OBP", obp).WithPCT(),
 		dataframe.DeriveInts("SLG", slg).WithPCT(),
@@ -87,7 +88,7 @@ func (r *Report) GetBattingData() *dataframe.Data {
 				return 100.0 * float64(ab-k) / float64(ab)
 			}
 			return 0
-		}).WithFormat("%4.1f").WithSummary(dataframe.Average),
+		}).WithFormat("%5.1f").WithSummary(dataframe.Average),
 		dataframe.DeriveFloats("LOOK", func(idx *dataframe.Index, i int) float64 {
 			cs := idx.GetInt(i, "CalledStrikes")
 			s := idx.GetInt(i, "Strikes")
@@ -96,6 +97,15 @@ func (r *Report) GetBattingData() *dataframe.Data {
 			}
 			return 0
 		}).WithFormat("%4.1f").WithSummary(dataframe.Average),
+		dataframe.DeriveFloats("SB2%", func(idx *dataframe.Index, i int) (res float64) {
+			sb2 := idx.GetInt(i, "SB2")
+			sb2opp := idx.GetInt(i, "SB2Opp")
+			if sb2opp > 0 {
+				res = 100.0 * float64(sb2) / float64(sb2opp)
+			}
+			return
+		}).WithFormat("%5.1f").WithSummary(dataframe.Average),
+		dataframe.Rename("SB2Opp", "S2O").WithSummary(dataframe.Sum),
 	)
 	idx = dat.GetIndex()
 	dat = dat.RSort(func(r1, r2 int) bool {

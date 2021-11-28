@@ -6,21 +6,40 @@ import (
 )
 
 type RunExpectancy interface {
-	GetExpectedRuns(outs int, first, second, third bool) float64
+	GetExpectedRuns(outs int, runrs Runners) float64
 }
 
 type RunExpectancyCounts interface {
-	GetExpectedRunsCount(outs int, first, second, third bool) int
+	GetExpectedRunsCount(outs int, runrs Runners) int
 }
 
-var reRunnersKey = []string{"___", "__1", "_2_", "_21", "3__", "3_1", "32_", "321"}
+type Runners string
+
+var RunnersValues = []Runners{"___", "__1", "_2_", "_21", "3__", "3_1", "32_", "321"}
+var NoOneOnNoOuts = RunnersValues[0]
+
+func GetRunners(state *game.State) Runners {
+	if state == nil {
+		return NoOneOnNoOuts
+	}
+	k := []rune{'_', '_', '_'}
+	if state.Runners[0] != "" {
+		k[2] = '1'
+	}
+	if state.Runners[1] != "" {
+		k[1] = '2'
+	}
+	if state.Runners[2] != "" {
+		k[0] = '3'
+	}
+	return Runners(k)
+}
 
 func GetExpectedRuns(re RunExpectancy, state *game.State) float64 {
 	if state == nil || state.Outs == 3 {
-		return re.GetExpectedRuns(0, false, false, false)
+		return re.GetExpectedRuns(0, NoOneOnNoOuts)
 	}
-	return re.GetExpectedRuns(state.Outs,
-		state.Runners[0] != "", state.Runners[1] != "", state.Runners[2] != "")
+	return re.GetExpectedRuns(state.Outs, GetRunners(state))
 }
 
 func GetRunExpectancyData(re RunExpectancy) *dataframe.Data {
@@ -43,18 +62,15 @@ func GetRunExpectancyData(re RunExpectancy) *dataframe.Data {
 		_2outCount = &dataframe.Column{Name: "2OutCount"}
 		dat.Columns = append(dat.Columns, _0outCount, _1outCount, _2outCount)
 	}
-	for i := 0; i < 8; i++ {
-		runners.AppendString(reRunnersKey[i])
-		first := (i & 1) != 0
-		second := (i & 2) != 0
-		third := (i & 4) != 0
-		_0out.AppendFloats(re.GetExpectedRuns(0, first, second, third))
-		_1out.AppendFloats(re.GetExpectedRuns(1, first, second, third))
-		_2out.AppendFloats(re.GetExpectedRuns(2, first, second, third))
+	for _, runrs := range RunnersValues {
+		runners.AppendString(string(runrs))
+		_0out.AppendFloats(re.GetExpectedRuns(0, runrs))
+		_1out.AppendFloats(re.GetExpectedRuns(1, runrs))
+		_2out.AppendFloats(re.GetExpectedRuns(2, runrs))
 		if count != nil {
-			_0outCount.AppendInts(count.GetExpectedRunsCount(0, first, second, third))
-			_1outCount.AppendInts(count.GetExpectedRunsCount(1, first, second, third))
-			_2outCount.AppendInts(count.GetExpectedRunsCount(2, first, second, third))
+			_0outCount.AppendInts(count.GetExpectedRunsCount(0, runrs))
+			_1outCount.AppendInts(count.GetExpectedRunsCount(1, runrs))
+			_2outCount.AppendInts(count.GetExpectedRunsCount(2, runrs))
 		}
 	}
 	return dat

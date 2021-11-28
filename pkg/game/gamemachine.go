@@ -504,8 +504,16 @@ func (m *gameMachine) moveRunners() error {
 				m.scoreRun(m.lastState.Runners[from])
 			}
 		case advance.From == "B":
+			if m.state.Runners[to] != "" {
+				return fmt.Errorf("cannot advance runner %s to %d because it's already occupied by %s",
+					m.state.Batter, to+1, m.state.Runners[to])
+			}
 			m.state.Runners[to] = m.state.Batter
 		default:
+			if m.state.Runners[to] != "" {
+				return fmt.Errorf("cannot advance runner %s to %d because it's already occupied by %s",
+					m.lastState.Runners[from], to+1, m.state.Runners[to])
+			}
 			m.state.Runners[to] = m.lastState.Runners[from]
 		}
 	}

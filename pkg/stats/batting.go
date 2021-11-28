@@ -38,19 +38,7 @@ func (b *Batting) Update() {
 
 func (b *Batting) RecordRE24(state *game.State, lastState *game.State, re RunExpectancy) {
 	if state.Complete {
-		runsBefore := GetExpectedRuns(re, lastState)
-		var runsAfter float64
-		if state.Outs != 3 {
-			runsAfter = GetExpectedRuns(re, state)
-		}
-		runsScored := float64(len(state.ScoringRunners))
-		change := runsAfter - runsBefore + runsScored
-		b.RE24 += change
-		/*
-			if m, _ := regexp.MatchString(`^[a-z]`, string(state.Batter)); m {
-				fmt.Printf("%4s %30s : %5.3f - %5.3f + %.0f = % 5.3f % 5.3f\n", state.Batter, state.EventCode, runsAfter, runsBefore, runsScored, change, b.RE24)
-			}
-		*/
+		b.RE24 += getBattingRE24Change(re, state, lastState)
 	}
 }
 

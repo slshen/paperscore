@@ -33,7 +33,7 @@ CalledStrikes
 Strikes
 SB2PitchOpp
 SB2
-SB2Opp
+SB2Opp %3d
 LOPH %4d
 LineDriveOuts
 Inactive
