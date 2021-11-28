@@ -1,32 +1,18 @@
 package stats
 
-import (
-	"fmt"
-	"os"
-	"regexp"
+import "github.com/slshen/sb/pkg/dataframe"
 
-	"github.com/slshen/sb/pkg/game"
-)
-
-var debugRE4 = os.Getenv("DEBUG_RE24") != ""
-
-func getBattingRE24Change(re RunExpectancy, state, lastState *game.State) float64 {
-	runsBefore := GetExpectedRuns(re, lastState)
-	var runsAfter float64
-	if state.Outs < 3 {
-		runsAfter = GetExpectedRuns(re, state)
+func GetBiggestRE24(dat *dataframe.Data, n int) *dataframe.Data {
+	idx := dat.GetIndex()
+	dat = dat.RSort(func(r1, r2 int) bool {
+		return idx.GetFloat(r1, "RE24") > idx.GetFloat(r2, "RE24")
+	})
+	rc := dat.RowCount()
+	if rc > (2*n)+1 {
+		// take top n, bottom n
+		dat = dat.RFilter(func(row int) bool {
+			return row < n || row > (rc-n)
+		})
 	}
-	runsScored := float64(len(state.ScoringRunners))
-	change := runsAfter - runsBefore + runsScored
-	if debugRE4 {
-		var outs int
-		if lastState != nil {
-			outs = lastState.Outs
-		}
-		if m, _ := regexp.MatchString(`^[a-z]`, string(state.Batter)); m {
-			fmt.Printf("%4s %d %s %30s : %5.3f - %5.3f + %.0f = % 5.3f\n",
-				state.Batter, outs, GetRunners(lastState), state.EventCode, runsAfter, runsBefore, runsScored, change)
-		}
-	}
-	return change
+	return dat
 }

@@ -36,12 +36,6 @@ func (b *Batting) Update() {
 	b.LOPH = b.LineDriveOuts + b.Hits
 }
 
-func (b *Batting) RecordRE24(state *game.State, lastState *game.State, re RunExpectancy) {
-	if state.Complete {
-		b.RE24 += getBattingRE24Change(re, state, lastState)
-	}
-}
-
 func (b *Batting) Record(state *game.State) (teamLOB int) {
 	if state.Outs == 3 {
 		lob := 0

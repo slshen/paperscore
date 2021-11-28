@@ -1,6 +1,7 @@
 package tournament
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/slshen/sb/pkg/dataframe"
@@ -29,6 +30,20 @@ func (r *Report) Run(re stats.RunExpectancy) error {
 		}
 	}
 	return nil
+}
+
+func (r *Report) GetBestAndWorstRE24() *dataframe.Data {
+	var dat *dataframe.Data
+	for _, stats := range r.gs.TeamStats {
+		if dat == nil {
+			dat = stats.GetRE24Data()
+		} else {
+			dat.Append(stats.GetRE24Data())
+		}
+	}
+	dat = stats.GetBiggestRE24(dat, 15)
+	dat.Name = fmt.Sprintf("%s Plays", r.Group.Name)
+	return dat
 }
 
 func (r *Report) GetBattingData() *dataframe.Data {

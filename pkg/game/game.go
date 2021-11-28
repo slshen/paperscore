@@ -113,7 +113,12 @@ func ReadGame(path string, in io.Reader) (*Game, error) {
 		g.VisitorTeam = NewTeam(g.Visitor)
 	}
 	if g.ID == "" {
-		g.ID = filepath.Base(path)
+		id := filepath.Base(path)
+		dot := strings.LastIndex(id, ".")
+		if dot > 0 {
+			id = id[0:dot]
+		}
+		g.ID = id
 	}
 	var err error
 	g.date, err = parseGameDate(g.Date)

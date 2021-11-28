@@ -24,9 +24,9 @@ const (
 )
 
 var (
-	emptyInts    = []int{}
-	emptyFloats  = []float64{}
-	emptyStrings = []string{}
+	EmptyInts    = []int{}
+	EmptyFloats  = []float64{}
+	EmptyStrings = []string{}
 )
 
 type Column struct {
@@ -35,6 +35,14 @@ type Column struct {
 	Summary       SummaryType
 	SummaryFormat string
 	Values        interface{}
+}
+
+func NewColumn(name, format string, values interface{}) *Column {
+	return &Column{
+		Name:   name,
+		Format: format,
+		Values: values,
+	}
 }
 
 func (col *Column) GetType() Type {
@@ -53,11 +61,11 @@ func (col *Column) EmptyCopy() *Column {
 	var values interface{}
 	switch col.GetType() {
 	case Int:
-		values = emptyInts
+		values = EmptyInts
 	case Float:
-		values = emptyFloats
+		values = EmptyFloats
 	case String:
-		values = emptyStrings
+		values = EmptyStrings
 	}
 	return &Column{
 		Name:   col.Name,
@@ -111,7 +119,7 @@ func (col *Column) GetInts() []int {
 	if col.Values != nil {
 		return col.Values.([]int)
 	}
-	return emptyInts
+	return EmptyInts
 }
 
 func (col *Column) AppendFloats(values ...float64) {
@@ -122,7 +130,7 @@ func (col *Column) GetFloats() []float64 {
 	if col.Values != nil {
 		return col.Values.([]float64)
 	}
-	return emptyFloats
+	return EmptyFloats
 }
 
 func (col *Column) AppendString(values ...string) {
@@ -133,7 +141,7 @@ func (col *Column) GetStrings() []string {
 	if col.Values != nil {
 		return col.Values.([]string)
 	}
-	return emptyStrings
+	return EmptyStrings
 }
 
 func (col *Column) Len() int {
