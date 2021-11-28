@@ -303,6 +303,7 @@ func tournamentCommand() *cobra.Command {
 					return err
 				}
 				fmt.Println(rep.GetBattingData())
+				fmt.Println(rep.GetBestAndWorstRE24())
 			}
 			return nil
 		},

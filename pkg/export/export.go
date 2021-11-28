@@ -50,9 +50,14 @@ func (export *Export) tournaments(games []*game.Game) ([]StatsGenerator, error) 
 		if err := rep.Run(export.re); err != nil {
 			return nil, err
 		}
-		gens = append(gens, &GameStatsGenerator{
-			get: rep.GetBattingData,
-		})
+		gens = append(gens,
+			&GameStatsGenerator{
+				get: rep.GetBattingData,
+			},
+			&GameStatsGenerator{
+				get: rep.GetBestAndWorstRE24,
+			},
+		)
 	}
 	return gens, nil
 }

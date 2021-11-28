@@ -21,11 +21,6 @@ type Data struct {
 	Columns []*Column
 }
 
-type Index struct {
-	idx  map[string]int
-	data *Data
-}
-
 func FromStructs(name string, values interface{}) (*Data, error) {
 	dat := &Data{
 		Name: name,
@@ -113,14 +108,9 @@ func (dat *Data) Arrange(names []string) {
 }
 
 func (dat *Data) GetIndex() *Index {
-	idx := map[string]int{}
-	for i, col := range dat.Columns {
-		idx[col.Name] = i
-	}
-	return &Index{
-		idx:  idx,
-		data: dat,
-	}
+	idx := &Index{data: dat}
+	idx.Update()
+	return idx
 }
 
 func (dat *Data) RApply(f func(row int)) {
@@ -271,7 +261,7 @@ func (dat *Data) String() string {
 			s.WriteRune(' ')
 			f.WriteRune(' ')
 		}
-		fmt.Fprintf(s, "%*s", col.GetWidth(), text.Center(col.Name, col.GetWidth()))
+		fmt.Fprintf(s, "%s", text.Center(col.Name, col.GetWidth()))
 		f.WriteString(col.GetFormat())
 	}
 	s.WriteRune('\n')
@@ -322,7 +312,7 @@ func (dat *Data) RenderCSV(w io.Writer) error {
 			return
 		}
 		for i, col := range dat.Columns {
-			record[i] = fmt.Sprintf("%v", col.GetValue(row))
+			record[i] = strings.TrimSpace(fmt.Sprintf(col.GetFormat(), col.GetValue(row)))
 		}
 		err = cw.Write(record)
 	})
@@ -383,28 +373,4 @@ func (dat *Data) Select(sels ...Selection) *Data {
 		res.Columns[i] = col
 	}
 	return res
-}
-
-func (idx *Index) GetColumn(name string) *Column {
-	i, ok := idx.idx[name]
-	if ok {
-		return idx.data.Columns[i]
-	}
-	return nil
-}
-
-func (idx *Index) GetValue(row int, name string) interface{} {
-	return idx.GetColumn(name).GetValue(row)
-}
-
-func (idx *Index) GetInt(row int, name string) int {
-	return idx.GetColumn(name).GetInt(row)
-}
-
-func (idx *Index) GetFloat(row int, name string) float64 {
-	return idx.GetColumn(name).GetFloat(row)
-}
-
-func (idx *Index) GetString(row int, name string) string {
-	return idx.GetColumn(name).GetString(row)
 }

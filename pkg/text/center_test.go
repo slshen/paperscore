@@ -8,6 +8,6 @@ import (
 
 func TestCenter(t *testing.T) {
 	assert := assert.New(t)
-	assert.Equal("  ello", Center("ello", 8))
-	assert.Equal(" Hello", Center("Hello", 8))
+	assert.Equal("  ello  ", Center("ello", 8))
+	assert.Equal(" Hello  ", Center("Hello", 8))
 }
