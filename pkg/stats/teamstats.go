@@ -31,10 +31,10 @@ func NewStats(team *game.Team, re RunExpectancy) *TeamStats {
 			dataframe.NewColumn("Rnr", "%3s", dataframe.EmptyStrings),
 			dataframe.NewColumn("Play", "%30s", dataframe.EmptyStrings),
 			dataframe.NewColumn("After", "%5.1f", dataframe.EmptyFloats),
-			dataframe.NewColumn("Befor", "%5.1f", dataframe.EmptyFloats),
+			dataframe.NewColumn("Bfore", "%5.1f", dataframe.EmptyFloats),
 			dataframe.NewColumn("R", "%1d", dataframe.EmptyInts),
 			dataframe.NewColumn("RE24", "% 6.1f", dataframe.EmptyFloats),
-			dataframe.NewColumn("Runners", "%20s", dataframe.EmptyStrings),
+			dataframe.NewColumn("Runners", "%-20s", dataframe.EmptyStrings),
 		},
 	}
 	return &TeamStats{
@@ -236,7 +236,7 @@ func (stats *TeamStats) getRE24Change(gameID string, state, lastState *game.Stat
 	stats.reIdx.GetColumn("Rnr").AppendString(string(GetRunners(lastState)))
 	stats.reIdx.GetColumn("Play").AppendString(state.EventCode)
 	stats.reIdx.GetColumn("After").AppendFloats(runsAfter)
-	stats.reIdx.GetColumn("Befor").AppendFloats(runsBefore)
+	stats.reIdx.GetColumn("Bfore").AppendFloats(runsBefore)
 	stats.reIdx.GetColumn("R").AppendInts(runsScored)
 	stats.reIdx.GetColumn("RE24").AppendFloats(change)
 	runnersStrings := make([]string, len(runners))

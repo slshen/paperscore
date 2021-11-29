@@ -55,7 +55,9 @@ func (export *Export) tournaments(games []*game.Game) ([]StatsGenerator, error) 
 				get: rep.GetBattingData,
 			},
 			&GameStatsGenerator{
-				get: rep.GetBestAndWorstRE24,
+				get: func() *dataframe.Data {
+					return rep.GetBestAndWorstRE24(15)
+				},
 			},
 		)
 	}
