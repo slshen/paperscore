@@ -23,7 +23,7 @@ func Root() *cobra.Command {
 	root.SilenceUsage = true
 	root.AddCommand(readCommand(), boxCommand(), playByPlayCommand(),
 		statsCommand("batting"), statsCommand("pitching"), reCommand(),
-		exportCommand(), tournamentCommand())
+		exportCommand(), tournamentCommand(), reAnalysisCommand())
 	return root
 }
 
@@ -276,8 +276,9 @@ func exportCommand() *cobra.Command {
 
 func tournamentCommand() *cobra.Command {
 	var (
-		us string
-		re reArgs
+		us    string
+		plays int
+		re    reArgs
 	)
 	c := &cobra.Command{
 		Use:   "tournament",
@@ -303,12 +304,37 @@ func tournamentCommand() *cobra.Command {
 					return err
 				}
 				fmt.Println(rep.GetBattingData())
-				fmt.Println(rep.GetBestAndWorstRE24())
+				fmt.Println(rep.GetBestAndWorstRE24(plays))
 			}
 			return nil
 		},
 	}
 	re.registerFlags(c.Flags())
 	c.Flags().StringVar(&us, "us", "", "Our `team`")
+	c.Flags().IntVar(&plays, "plays", 15, "Show the top and bottom `n` plays by RE24")
+	return c
+}
+
+func reAnalysisCommand() *cobra.Command {
+	var (
+		re reArgs
+	)
+	c := &cobra.Command{
+		Use:   "re-analysis",
+		Short: "Analyze run expectancy",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			re, err := re.getRunExpectancy()
+			if err != nil {
+				return err
+			}
+			if re == nil {
+				return fmt.Errorf("no RE specified")
+			}
+			rea := stats.NewREAnalysis(re)
+			fmt.Println(rea.Run())
+			return nil
+		},
+	}
+	re.registerFlags(c.Flags())
 	return c
 }

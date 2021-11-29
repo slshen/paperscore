@@ -8,7 +8,7 @@ func GetBiggestRE24(dat *dataframe.Data, n int) *dataframe.Data {
 		return idx.GetFloat(r1, "RE24") > idx.GetFloat(r2, "RE24")
 	})
 	rc := dat.RowCount()
-	if rc > (2*n)+1 {
+	if n > 0 && rc > (2*n)+1 {
 		// take top n, bottom n
 		dat = dat.RFilter(func(row int) bool {
 			return row < n || row > (rc-n)

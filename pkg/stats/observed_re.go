@@ -8,65 +8,62 @@ import (
 )
 
 type ObservedRunExpectancy struct {
-	states []*stateObservation
+	totals     []*stateObservation
+	inProgress []*stateObservation
 }
 
 var _ RunExpectancy = (*ObservedRunExpectancy)(nil)
 var _ RunExpectancyCounts = (*ObservedRunExpectancy)(nil)
 
 type stateObservation struct {
-	outs  int
 	count int
 	runs  int
 }
 
 func (re *ObservedRunExpectancy) Read(g *game.Game) error {
-	if re.states == nil {
-		re.states = make([]*stateObservation, 24)
+	if re.totals == nil {
+		re.totals = make([]*stateObservation, 24)
+		re.inProgress = make([]*stateObservation, 24)
 		for i := 0; i < 24; i++ {
-			re.states[i] = &stateObservation{
-				outs: i / 8,
-			}
+			re.totals[i] = &stateObservation{}
 		}
+		re.inProgress[0] = &stateObservation{}
 	}
 	states := g.GetStates()
-	observed := re.reset(nil)
 	for _, state := range states {
-		for _, state24 := range observed {
+		for _, state24 := range re.inProgress {
 			if state24 != nil {
 				state24.runs += len(state.ScoringRunners)
 			}
 		}
 		if state.Outs == 3 {
-			observed = re.reset(observed)
+			for i, p := range re.inProgress {
+				if p != nil {
+					re.totals[i].count += p.count
+					re.totals[i].runs += p.runs
+					if i == 0 {
+						re.inProgress[i].count = 1
+						re.inProgress[i].runs = 0
+					} else {
+						re.inProgress[i] = nil
+					}
+				}
+			}
 			continue
 		}
 		index := re.getIndex(state.Outs, GetRunners(state))
-		if observed[index] == nil {
-			observed[index] = &stateObservation{}
+		if re.inProgress[index] == nil {
+			re.inProgress[index] = &stateObservation{}
 		}
-		state24 := observed[index]
-		state24.count++
+		re.inProgress[index].count++
 	}
 	return nil
 }
 
-func (re *ObservedRunExpectancy) reset(observed []*stateObservation) []*stateObservation {
-	for i, obs := range observed {
-		if obs != nil {
-			st := re.states[i]
-			st.count += obs.count
-			st.runs += obs.runs
-		}
-	}
-	res := make([]*stateObservation, 24)
-	res[0] = &stateObservation{
-		count: 1,
-	}
-	return res
-}
-
 func (re *ObservedRunExpectancy) getIndex(outs int, runrs Runners) int {
+	if outs == 3 {
+		return 0
+	}
 	index := outs * 8
 	if runrs[2] != '_' {
 		index |= 1
@@ -81,18 +78,18 @@ func (re *ObservedRunExpectancy) getIndex(outs int, runrs Runners) int {
 }
 
 func (re *ObservedRunExpectancy) GetExpectedRuns(outs int, runrs Runners) float64 {
-	if re.states == nil {
+	if re.totals == nil {
 		return 0
 	}
-	state24 := re.states[re.getIndex(outs, runrs)]
+	state24 := re.totals[re.getIndex(outs, runrs)]
 	return state24.getExpectedRuns()
 }
 
 func (re *ObservedRunExpectancy) GetExpectedRunsCount(outs int, runrs Runners) int {
-	if re.states == nil {
+	if re.totals == nil {
 		return 0
 	}
-	state24 := re.states[re.getIndex(outs, runrs)]
+	state24 := re.totals[re.getIndex(outs, runrs)]
 	return state24.count
 }
 
@@ -106,9 +103,9 @@ func (state24 *stateObservation) getExpectedRuns() (runs float64) {
 func (re *ObservedRunExpectancy) WriteYAML(w io.Writer) error {
 	for i, runrs := range RunnersValues {
 		_, err := fmt.Fprintf(w, "\"%s\": [ %.3f, %.3f, %.3f ]\n", runrs,
-			re.states[i].getExpectedRuns(),
-			re.states[i+8].getExpectedRuns(),
-			re.states[i+16].getExpectedRuns())
+			re.totals[i].getExpectedRuns(),
+			re.totals[i+8].getExpectedRuns(),
+			re.totals[i+16].getExpectedRuns())
 		if err != nil {
 			return err
 		}
