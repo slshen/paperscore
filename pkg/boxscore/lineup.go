@@ -54,9 +54,9 @@ func (lineup *Lineup) PitchingTable() string {
 
 func (lineup *Lineup) ErrorsList() string {
 	s := &strings.Builder{}
-	for i, count := range lineup.ErrorsByPosition {
-		if count > 0 {
-			fmt.Fprintf(s, " E%d:%d", i+1, count)
+	for _, f := range lineup.FieldingByPosition {
+		if f.Errors > 0 {
+			fmt.Fprintf(s, " E%d:%d", f.Position, f.Errors)
 		}
 	}
 	return s.String()

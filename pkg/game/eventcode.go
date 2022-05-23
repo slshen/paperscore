@@ -27,6 +27,18 @@ var fielderNumber = map[string]int{
 	"9": 9,
 }
 
+func (p *eventCodeParser) getFielders(eventFields ...int) []int {
+	res := make([]int, len(eventFields))
+	for i := range res {
+		res[i] = p.getFielder(eventFields[i])
+	}
+	return res
+}
+
+func (p *eventCodeParser) getFielder(eventField int) int {
+	return fielderNumber[p.eventMatches[eventField]]
+}
+
 func (p *eventCodeParser) parseEvent(code string) {
 	m := playRegexp.FindStringSubmatch(code)
 	p.playCode = m[1]

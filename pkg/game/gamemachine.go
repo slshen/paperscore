@@ -181,7 +181,7 @@ func (m *gameMachine) handleEvent() error {
 	case m.eventIs("$"):
 		m.state.Play = &Play{
 			Type:     FlyOut,
-			Fielders: []int{fielderNumber[m.eventMatches[0]]},
+			Fielders: m.getFielders(0),
 		}
 		m.state.recordOut()
 		m.state.Complete = true
@@ -191,8 +191,8 @@ func (m *gameMachine) handleEvent() error {
 		m.state.Play = &Play{
 			Type: GroundOut,
 		}
-		for _, fielder := range m.eventMatches {
-			m.state.Play.Fielders = append(m.state.Play.Fielders, fielderNumber[fielder])
+		for i := range m.eventMatches {
+			m.state.Play.Fielders = append(m.state.Play.Fielders, m.getFielder(i))
 		}
 		m.state.recordOut()
 		m.state.Complete = true
@@ -205,6 +205,12 @@ func (m *gameMachine) handleEvent() error {
 	case m.eventIs("W+WP"):
 		m.state.Play = &Play{
 			Type: WalkWildPitch,
+		}
+		m.impliedAdvance("B-1")
+		m.state.Complete = true
+	case m.eventIs("W+PB"):
+		m.state.Play = &Play{
+			Type: WalkPassedBall,
 		}
 		m.impliedAdvance("B-1")
 		m.state.Complete = true
@@ -244,33 +250,33 @@ func (m *gameMachine) handleEvent() error {
 	case m.eventIs("K2$"):
 		m.state.Play = &Play{
 			Type:     StrikeOut,
-			Fielders: []int{2, fielderNumber[m.eventMatches[0]]},
+			Fielders: []int{2, m.getFielder(0)},
 		}
 		m.state.recordOut()
 		m.state.Complete = true
 	case m.eventIs("K+PB"):
 		m.state.Play = &Play{
-			Type: StrikeOutPassedBall,
+			Type:     StrikeOutPassedBall,
+			Fielders: []int{2},
 		}
 		m.state.Complete = true
 		m.impliedAdvance("B-1")
 	case m.eventIs("K+WP"):
 		m.state.Play = &Play{
-			Type: StrikeOutWildPitch,
+			Type:     StrikeOutWildPitch,
+			Fielders: []int{1},
 		}
 		m.state.Complete = true
 		m.impliedAdvance("B-1")
 	case m.eventIs("S$"):
 		m.state.Play = &Play{
-			Type:     Single,
-			Fielders: []int{fielderNumber[m.eventMatches[0]]},
+			Type: Single,
 		}
 		m.impliedAdvance("B-1")
 		m.state.Complete = true
 	case m.eventIs("D$"):
 		m.state.Play = &Play{
-			Type:     Double,
-			Fielders: []int{fielderNumber[m.eventMatches[0]]},
+			Type: Double,
 		}
 		m.impliedAdvance("B-2")
 		m.state.Complete = true
@@ -282,8 +288,7 @@ func (m *gameMachine) handleEvent() error {
 		m.state.Complete = true
 	case m.eventIs("T$"):
 		m.state.Play = &Play{
-			Type:     Triple,
-			Fielders: []int{fielderNumber[m.eventMatches[0]]},
+			Type: Triple,
 		}
 		m.impliedAdvance("B-3")
 		m.state.Complete = true
@@ -316,6 +321,7 @@ func (m *gameMachine) handleEvent() error {
 		}
 		m.state.Play = &Play{
 			Type:          ReachedOnError,
+			Fielders:      m.getFielders(0),
 			FieldingError: fe,
 		}
 		m.impliedAdvance("B-1")
@@ -324,16 +330,17 @@ func (m *gameMachine) handleEvent() error {
 		m.state.Play = &Play{
 			Type: CatcherInterference,
 			FieldingError: &FieldingError{
-				Fielder: fielderNumber[m.eventMatches[0]],
+				Fielder: m.getFielder(0),
 			},
 		}
 		m.impliedAdvance("B-1")
 		m.state.Complete = true
 	case m.eventIs("PO%(E$)"):
 		m.state.Play = &Play{
-			Type: PickedOff,
+			Type:     PickedOff,
+			Fielders: m.getFielders(1),
 			FieldingError: &FieldingError{
-				Fielder: fielderNumber[m.eventMatches[1]],
+				Fielder: m.getFielder(1),
 			},
 		}
 		m.state.NotOutOnPlay = true
@@ -347,8 +354,9 @@ func (m *gameMachine) handleEvent() error {
 			return fmt.Errorf("cannot pick off in %s - %w", m.playCode, err)
 		}
 		m.state.Play = &Play{
-			Type:    PickedOff,
-			Runners: []PlayerID{runner},
+			Type:     PickedOff,
+			Runners:  []PlayerID{runner},
+			Fielders: m.getFielders(1, 2),
 		}
 		advance := m.state.Advances[from]
 		if advance == nil {
@@ -360,7 +368,8 @@ func (m *gameMachine) handleEvent() error {
 	case m.eventIs("FC$"):
 		// outs are in the advance, if any
 		m.state.Play = &Play{
-			Type: FieldersChoice,
+			Type:     FieldersChoice,
+			Fielders: m.getFielders(0),
 		}
 		m.impliedAdvance("B-1")
 		m.state.Complete = true
@@ -428,12 +437,14 @@ func (m *gameMachine) handleEvent() error {
 			Type:    CaughtStealing,
 			Runners: []PlayerID{runner},
 			Base:    to,
+			//Fielders: ,
 		}
 	case m.eventIs("FLE$"):
 		m.state.Play = &Play{
-			Type: FoulFlyError,
+			Type:     FoulFlyError,
+			Fielders: m.getFielders(0),
 			FieldingError: &FieldingError{
-				Fielder: fielderNumber[m.eventMatches[0]],
+				Fielder: m.getFielder(0),
 			},
 		}
 	case m.eventIs("NP"):

@@ -2,52 +2,32 @@ package stats
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/slshen/sb/pkg/dataframe"
 	"github.com/slshen/sb/pkg/game"
 )
 
 type TeamStats struct {
-	Batting          map[game.PlayerID]*Batting
-	Pitching         map[game.PlayerID]*Pitching
-	LOB              int
-	Batters          []game.PlayerID
-	Pitchers         []game.PlayerID
-	Errors           int
-	ErrorsByPosition []int `yaml:",flow"`
-	Team             *game.Team
-
-	re    RunExpectancy
-	reIdx *dataframe.Index
+	Batting  map[game.PlayerID]*Batting
+	Pitching map[game.PlayerID]*Pitching
+	*FieldingStats
+	LOB      int
+	Batters  []game.PlayerID
+	Pitchers []game.PlayerID
+	Team     *game.Team
+	*ExcessRunsAllowed
 }
 
 func NewStats(team *game.Team, re RunExpectancy) *TeamStats {
-	reDat := &dataframe.Data{
-		Columns: []*dataframe.Column{
-			dataframe.NewColumn("Game", "%10s", dataframe.EmptyStrings),
-			dataframe.NewColumn("ID", "%4s", dataframe.EmptyStrings),
-			dataframe.NewColumn("O", "%1d", dataframe.EmptyInts),
-			dataframe.NewColumn("Rnr", "%3s", dataframe.EmptyStrings),
-			dataframe.NewColumn("Play", "%30s", dataframe.EmptyStrings),
-			dataframe.NewColumn("After", "%5.1f", dataframe.EmptyFloats),
-			dataframe.NewColumn("Bfore", "%5.1f", dataframe.EmptyFloats),
-			dataframe.NewColumn("R", "%1d", dataframe.EmptyInts),
-			dataframe.NewColumn("RE24", "% 6.1f", dataframe.EmptyFloats),
-			dataframe.NewColumn("Runners", "%-20s", dataframe.EmptyStrings),
-		},
-	}
 	return &TeamStats{
-		Team:     team,
-		re:       re,
-		reIdx:    reDat.GetIndex(),
+		Team:          team,
+		FieldingStats: newFieldingStats(),
+		ExcessRunsAllowed: &ExcessRunsAllowed{
+			re: re,
+		},
 		Batting:  make(map[game.PlayerID]*Batting),
 		Pitching: make(map[game.PlayerID]*Pitching),
 	}
-}
-
-func (stats *TeamStats) GetRE24Data() *dataframe.Data {
-	return stats.reIdx.GetData()
 }
 
 func (stats *TeamStats) GetPitchingData() *dataframe.Data {
@@ -64,14 +44,6 @@ func (stats *TeamStats) GetPitchingData() *dataframe.Data {
 	return dat
 }
 
-func (stats *TeamStats) recordError(e *game.FieldingError) {
-	for len(stats.ErrorsByPosition) < e.Fielder {
-		stats.ErrorsByPosition = append(stats.ErrorsByPosition, 0)
-	}
-	stats.ErrorsByPosition[e.Fielder-1]++
-	stats.Errors++
-}
-
 func (stats *TeamStats) GetBattingData() *dataframe.Data {
 	dat := newData("BAT")
 	var idx *dataframe.Index
@@ -86,11 +58,11 @@ func (stats *TeamStats) GetBattingData() *dataframe.Data {
 	return dat
 }
 
-func (stats *TeamStats) RecordBatting(g *game.Game, state, lastState *game.State) {
+func (stats *TeamStats) RecordBatting(g *game.Game, state, lastState *game.State, reChange float64) {
 	batting := stats.GetBatting(state.Batter)
 	stats.LOB += batting.Record(state)
-	if stats.re != nil && state.Complete {
-		batting.RE24 += stats.getRE24Change(g.ID, state, lastState, nil)
+	if state.Complete {
+		batting.RE24 += reChange
 	}
 	batting.GameAppearances[g.ID] = true
 	switch state.Play.Type {
@@ -146,7 +118,7 @@ func (stats *TeamStats) RecordBatting(g *game.Game, state, lastState *game.State
 		runner := stats.GetBatting(runnerID)
 		runner.RunsScored++
 	}
-	if stats.re != nil {
+	if reChange != 0 {
 		var runners []game.PlayerID
 		if state.Play.Is(game.StolenBase, game.CaughtStealing, game.PickedOff) {
 			runners = state.Play.Runners
@@ -158,7 +130,6 @@ func (stats *TeamStats) RecordBatting(g *game.Game, state, lastState *game.State
 			}
 		}
 		if len(runners) > 0 {
-			reChange := stats.getRE24Change(g.ID, state, lastState, runners)
 			perRunner := reChange / float64(len(runners))
 			for _, runnerID := range runners {
 				runner := stats.GetBatting(runnerID)
@@ -216,33 +187,5 @@ func (stats *TeamStats) RecordFielding(g *game.Game, state, lastState *game.Stat
 			stats.recordError(adv.FieldingError)
 		}
 	}
-}
-
-func (stats *TeamStats) getRE24Change(gameID string, state, lastState *game.State, runners []game.PlayerID) float64 {
-	runsBefore := GetExpectedRuns(stats.re, lastState)
-	var runsAfter float64
-	if state.Outs < 3 {
-		runsAfter = GetExpectedRuns(stats.re, state)
-	}
-	runsScored := len(state.ScoringRunners)
-	change := runsAfter - runsBefore + float64(runsScored)
-	var outs int
-	if lastState != nil {
-		outs = lastState.Outs
-	}
-	stats.reIdx.GetColumn("Game").AppendString(gameID)
-	stats.reIdx.GetColumn("ID").AppendString(string(state.Batter))
-	stats.reIdx.GetColumn("O").AppendInts(outs)
-	stats.reIdx.GetColumn("Rnr").AppendString(string(GetRunners(lastState)))
-	stats.reIdx.GetColumn("Play").AppendString(state.EventCode)
-	stats.reIdx.GetColumn("After").AppendFloats(runsAfter)
-	stats.reIdx.GetColumn("Bfore").AppendFloats(runsBefore)
-	stats.reIdx.GetColumn("R").AppendInts(runsScored)
-	stats.reIdx.GetColumn("RE24").AppendFloats(change)
-	runnersStrings := make([]string, len(runners))
-	for i := range runners {
-		runnersStrings[i] = string(runners[i])
-	}
-	stats.reIdx.GetColumn("Runners").AppendString(strings.Join(runnersStrings, " "))
-	return change
+	stats.ExcessRunsAllowed.record(state, lastState)
 }

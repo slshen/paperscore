@@ -22,7 +22,7 @@ func TestRE24(t *testing.T) {
 	}
 	assert.NotNil(GetRunExpectancyData(re))
 	for outs := 0; outs < 3; outs++ {
-		for _, runrs := range RunnersValues {
+		for _, runrs := range OccupedBasesValues {
 			assert.Greater(re.GetExpectedRuns(outs, runrs), 0.0)
 		}
 	}

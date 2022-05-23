@@ -39,7 +39,7 @@ func ReadREMatrix(path string) (RunExpectancy, error) {
 	return rem, nil
 }
 
-func (rem reMatrix) GetExpectedRuns(outs int, runrs Runners) float64 {
+func (rem reMatrix) GetExpectedRuns(outs int, runrs OccupiedBases) float64 {
 	vals := rem[string(runrs)]
 	return vals[outs]
 }

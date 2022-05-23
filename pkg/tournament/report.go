@@ -33,14 +33,7 @@ func (r *Report) Run(re stats.RunExpectancy) error {
 }
 
 func (r *Report) GetBestAndWorstRE24(n int) *dataframe.Data {
-	var dat *dataframe.Data
-	for _, stats := range r.gs.TeamStats {
-		if dat == nil {
-			dat = stats.GetRE24Data()
-		} else {
-			dat.Append(stats.GetRE24Data())
-		}
-	}
+	dat := r.gs.GetRE24Data()
 	dat = stats.GetBiggestRE24(dat, n)
 	dat.Name = fmt.Sprintf("%s Plays", r.Group.Name)
 	return dat

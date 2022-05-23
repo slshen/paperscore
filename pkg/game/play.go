@@ -11,6 +11,7 @@ const (
 	HitByPitch
 	Walk
 	WalkWildPitch
+	WalkPassedBall
 	StolenBase
 	PickedOff
 	CatcherInterference

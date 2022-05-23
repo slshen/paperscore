@@ -13,6 +13,7 @@ import (
 type Export struct {
 	Us     string
 	League string
+	DryRun bool
 	sheets *SheetExport
 	re     stats.RunExpectancy
 }
@@ -105,6 +106,10 @@ func (export *Export) Export(games []*game.Game) error {
 	}
 	for _, gen := range generators {
 		data := gen.GetData()
+		if export.DryRun {
+			fmt.Println(data)
+			continue
+		}
 		if err := export.sheets.ExportData(data); err != nil {
 			return err
 		}

@@ -6,21 +6,30 @@ import (
 )
 
 type RunExpectancy interface {
-	GetExpectedRuns(outs int, runrs Runners) float64
+	GetExpectedRuns(outs int, runrs OccupiedBases) float64
 }
 
 type RunExpectancyCounts interface {
-	GetExpectedRunsCount(outs int, runrs Runners) int
+	GetExpectedRunsCount(outs int, runrs OccupiedBases) int
 }
 
-type Runners string
+type OccupiedBases string
 
-var RunnersValues = []Runners{"___", "__1", "_2_", "_21", "3__", "3_1", "32_", "321"}
-var NoOneOnNoOuts = RunnersValues[0]
+var (
+	OccupedBasesValues      = []OccupiedBases{"___", "__1", "_2_", "_21", "3__", "3_1", "32_", "321"}
+	BasesEmpty              = OccupedBasesValues[0]
+	RunnerOnFirst           = OccupedBasesValues[1]
+	RunnerOnSecond          = OccupedBasesValues[2]
+	RunnerOnFirstAndSecond  = OccupedBasesValues[3]
+	RunnerOnThird           = OccupedBasesValues[4]
+	RunnersOnFirstAndThird  = OccupedBasesValues[5]
+	RunnersOnSecondAndThird = OccupedBasesValues[6]
+	BasesLoaded             = OccupedBasesValues[7]
+)
 
-func GetRunners(state *game.State) Runners {
+func GetOccupiedBases(state *game.State) OccupiedBases {
 	if state == nil {
-		return NoOneOnNoOuts
+		return BasesEmpty
 	}
 	k := []rune{'_', '_', '_'}
 	if state.Runners[0] != "" {
@@ -32,14 +41,14 @@ func GetRunners(state *game.State) Runners {
 	if state.Runners[2] != "" {
 		k[0] = '3'
 	}
-	return Runners(k)
+	return OccupiedBases(k)
 }
 
 func GetExpectedRuns(re RunExpectancy, state *game.State) float64 {
 	if state == nil || state.Outs == 3 {
-		return re.GetExpectedRuns(0, NoOneOnNoOuts)
+		return re.GetExpectedRuns(0, BasesEmpty)
 	}
-	return re.GetExpectedRuns(state.Outs, GetRunners(state))
+	return re.GetExpectedRuns(state.Outs, GetOccupiedBases(state))
 }
 
 func GetRunExpectancyData(re RunExpectancy) *dataframe.Data {
@@ -62,7 +71,7 @@ func GetRunExpectancyData(re RunExpectancy) *dataframe.Data {
 		_2outCount = &dataframe.Column{Name: "2OutCount"}
 		dat.Columns = append(dat.Columns, _0outCount, _1outCount, _2outCount)
 	}
-	for _, runrs := range RunnersValues {
+	for _, runrs := range OccupedBasesValues {
 		runners.AppendString(string(runrs))
 		_0out.AppendFloats(re.GetExpectedRuns(0, runrs))
 		_1out.AppendFloats(re.GetExpectedRuns(1, runrs))

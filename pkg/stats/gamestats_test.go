@@ -24,4 +24,5 @@ func TestGameStats(t *testing.T) {
 	}
 	assert.NotNil(gs.GetBattingData())
 	assert.NotNil(gs.GetPitchingData())
+	assert.NotNil(gs.GetXRAData())
 }

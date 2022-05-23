@@ -72,6 +72,8 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 		case game.Walk:
 			fallthrough
 		case game.WalkWildPitch:
+			fallthrough
+		case game.WalkPassedBall:
 			b.Walks++
 		case game.GroundOut:
 			b.GroundOuts++
@@ -88,7 +90,7 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 		case game.StrikeOutWildPitch:
 			b.ReachedOnK++
 		}
-		if !(state.Play.Is(game.Walk, game.HitByPitch, game.WalkWildPitch, game.CatcherInterference) ||
+		if !(state.Play.Is(game.Walk, game.HitByPitch, game.WalkWildPitch, game.WalkPassedBall, game.CatcherInterference) ||
 			(state.Play.Type == game.ReachedOnError && state.Modifiers.Contains(game.Obstruction)) ||
 			state.Modifiers.Contains(game.SacrificeFly, game.SacrificeHit)) {
 			b.AB++
@@ -99,7 +101,7 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 				b.LineDriveOuts++
 			}
 		}
-		if state.Play.Hit() || state.Play.Is(game.Walk, game.WalkWildPitch, game.HitByPitch) {
+		if state.Play.Hit() || state.Play.Is(game.Walk, game.WalkWildPitch, game.WalkPassedBall, game.HitByPitch) {
 			b.OnBase++
 		}
 		if state.Modifiers.Contains(game.SacrificeHit) {

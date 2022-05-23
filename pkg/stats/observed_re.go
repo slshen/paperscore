@@ -51,7 +51,7 @@ func (re *ObservedRunExpectancy) Read(g *game.Game) error {
 			}
 			continue
 		}
-		index := re.getIndex(state.Outs, GetRunners(state))
+		index := re.getIndex(state.Outs, GetOccupiedBases(state))
 		if re.inProgress[index] == nil {
 			re.inProgress[index] = &stateObservation{}
 		}
@@ -60,7 +60,7 @@ func (re *ObservedRunExpectancy) Read(g *game.Game) error {
 	return nil
 }
 
-func (re *ObservedRunExpectancy) getIndex(outs int, runrs Runners) int {
+func (re *ObservedRunExpectancy) getIndex(outs int, runrs OccupiedBases) int {
 	if outs == 3 {
 		return 0
 	}
@@ -77,7 +77,7 @@ func (re *ObservedRunExpectancy) getIndex(outs int, runrs Runners) int {
 	return index
 }
 
-func (re *ObservedRunExpectancy) GetExpectedRuns(outs int, runrs Runners) float64 {
+func (re *ObservedRunExpectancy) GetExpectedRuns(outs int, runrs OccupiedBases) float64 {
 	if re.totals == nil {
 		return 0
 	}
@@ -85,7 +85,7 @@ func (re *ObservedRunExpectancy) GetExpectedRuns(outs int, runrs Runners) float6
 	return state24.getExpectedRuns()
 }
 
-func (re *ObservedRunExpectancy) GetExpectedRunsCount(outs int, runrs Runners) int {
+func (re *ObservedRunExpectancy) GetExpectedRunsCount(outs int, runrs OccupiedBases) int {
 	if re.totals == nil {
 		return 0
 	}
@@ -101,7 +101,7 @@ func (state24 *stateObservation) getExpectedRuns() (runs float64) {
 }
 
 func (re *ObservedRunExpectancy) WriteYAML(w io.Writer) error {
-	for i, runrs := range RunnersValues {
+	for i, runrs := range OccupedBasesValues {
 		_, err := fmt.Fprintf(w, "\"%s\": [ %.3f, %.3f, %.3f ]\n", runrs,
 			re.totals[i].getExpectedRuns(),
 			re.totals[i+8].getExpectedRuns(),

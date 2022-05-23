@@ -12,6 +12,7 @@ type GameStats struct {
 	TeamStats map[string]*TeamStats
 	RE        RunExpectancy
 
+	red   *REData
 	teams map[string]*game.Team
 }
 
@@ -19,6 +20,7 @@ func NewGameStats(re RunExpectancy) *GameStats {
 	return &GameStats{
 		TeamStats: make(map[string]*TeamStats),
 		RE:        re,
+		red:       NewREData(re),
 		teams:     make(map[string]*game.Team),
 	}
 }
@@ -39,7 +41,12 @@ func (gs *GameStats) Read(g *game.Game) error {
 		battingTeamStats := gs.GetStats(battingTeam)
 		fieldingTeamStats := gs.GetStats(fieldingTeam)
 		lastState := getLastState(states, i)
-		battingTeamStats.RecordBatting(g, state, lastState)
+		var advances game.Advances
+		if !state.Complete {
+			advances = state.Advances
+		}
+		reChange := gs.red.Record(g.ID, state, lastState, advances)
+		battingTeamStats.RecordBatting(g, state, lastState, reChange)
 		fieldingTeamStats.RecordFielding(g, state, lastState)
 	}
 	return nil
@@ -81,6 +88,18 @@ func (gs *GameStats) GetPitchingData() *dataframe.Data {
 	})
 }
 
+func (gs *GameStats) GetXRAData() *dataframe.Data {
+	var dat *dataframe.Data
+	for _, stats := range gs.TeamStats {
+		if dat == nil {
+			dat = stats.GetXRAData()
+		} else {
+			dat.Append(stats.GetXRAData())
+		}
+	}
+	return dat
+}
+
 func comparePlayers(idx *dataframe.Index, r1, r2 int) bool {
 	n1 := fmt.Sprintf("%v/%v", idx.GetValue(r1, "Team"), idx.GetValue(r1, "Name"))
 	n2 := fmt.Sprintf("%v/%v", idx.GetValue(r2, "Team"), idx.GetValue(r2, "Name"))
@@ -93,6 +112,10 @@ func (gs *GameStats) GetBattingData() *dataframe.Data {
 
 func (gs *GameStats) GetAllBattingData() *dataframe.Data {
 	return gs.getBattingData(true)
+}
+
+func (gs *GameStats) GetRE24Data() *dataframe.Data {
+	return gs.red.GetData()
 }
 
 func (gs *GameStats) getBattingData(includeInactiveBatters bool) *dataframe.Data {

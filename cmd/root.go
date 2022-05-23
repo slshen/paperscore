@@ -230,6 +230,7 @@ func exportCommand() *cobra.Command {
 		us            string
 		league        string
 		spreadsheetID string
+		dryRun        bool
 		re            reArgs
 	)
 	c := &cobra.Command{
@@ -255,6 +256,7 @@ func exportCommand() *cobra.Command {
 				return err
 			}
 			export, err := export.NewExport(sheets, re)
+			export.DryRun = dryRun
 			if err != nil {
 				return err
 			}
@@ -271,6 +273,7 @@ func exportCommand() *cobra.Command {
 	c.Flags().StringVar(&us, "us", "", "Our `team`")
 	c.Flags().StringVar(&league, "league", "", "Include only games in `league`")
 	c.Flags().StringVar(&spreadsheetID, "spreadsheet-id", "", "The spreadsheet to use")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "Print the sheets instead of uploading them")
 	return c
 }
 

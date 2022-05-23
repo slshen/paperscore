@@ -78,6 +78,8 @@ func (p *Pitching) Record(state *game.State, lastState *game.State) {
 				p.StrikeOutsLooking++
 			}
 		case game.Walk:
+			fallthrough
+		case game.WalkPassedBall:
 			p.Walks++
 		case game.WalkWildPitch:
 			p.Walks++
