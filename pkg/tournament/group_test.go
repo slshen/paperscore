@@ -10,7 +10,7 @@ import (
 
 func TestGroupBy(t *testing.T) {
 	assert := assert.New(t)
-	gs, err := game.ReadGamesDir("../../data")
+	gs, err := game.ReadGamesDir("../../data/2021")
 	assert.NoError(err)
 	grs := GroupByTournament(gs)
 	for _, gr := range grs {

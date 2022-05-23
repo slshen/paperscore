@@ -16,7 +16,7 @@ func TestLoad(t *testing.T) {
 		"20210912-3.yaml", "20210911-3.yaml", "20211009-1.yaml", "20210911-1.yaml",
 		"20210925-3.yaml", "20210926-1.yaml", "20210925-2.yaml",
 	} {
-		g, err := ReadGameFile(filepath.Join("../../data", f))
+		g, err := ReadGameFile(filepath.Join("../../data/2021", f))
 		assert.NoError(err, f)
 		if assert.NotNil(g) {
 			// assert.Greater(len(g.VisitorPlays), 10)

@@ -53,6 +53,9 @@ func (stats *ExcessRunsAllowed) record(state, lastState *game.State) {
 }
 
 func (stats *ExcessRunsAllowed) getCounterfactualState(state, lastState *game.State) *Counterfactual {
+	if state == nil || lastState == nil {
+		return nil
+	}
 	switch state.Play.Type {
 	case game.StrikeOutPassedBall:
 		fallthrough
@@ -88,7 +91,8 @@ func (stats *ExcessRunsAllowed) getCounterfactualState(state, lastState *game.St
 					cf.OccupiedBases = RunnerOnSecond
 				}
 			default:
-				panic("can't handle " + state.EventCode)
+				// panic("can't handle " + state.EventCode)
+				return nil
 			}
 		}
 		return cf
@@ -130,11 +134,4 @@ func (stats *ExcessRunsAllowed) GetXRAData() *dataframe.Data {
 			{Name: "XRA", Values: dataframe.EmptyFloats},
 		},
 	}
-}
-
-func minint(i, j int) int {
-	if i < j {
-		return i
-	}
-	return j
 }

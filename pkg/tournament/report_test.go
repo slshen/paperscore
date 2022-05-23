@@ -13,7 +13,7 @@ func TestReport(t *testing.T) {
 	assert := assert.New(t)
 	re, err := stats.ReadREMatrix("../../data/tweaked_re.csv")
 	assert.NoError(err)
-	gs, err := game.ReadGamesDir("../../data")
+	gs, err := game.ReadGamesDir("../../data/2021")
 	assert.NoError(err)
 	grs := GroupByTournament(gs)
 	for _, gr := range grs {

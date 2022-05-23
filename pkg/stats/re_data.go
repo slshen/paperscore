@@ -68,7 +68,6 @@ func (red *REData) Record(gameID string, state, lastState *game.State, advances 
 		if adv != nil {
 			runnersStrings = append(runnersStrings, string(adv.Runner))
 		}
-
 	}
 	red.runners.AppendString(strings.Join(runnersStrings, " "))
 	return change

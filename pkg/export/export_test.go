@@ -25,7 +25,7 @@ func TestExport(t *testing.T) {
 		return
 	}
 	export.Us = "pride"
-	files := []string{"../../data/20211017-1.yaml"}
+	files := []string{"../../data/2021/20211017-1.yaml"}
 	games, err := game.ReadGameFiles(files)
 	if !assert.NoError(err) {
 		return
