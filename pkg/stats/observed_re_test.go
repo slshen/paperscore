@@ -11,7 +11,7 @@ import (
 func TestRE24(t *testing.T) {
 	assert := assert.New(t)
 	re := &ObservedRunExpectancy{}
-	files, err := filepath.Glob("../../data/2021*.yaml")
+	files, err := filepath.Glob("../../data/2021/2021*.yaml")
 	if !assert.NoError(err) {
 		return
 	}

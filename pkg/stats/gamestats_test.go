@@ -11,7 +11,7 @@ import (
 func TestGameStats(t *testing.T) {
 	assert := assert.New(t)
 	gs := NewGameStats(nil)
-	files, err := filepath.Glob("../../data/2021*.yaml")
+	files, err := filepath.Glob("../../data/2021/2021*.yaml")
 	if !assert.NoError(err) {
 		return
 	}
