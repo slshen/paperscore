@@ -1,0 +1,79 @@
+date: 5/21/22
+game: 1
+visitor: Pride J/F
+visitorid: pride-2022
+home: Firecrackers Everett Parry
+start: 7:53AM
+timelimit: 80m
+tournament: PGF Best on Dirt
+league: PGF
+visitorplays:
+  - pitcher,2
+  - as7,CSFS,K
+  - ah26,FBSBX,163/G1
+  - mj18,X,D8/L8
+  - ms11,BFFBX,9/L9
+  - inn,0
+  - kg2,BFBSX,S9/G9
+  - mc25,BBFBCFX,E4/G4.B-1;1-2
+  - rv10,CBCBX,9/F9/SF.1-2;2-3
+  - le13,FCS,K
+  - kn21,BSSBFC,K
+  - inn,0
+  - as7,BX,4/P4
+  - ah26,BFCS,K
+  - mj18,BBBB,W.B-1
+  - ms11,X,E7/F7.B-2;1-H
+  - kg2,BSBFX,4/P4
+  - inn,1
+  - mc25,X,8/F8
+  - rv10,X,DGR/P3P.B-2
+  - le13,X,S9/L9.B-2;2-H
+  - kn21,BSBB,WP.2-3
+  - kn21,BSBBSB,W.B-1
+  - as7,X,S7/P6D.B-1;1-2;3-H
+  - ah26,FX,S7/F7S.B-1;1-2;2-H
+  - mj18,BX,6/P1/IFR
+  - ms11,BFBCB,S8/L89.B-1;1-3;2-H
+  - kg2,B,WP.1-2
+  - kg2,BB,WP.2-3;3-H
+  - kg2,BBFX,S8/L8.B-1;3-H
+  - mc25,CX,6/L6
+  - final,7
+homeplays:
+  - pitcher,ms11
+  - 48,SCX,8/F8
+  - 6,CFBX,43/G4
+  - 11,BFCFX,53/G5
+  - inn,0
+  - 00,X,13/G1
+  - 9,CBBFC,K
+  - 2,BFX,E6/G6.B-3
+  - 99,CH,HP.B-1
+  - 13,B,SB2
+  - 13,BBX,43/G4
+  - inn,0
+  - 7,SBBBB,W.B-1
+  - 1,SSB,PB.1-2
+  - 1,SSBBS,K
+  - 3,FX,63/G6.2-3
+  - 48,X,S7/G6.B-2(E7);3-H
+  - 6,BSCBS,K
+  - inn,1
+  - 11,FBBX,S8/L78
+  - 00,FFFB,SB2
+  - 00,FFFBFX,S8/L78.B-1;2-H
+  - 9,B,SB2
+  - 9,BBFBX,S9/G43.B-1;2-H
+  - 2,B,SB2
+  - 2,BCX,S8/G6.B-1;2-3
+  - 99,B,SB2.1-2;3-H
+  - 99,BX,8/F8/S.2-3
+  - 13,CS,PB.3-H
+  - 13,CSFS,K
+  - 7,X,E1/G1/TH.B-1
+  - 1,BSBBB,W.B-1;1-2
+  - 3,FX,E9/F9.B-3;1-H;2-H
+  - 48,BX,E6/G6.B-1;3-H,time expires
+  - final,8
+

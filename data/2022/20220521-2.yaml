@@ -1,0 +1,81 @@
+date: 5/21/22
+game: 2
+visitor: Pride J/F
+visitorid: pride-2022
+home: Valley Kids
+start: 9:30A
+timelimit: 80m
+tournament: PGF Best on Dirt
+league: PGF
+visitorplays:
+  - pitcher,23
+  - as7,BX,D9/L9
+  - ah26,SC,S2/G1.B-1;2-3
+  - mj18,BFBFB,WP.1-2
+  - mj18,BFBFBX,E4/G4.B-1;2-3;3-H
+  - ms11,B,SB2
+  - ms11,BBFBX,4/P4
+  - kg2,CFX,6/P6,nice catch
+  - mc25,FBX,53/G5
+  - inn,1
+  - rv10,BBCFX,E4/G4.B-1
+  - le13,SBFX,S6/G6.B-1;1-2
+  - kn21,BFS,SB2;SB3
+  - kn21,BFSC,K
+  - as7,FFX,S6/G6.B-2(E6/TH);2-3;3-H
+  - ah26,BBFSFBFB,W
+  - mj18,BCX,5(B)5(3)/LDP
+  - inn,2
+  - ms11,FFBS,K
+  - kg2,CBBCFX,5/P5
+  - mc25,BFBX,43/G4
+  - inn,2
+  - rv10,BBBCSX,3/G3,nice play
+  - le13,X,S5/G5/B,bunt!
+  - kn21,BBFBFB,W.B-1;1-2
+  - as7,X,FC6/G6.B-1;1-3(E6);2-H
+  - ah26,X,S1/G1.B-1;1-H;3-H
+  - mj18,BCX,S7/L.B-1;1-2
+  - ms11,FSBFBBFB,W.B-1;1-2;2-3
+  - kg2,X,S8/G8.B-3(E4);1-H(E8);2-H;3-H
+  - pitcher,20
+  - mc25,BBFBB,W.B-1
+  - rv10,X,8/F8/SF.3-H
+  - le13,FFBX,63/G6
+  - inn,9
+  - kn21,CCBBC,K
+  - as7,CX,2/B/RINT,tripped out of the box
+  - ah26,BBX,D7/F78
+  - mj18,FBX,H.B-H;2-H
+  - ms11,SFBFB,E7/F7.B-2
+  - kg2,X,63/G6
+  - final,11
+homeplays:
+  - pitcher,ms11
+  - 00,FX,6/P6
+  - 1,FFFBFBX,3/G3
+  - 8,BX,S9/L89
+  - 23,FFS,K
+  - inn,0
+  - 23,FFBS,K+WP.B-1
+  - 2,X,4/P4
+  - 3,BBX,3/G3.1-H(E3/TH)
+  - 42,CBX,E6/G6.B-1
+  - 28,BSB,SB2
+  - 28,BSBX,S3/P3D.B-1;2-H
+  - 7,SCBS,K
+  - inn,2
+  - 20,BCX,53/G5
+  - 00,FBBBX,34/G3
+  - 1,BX,6/P6
+  - inn,2
+  - 8,BBCBX,8/F8
+  - 23,CBX,4/P4,nice catch
+  - 5,BBX,3/G6
+  - inn,2
+  - 2,FBX,D9/F9S,no talking
+  - 3,SFS,K
+  - 42,BBX,S6/P5D.B-1
+  - 28,CX,6/P6/IFR
+  - 7,BX,34/G3
+  - final,2

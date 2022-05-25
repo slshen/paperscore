@@ -1,0 +1,69 @@
+date: 5/22/22
+game: 1
+visitor: Pride J/F
+visitorid: pride-2022
+home: Chico Black Attack
+start: 7:53A
+timelimit: 80m
+tournament: PGF Best on Dirt
+league: PGF
+visitorplays:
+  - pitcher,55
+  - mf17,CBBBB,W.B-1
+  - ah26,X,1(B)13(1)/LDP
+  - mj18,CBX,63/G6
+  - inn,0
+  - ms11,SBX,S8/F8,lost in sun
+  - kg2,CFBX,FC6.BX1(RINT);1X2(64),no slide-breakup DP
+  - bj00,SFS,K
+  - inn,0
+  - le13,BBBX,S8/L8.B-1
+  - rv10,BX,D8/F8D.B-2;1-H
+  - as7,X,43/G4.2-3
+  - mf17,BX,E5/G5/TH.B-1;3-H
+  - ah26,C,SB2
+  - ah26,CSX,DGR/G7.B-2;2-H
+  - mj18,CBX,53/G5.2-3
+  - ms11,X,S7/G7.B-1;3-H
+  - kg2,B,PO1(E2).1-2
+  - kg2,BBX,S7/F78.B-1;2-3
+  - bj00,CFS,K
+  - inn,4
+  - le13,BX,53/G5
+  - rv10,BSB,S8/F8S
+  - as7,BX,FC4/P4.B-1;1-2(E4/TH)
+  - mf17,BBBCX,3(B)3(1)/LDP
+  - inn,4
+  - ah26,FX,E6/G6.B-1
+  - mj18,SBCFX,3/P3,nice catch
+  - ms11,SBX,D7/L78.B-2;1-H
+  - kg2,SX,S8/G8.B-3(E6/TH);2-H
+  - mc25,CBX,S9/G4.B-1;3-H
+  - le13,BB,SB2
+  - le13,BBFBX,43/G4.2-3
+  - rv10,CBFFX,S8/F89.B-1;3-H
+  - as7,FCFFX,6/P6
+  - final,8
+homeplays:
+  - pitcher,ms11
+  - 55,FBX,3/G3
+  - 6,BBSSBS,K23
+  - 8,FCFBBFX,E5/G5
+  - 3,X,53/G5
+  - inn,0
+  - 4,X,8/F8
+  - 2,SSS,K
+  - 22,BFBBB,W
+  - 15,BFFBFX,S8/L8.B-1;1-2
+  - 30,BBSCS,K
+  - inn,0
+  - 3,CBBBFS,K23
+  - 4,X,53/G5
+  - 2,BSBFFBX,7/F7
+  - inn,0
+  - 22,BFBBX,5/P5
+  - 15,FCX,E3/G6.B-1
+  - 30,BBCBB,W.B-1;1-2
+  - 55,BCFS,K
+  - 6,SFS,K
+  - final,0

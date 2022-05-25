@@ -1,0 +1,77 @@
+date: 5/21/22
+game: 3
+visitor: Pride J/F
+visitorid: pride-2022
+home: All American Mizuno
+start: 12:44P
+timelimit: 80m
+tournament: PGF Best on Dirt
+league: PGF
+visitorplays:
+  - pitcher,10
+  - as7,FBH,HP
+  - ah26,CS,SB2
+  - ah26,CSX,3/G3.2-3
+  - mj18,CX,S6/P5D.B-1;3-H
+  - ms11,CX,D7/L7.B-2;1-H
+  - kg2,CFS,K
+  - mc25,B,WP.2-3
+  - mc25,BBCX,E7/F7.B-1;3-H
+  - rv10,BBFBSC,K
+  - inn,3
+  - le13,X,S9/G43.B-1
+  - kn21,FBBSBS,K
+  - as7,CX,FC6/G6.B-1;1X2(64)
+  - ah26,FB,SB2
+  - ah26,FFBBCX,63/G6
+  - inn,3
+  - mj18,BBX,7/F7
+  - ms11,X,8/F8
+  - kg2,X,S9/F9S
+  - mc25,X,8/F8
+  - inn,3
+  - rv10,BX,D7/L7.B-2
+  - le13,BBCFFX,FC6/G6.B-1;2X3(65),running mistake?
+  - kn21,CBB,WP.1-2
+  - kn21,CBBSBS,K
+  - as7,BBFX,8/F8
+  - inn,3
+  - ah26,SBX,S6/P6
+  - mj18,CCX,7/L7
+  - ms11,BX,FC8/P8.B-1;1X2(84)
+  - kg2,CCFX,1/L1
+  - final,3
+homeplays:
+  - pitcher,ms11
+  - 8,CBX,D8/G8
+  - 10,CCBBFX,6/P6
+  - 14,CX,9/F9/SF.2-3
+  - 7,BX,S5/G5.B-1;3-H
+  - 9,X,46/G4
+  - inn,1
+  - 17,FCFX,E5/G5.B-1
+  - 34,C,SB2
+  - 34,CX,4/P4
+  - 20,CFFFBFS,K23.2-3
+  - 3,BBBB,W.B-1
+  - 28,BB,SB2
+  - 28,BBBB,W.B-1
+  - 21,BBCFBB,W.B-1;1-2;2-3;3-H
+  - 8,CCS,K
+  - inn,2
+  - 10,BCBFBFX,4/P4
+  - 14,BBBB,W
+  - 7,CS,SB2
+  - 7,CSBBS,K
+  - 9,BCX,D7/F7D.B-2;2-H
+  - 17,X,43/G4
+  - inn,3
+  - 34,BBCBB,W.B-1
+  - 20,BBBX,6/P6
+  - 3,C,CS2(26)
+  - 3,CSBS,K
+  - inn,3
+  - 28,BCBX,E4/P4.B-2(E4/TH)
+  - 21,X,14/G1/SH.2-3
+  - 8,CX,S6/G6.B-1;3-H,time expires
+  - final,4
