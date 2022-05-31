@@ -14,7 +14,7 @@ type eventCodeParser struct {
 }
 
 var eventCodeRegexps = map[string]*regexp.Regexp{}
-var playRegexp = regexp.MustCompile(`([^./]+)`)
+var playRegexp = regexp.MustCompile(`([^./ ]+)`)
 var fielderNumber = map[string]int{
 	"1": 1,
 	"2": 2,
@@ -42,7 +42,7 @@ func (p *eventCodeParser) getFielder(eventField int) int {
 func (p *eventCodeParser) parseEvent(code string) {
 	m := playRegexp.FindStringSubmatch(code)
 	p.playCode = m[1]
-	dot := strings.IndexRune(code, '.')
+	dot := strings.IndexAny(code, ". ")
 	if dot > 0 {
 		p.advancesCode = code[dot+1:]
 		code = code[0:dot]

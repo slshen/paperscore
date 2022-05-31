@@ -202,6 +202,16 @@ func (m *gameMachine) handleEvent() error {
 		}
 		m.state.recordOut()
 		m.state.Complete = true
+	case m.eventIs("K+SB%"):
+		m.state.Play = &Play{
+			Type:    StrikeOut,
+			Runners: make([]PlayerID, 1),
+		}
+		m.state.recordOut()
+		m.state.Complete = true
+		if err := m.handleStolenBase(); err != nil {
+			return err
+		}
 	case m.eventIs("W+WP"):
 		m.state.Play = &Play{
 			Type: WalkWildPitch,
@@ -225,27 +235,8 @@ func (m *gameMachine) handleEvent() error {
 			Type:    StolenBase,
 			Runners: make([]PlayerID, len(m.eventMatches)),
 		}
-		for i := range m.eventMatches {
-			base := m.eventMatches[i]
-			var runner PlayerID
-			switch base {
-			case "2":
-				m.impliedAdvance("1-2")
-				runner = m.lastState.Runners[0]
-			case "3":
-				m.impliedAdvance("2-3")
-				runner = m.lastState.Runners[1]
-			case "H":
-				m.impliedAdvance("3-H")
-				runner = m.lastState.Runners[2]
-			default:
-				return fmt.Errorf("unknown stolen base code %s", m.state.EventCode)
-			}
-			m.state.Play.StolenBases = append(m.state.Play.StolenBases, base)
-			if runner == "" {
-				return fmt.Errorf("no runner can steal %s in %s", base, m.playCode)
-			}
-			m.state.Play.Runners[i] = runner
+		if err := m.handleStolenBase(); err != nil {
+			return err
 		}
 	case m.eventIs("K2$"):
 		m.state.Play = &Play{
@@ -373,7 +364,7 @@ func (m *gameMachine) handleEvent() error {
 		}
 		m.impliedAdvance("B-1")
 		m.state.Complete = true
-	case m.eventIs("$$(%)$"):
+	case m.eventIs("$$(%)$") || m.eventIs("$(%)$$"):
 		if !m.modifiers.Contains("GDP") {
 			return fmt.Errorf("play should contain GDP modifier in %s", m.playCode)
 		}
@@ -454,6 +445,32 @@ func (m *gameMachine) handleEvent() error {
 		// no play
 	default:
 		return fmt.Errorf("unknown event %s in %s", m.eventCode, m.playCode)
+	}
+	return nil
+}
+
+func (m *gameMachine) handleStolenBase() error {
+	for i := range m.eventMatches {
+		base := m.eventMatches[i]
+		var runner PlayerID
+		switch base {
+		case "2":
+			m.impliedAdvance("1-2")
+			runner = m.lastState.Runners[0]
+		case "3":
+			m.impliedAdvance("2-3")
+			runner = m.lastState.Runners[1]
+		case "H":
+			m.impliedAdvance("3-H")
+			runner = m.lastState.Runners[2]
+		default:
+			return fmt.Errorf("unknown stolen base code %s", m.state.EventCode)
+		}
+		m.state.Play.StolenBases = append(m.state.Play.StolenBases, base)
+		if runner == "" {
+			return fmt.Errorf("no runner can steal %s in %s", base, m.playCode)
+		}
+		m.state.Play.Runners[i] = runner
 	}
 	return nil
 }

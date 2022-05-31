@@ -1,0 +1,84 @@
+date: 5/30/22
+game: 3
+visitor: Pride J/F
+visitorid: pride-2022
+home: Universal Macias
+start: 4:25P
+timelimit: 80m
+tournament: PGF Memorial Day Classic
+league: PGF
+visitorplays:
+  - pitcher,6
+  - aw6,BX,S7/P7S
+  - ah26,BCSFFFX,6/P64
+  - mj18,B,WP.1-2
+  - mj18,BBBX,S8/P8S.B-1;2-3
+  - kg2,BBFX,4/P4S.1-2
+  - bj00,FFX,D8/F8D.B-2;2-H;3-H
+  - sn88,FBBSS,K
+  - inn,2
+  - rv10,BCBX,8/F78
+  - as7,FX,S2/G2/B
+  - cm22,FBB,SB2
+  - cm22,FBBFBX,S8/G8.B-1;2-3
+  - aw6,CCS,K
+  - ah26,X,63/G6
+  - inn,2
+  - mj18,BX,8/F8
+  - kg2,BSBFBX,S7/L7
+  - bj00,X,6(1)63/GDP/G6
+  - inn,2
+  - sn88,CX,3/P3
+  - rv10,BCFX,53/G5
+  - as7,BX,S8/F8S
+  - cm22,CFBX,7/F78
+  - inn,2
+  - aw6,X,43/G4
+  - ah26,X,D7/F7D
+  - mj18,BFFBX,6/L6
+  - kg2,BCBCX,D7/L7.B-2;2-H
+  - bj00,BFFFBFBB,W
+  - pitcher,32
+  - sn88,FCFH,HP.B-1;1-2;2-3
+  - rv10,X,FC6/G6.1X2(6)
+  - final,3
+homeplays:
+  - pitcher,bj00
+  - 20,BBBCCX,S3/G3
+  - 35,B,SB2
+  - 35,BX,T8/F8D.B-3;2-H
+  - 16,FSFBX,7/F7/SF.3-H
+  - 7,FX,6/P6
+  - 8,BBFBB,W
+  - 1,FB,WP.1-2
+  - 1,FBFX,S6/G6.B-1;2-3
+  - 17,BB,WP.1-2
+  - 17,BBBB,W.B-1
+  - 19,SX,S8/L8.B-1;1-3;2-H;3-H
+  - 9,B,WP.3-H
+  - 9,BCSBBC,K
+  - inn,5
+  - 20,FX,43/G4
+  - 35,FX,E6/G6.B-1
+  - 16,C,SB2
+  - 16,CBX,D7/F7D.B-2;2-H
+  - 7,CBSB,PB.2-3
+  - 7,CBSBBFFB,W.B-1
+  - 8,C,PO3(25)
+  - 8,CBBFBX,7/F7
+  - inn,6
+  - 21,BBX,S6/G6
+  - 17,BX,8/F8
+  - 19,FBX,FC1.B-1;1X2(14)
+  - 9,BCFFFX,S8/G8.B-1;1-2
+  - 20,B,WP.1-2;2-3
+  - 20,BBBCB,W
+  - 35,X,2/P2
+  - inn,6
+  - 16,H,HP
+  - 7,X,S2/G2/B.B-1;1-2
+  - 8,CBBX,9/P89
+  - 21,FCFX,D8/L89.B-2;1-3;2-H
+  - 17,FFC,K
+  - 19,CX,8/L8
+  - inn,7

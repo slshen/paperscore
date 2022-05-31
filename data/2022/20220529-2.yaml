@@ -1,0 +1,86 @@
+date: 5/29/22
+game: 2
+visitor: Pride J/F
+visitorid: pride-2022
+home: AASA McCafferty
+start: 4:34P
+timelimit: 80m
+tournament: PGF Memorial Day Classic
+league: PGF
+visitorplays:
+  - pitcher,7
+  - aw6,BBCCFX,S6/G6
+  - mf17,CFBX,S3/G5.B-1;1-2
+  - ah26,BFFFFB,WP.2-3;1-2
+  - ah26,BFFFFBFBFX,S7/G7.B-1;2-3;3-H
+  - mj18,CB,WP.1-2;3-H
+  - mj18,CBFBX,D8/L78.B-2;2-H
+  - kg2,BB,WP.2-3
+  - kg2,BBBCFX,63/G6.3-H
+  - sn88,BSX,43/G4
+  - rv10,X,13/G1
+  - inn,4
+  - le13,CBCX,S4/P3D
+  - bj00,SBX,D8/L89.B-2;1-3
+  - as7,FBSFX,8/F8,no tag up from 3
+  - cm22,BX,S8/G8.B-2(E8/TH);2-3;3-H
+  - pitcher,22
+  - aw6,BX,5/P5
+  - mf17,SBFX,S8/L8S.B-2;2-3;3-H
+  - ah26,X,63/G6
+  - inn,6
+  - mj18,BX,1/P1
+  - kg2,CBBFBB,W.B-1
+  - sn88,BBFBCC,K
+  - rv10,X,53/G5
+  - inn,6
+  - le13,BBX,S1/G1
+  - bj00,FFX,53/G5.1-2
+  - as7,X,S7/G6.B-1;2-3
+  - cm22,CCFBFX,43/G4.1-2;3-H
+  - aw6,BX,S8/G8.B-2;2-3
+  - mf17,X,43/G4
+  - inn,7
+  - ah26,X,43/G4
+  - mj18,CX,S8/L89.B-1
+  - kg2,FFBFX,4/P4
+  - sn88,X,93/G9
+  - final,7
+homeplays:
+  - pitcher,cm22
+  - 71,BBCBX,3/G3
+  - 13,BBF,FLE6
+  - 13,BBFFFX,S8/G4
+  - 10,X,4/P4
+  - 11,CBFB,SB2
+  - 11,CBFBBX,D8/L8.B-2;2-H
+  - 22,BX,S7/L6.B-1;2-H
+  - 18,X,S8/G8.B-1;1-2
+  - pitcher,bj00
+  - 7,SX,5/G5
+  - inn,2
+  - 4,SFX,D7/F7
+  - 98,BBBCB,W.B-1
+  - 29,X,13/G1.1-2;2-3
+  - 8,FX,63/G6.3-H
+  - 71,BBBB,W.B-1
+  - 13,BFCC,K
+  - inn,3
+  - 10,FFBBX,7/F7
+  - 11,BBBB,W
+  - 22,CFS,K
+  - 18,FFS,K
+  - inn,3
+  - 7,BSX,13/G1
+  - 4,BCBX,7/F7
+  - 98,CFFFX,S8/G8
+  - 29,BX,2/P2
+  - inn,3
+  - 8,BBCBB,W.B-1
+  - 71,X,S2/B/G2.B-1;1-2
+  - 13,FBBCX,H.B-H;1-H;2-H
+  - 10,X,63/G6
+  - 11,BCBBCFFB,W.B-1
+  - 22,BX,7/F7
+  - 18,FX,53/G5
+  - final,6
