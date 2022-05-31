@@ -18,7 +18,7 @@ func (lineup *Lineup) BattingTable() string {
 		return ""
 	}
 	dat := lineup.GetBattingData().Select(
-		dataframe.Rename("Name", "#"),
+		dataframe.Rename("Name", "#").WithFormat("%-14s"),
 		dataframe.Col("AB"),
 		dataframe.Rename("Hits", "H"),
 		dataframe.Col("LOPH"),

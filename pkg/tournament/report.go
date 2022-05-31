@@ -42,13 +42,13 @@ func (r *Report) GetBestAndWorstRE24(n int) *dataframe.Data {
 func (r *Report) GetBattingData() *dataframe.Data {
 	dat := r.gs.GetBattingData()
 	idx := dat.GetIndex()
-	dat.Name = r.Group.Name
+	dat.Name = fmt.Sprintf("%s (%d games)", r.Group.Name, len(r.Group.Games))
 	dat = dat.RFilter(func(row int) bool {
 		t := strings.ToLower(idx.GetString(row, "Team"))
 		return strings.HasPrefix(t, r.Us)
 	})
 	dat = dat.Select(
-		dataframe.Col("Name"),
+		dataframe.Col("Name").WithFormat("%14s"),
 		dataframe.Col("PA").WithSummary(dataframe.Sum),
 		dataframe.Col("AB").WithSummary(dataframe.Sum),
 		dataframe.Rename("Hits", "H").WithSummary(dataframe.Sum),

@@ -1,0 +1,80 @@
+date: 5/28/22
+game: 3
+visitor: Pride J/F
+visitorid: pride-2022
+home: Cal Nuggets Gold 14u
+start: 8:34p
+timelimit: 80m
+tournament: PGF Memorial Day Classic
+league: PGF
+visitorplays:
+  - pitcher,88
+  - aw6,FFFX,43/G4
+  - mf17,X,S4/L4
+  - ah26,X,S8/L8.B-1;1-3
+  - mj18,CB,SB2
+  - mj18,CBFS,K
+  - kg2,BBBCB,W
+  - le13,BX,S4/P4.B-1;1-2;2-3;3-H
+  - rv10,BX,S7/G6.B-1;1-2;2-3;3-H
+  - sn88,X,D7/F7D.B-2;1-H;2-H;3-H
+  - bj00,CBX,E5/G5.B-1;2-3
+  - as7,X,E4/P4D.B-2;1-3;3-H
+  - cm22,CBBX,43/G4
+  - inn,6
+  - aw6,CCFBFBX,S8/G6
+  - mf17,CBBCBS,K
+  - ah26,CFFX,S7/G6.B-1;1-2
+  - mj18,CSC,K
+  - kg2,BFCBBFFX,D7/F7D.B-2;1-H;2-H
+  - le13,BFBCFBX,5/L5
+  - inn,8
+  - rv10,BF,FLE5
+  - rv10,BFFX,8/F8
+  - sn88,BX,8/F8
+  - bj00,SX,9/L9
+  - inn,8
+  - pitcher,89
+  - as7,BBCFS,K
+  - cm22,CX,43/G4
+  - aw6,FFFBBBX,2/P2,nice catch
+  - inn,8
+  - mf17,CSX,4/P4
+  - ah26,FBX,7/F7
+  - mj18,SBBBCX,S9/P7S
+  - kg2,SCFX,3/P3
+  - final,8
+homeplays:
+  - pitcher,bj00
+  - 63,SBBSBX,43/G4
+  - 10,CBBBCFFX,S8/G4
+  - 5,BCBBFC,K+SB2
+  - 22,BB,WP.2-3
+  - 22,BBCBCB,W
+  - 89,C,SB2
+  - 89,CBFX,S7/F7S.B-2;2-H;3-H,no cut
+  - 77,CCS,K
+  - inn,2
+  - 30,BCFBFX,63/G6
+  - 7,SBBCBS,K
+  - 20,SBBCBS,K
+  - inn,2
+  - 48,CFX,S8/G4
+  - 63,SBSS,K
+  - 88,BSBFC,K
+  - 5,BBCCX,S8/P8S.B-1;1-2
+  - 22,CSX,FC4.1X2(46);B-1
+  - inn,2
+  - 89,SFBFBFX,3/P3,nice catch
+  - 17,BCFBBS,K
+  - 35,BX,63/G6
+  - inn,2
+  - 7,SFX,53/G5
+  - 32,CCS,K
+  - 2,BBCX,S7/L7
+  - 99,BBX,S7/F7S.B-1;1-2
+  - 5,BCFX,T8/L8.B-3;1-H;2-H
+  - 22,BBCSX,E6/G6.B-2(E6/TH);3-H
+  - 89,BB,WP.2-3
+  - 89,BBX,7/F7,nice catch
+  - final,5

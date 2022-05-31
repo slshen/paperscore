@@ -1,0 +1,79 @@
+date: 5/28/22
+game: 2
+home: Pride J/F
+homeid: pride-2022
+visitor: Absolute Blast Rafferty
+start: 7:13P
+timelimit: 80m
+tournament: PGF Memorial Day Classic
+league: PGF
+homeplays:
+  - pitcher,32
+  - aw6,BBX,E5/G5.B-1
+  - mf17,FB,SB2
+  - mf17,FBX,E3/G3.B-1;2-3
+  - ah26,X,E6/L6.B-1;1-2;3-H
+  - mj18,CX,S8/G8.B-1;1-2;2-H
+  - kg2,CCFFB,WP.1-2;2-3
+  - kg2,CCFFBFBX,4/P4
+  - le13,X,43/G4.2-3;3-H
+  - rv10,BX,S7/L7.B-1;3-H
+  - sn88,CX,43/G4
+  - inn,4
+  - bj00,X,S9/F9S
+  - as7,BBX,S7/F7S.B-1;1-2
+  - cm22,CFBBS,K
+  - aw6,X,S3/G3.B-1;1-2;2-3
+  - mf17,X,8/F8/SF.2-3;3-H
+  - ah26,C,CS2(26)
+  - inn,5
+  - ah26,X,43/G4
+  - mj18,FFX,63/G6
+  - kg2,BBX,E6/G1.B-1
+  - le13,BX,FC6/G6.B-1;1X2(64)
+  - inn,5
+  - rv10,BCX,4/P4,nice catch
+  - sn88,X,43/G4
+  - bj00,CBFBBX,53/G5
+  - inn,5
+  - as7,X,S7/P6D.B-1
+  - cm22,BFX,S1/G1.B-2;1-3
+  - aw6,X,43/G4.2-3;3-H
+  - mf17,X,S8/G8.B-1;3-H
+  - ah26,B,SB2
+  - ah26,BBX,E4/G4.B-1;2-3
+  - mj18,CBFFFX,D8/F8D.B-3;1-H;3-H
+  - kg2,CBX,8/F8,runner on 3 did not tag up
+  - le13,X,T7/F7.BXH(732);3-H,run rule
+  - final,10
+visitorplays:
+  - pitcher,cm22
+  - 8,X,E5/TH.B-2
+  - 11,BCB,WP.2-3
+  - 11,BCBX,63/G6.3-H
+  - 00,CBX,8/F8,nice catch
+  - 22,X,9/F89S
+  - inn,1
+  - 10,BX,S8/P8S.B-1,no talking
+  - 16,X,FC5/G5.B-1;1X2(54)
+  - 14,CBBX,FC4/G4.B-1;1X2(46)
+  - 1,BBB,WP.1-2
+  - 1,BBBFX,E7/F7.B-2(E6);2-H
+  - 15,CB,SB3
+  - 15,CBCX,7/F7
+  - inn,2
+  - 32,X,63/G6
+  - 99,FSBFBBB,W
+  - 8,BFBX,8/F8
+  - 11,X,53/G5
+  - inn,2
+  - 00,X,5/L5
+  - 22,FBX,S8/G4
+  - 10,B,WP.1-2
+  - 10,BBCX,13/G1.2-3
+  - 16,X,9/F9
+  - inn,2
+  - 14,BBX,E5/G5.B-1
+  - 1,BBX,6(B)63(1)/LDP
+  - 15,BFBX,7/F7
+  - final,2
