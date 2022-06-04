@@ -1,5 +1,37 @@
 package dataframe
 
+type Selection func(idx *Index) *Column
+
+func (dat *Data) Select(sels ...Selection) *Data {
+	idx := dat.GetIndex()
+	res := &Data{
+		Name:    dat.Name,
+		Columns: make([]*Column, len(sels)),
+	}
+	for i, sel := range sels {
+		col := sel(idx)
+		if col == nil {
+			panic("cannot select a column")
+		}
+		res.Columns[i] = col
+	}
+	return res
+}
+
+func (dat *Data) Add(sels ...Selection) {
+	idx := dat.GetIndex()
+	for _, sel := range sels {
+		col := sel(idx)
+		if col == nil {
+			panic("cannot add nil column")
+		}
+		if idx.GetColumn(col.Name) != nil {
+			panic("cannot add duplicate column")
+		}
+		dat.Columns = append(dat.Columns, col)
+	}
+}
+
 func Col(name string) Selection {
 	return func(i *Index) *Column {
 		return i.GetColumn(name)
@@ -69,6 +101,19 @@ func DeriveInts(name string, f func(idx *Index, i int) int) Selection {
 func DeriveFloats(name string, f func(idx *Index, i int) float64) Selection {
 	return func(idx *Index) *Column {
 		values := make([]float64, idx.data.RowCount())
+		for i := range values {
+			values[i] = f(idx, i)
+		}
+		return &Column{
+			Name:   name,
+			Values: values,
+		}
+	}
+}
+
+func DeriveStrings(name string, f func(idx *Index, i int) string) Selection {
+	return func(idx *Index) *Column {
+		values := make([]string, idx.data.RowCount())
 		for i := range values {
 			values[i] = f(idx, i)
 		}

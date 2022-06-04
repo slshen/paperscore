@@ -20,10 +20,10 @@ func NewREData(re RunExpectancy) *REData {
 		o:       dataframe.NewColumn("O", "%1d", dataframe.EmptyInts),
 		rnr:     dataframe.NewColumn("Rnr", "%3s", dataframe.EmptyStrings),
 		play:    dataframe.NewColumn("Play", "%30s", dataframe.EmptyStrings),
-		after:   dataframe.NewColumn("After", "%5.1f", dataframe.EmptyFloats),
-		before:  dataframe.NewColumn("Bfore", "%5.1f", dataframe.EmptyFloats),
+		after:   dataframe.NewColumn("After", "%5.2f", dataframe.EmptyFloats),
+		before:  dataframe.NewColumn("Bfore", "%5.2f", dataframe.EmptyFloats),
 		r:       dataframe.NewColumn("R", "%1d", dataframe.EmptyInts),
-		re24:    dataframe.NewColumn("RE24", "% 6.1f", dataframe.EmptyFloats),
+		re24:    dataframe.NewColumn("RE24", "% 6.2f", dataframe.EmptyFloats),
 		runners: dataframe.NewColumn("Runners", "%-20s", dataframe.EmptyStrings),
 	}
 }

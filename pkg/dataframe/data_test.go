@@ -77,14 +77,50 @@ func TestStructs(t *testing.T) {
 		I int
 		F float64
 		S string
+		B bool
 	}
 	ss := []S{
-		{1, 1.1, "one"},
-		{2, 2.2, "two"},
+		{1, 1.1, "one", true},
+		{2, 2.2, "two", false},
 	}
 	dat, err := FromStructs("", ss)
 	assert.NoError(err)
 	assert.NotNil(dat)
 	fmt.Println(dat)
-	// assert.FailNow("")
+	assert.NotNil(dat.GetIndex().GetColumn("I"))
+	assert.NotNil(dat.GetIndex().GetColumn("B"))
+	dat.Arrange("S")
+	assert.Equal("S", dat.Columns[0].Name)
+}
+
+func TestFilterAndSelect(t *testing.T) {
+	assert := assert.New(t)
+	dat := &Data{
+		Columns: []*Column{
+			NewColumn("Rank", "%d", []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}),
+		},
+	}
+	assert.Equal(10, dat.RowCount())
+	dat = dat.RFilter(func(row int) bool { return row < 5 })
+	assert.Equal(5, dat.RowCount())
+	dat = dat.Select(
+		Col("Rank"),
+		DeriveInts("Rank2", func(idx *Index, i int) int {
+			return idx.GetInt(i, "Rank") * 2
+		}),
+		DeriveFloats("RankSqf", func(idx *Index, i int) float64 {
+			r := float64(idx.GetInt(i, "Rank"))
+			return r * r
+		}),
+	)
+	assert.Equal([]int{2, 4, 6, 8, 10}, dat.Columns[1].GetInts())
+	assert.Equal([]float64{1, 4, 9, 16, 25}, dat.Columns[2].GetFloats())
+	dat.Add(DeriveInts("Rank0", func(idx *Index, i int) int { return i }))
+	assert.Equal([]int{0, 1, 2, 3, 4}, dat.Columns[3].GetInts())
+	dat = dat.Select(
+		Col("Rank"),
+		Rename("Rank2", "R2"),
+	)
+	assert.Equal(2, len(dat.Columns))
+	assert.Equal("R2", dat.Columns[1].Name)
 }

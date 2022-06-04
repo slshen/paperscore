@@ -137,6 +137,19 @@ func (col *Column) AppendString(values ...string) {
 	col.Values = append(col.GetStrings(), values...)
 }
 
+func (col *Column) AppendValue(value interface{}) {
+	switch v := value.(type) {
+	case int:
+		col.AppendInts(v)
+	case float64:
+		col.AppendFloats(v)
+	case string:
+		col.AppendString(v)
+	default:
+		panic("illegal value to append")
+	}
+}
+
 func (col *Column) GetStrings() []string {
 	if col.Values != nil {
 		return col.Values.([]string)

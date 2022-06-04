@@ -35,7 +35,7 @@ func (r *Report) Run(re stats.RunExpectancy) error {
 func (r *Report) GetBestAndWorstRE24(n int) *dataframe.Data {
 	dat := r.gs.GetRE24Data()
 	dat = stats.GetBiggestRE24(dat, n)
-	dat.Name = fmt.Sprintf("%s Plays", r.Group.Name)
+	dat.Name = fmt.Sprintf("%s Plays (%d games)", r.Group.Name, len(r.Group.Games))
 	return dat
 }
 
@@ -58,6 +58,7 @@ func (r *Report) GetBattingData() *dataframe.Data {
 		}).WithFormat("%3d").WithSummary(dataframe.Sum),
 		dataframe.Rename("Walks", "BB").WithSummary(dataframe.Sum),
 		dataframe.Rename("StrikeOuts", "K").WithSummary(dataframe.Sum),
+		dataframe.Rename("RunsScored", "RS").WithFormat("%2d").WithSummary(dataframe.Sum),
 		dataframe.Col("RE24").WithSummary(dataframe.Sum),
 		dataframe.DeriveInts("OBP", obp).WithPCT(),
 		dataframe.DeriveInts("SLG", slg).WithPCT(),
