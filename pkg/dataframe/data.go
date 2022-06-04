@@ -98,11 +98,21 @@ func (dat *Data) AppendStruct(idx *Index, s interface{}) (*Index, error) {
 	return idx, nil
 }
 
-func (dat *Data) Arrange(names []string) {
+func (dat *Data) Arrange(names ...string) {
 	idx := dat.GetIndex()
 	cols := make([]*Column, len(dat.Columns))
+	added := map[string]bool{}
 	for i, name := range names {
 		cols[i] = idx.GetColumn(name)
+		added[name] = true
+	}
+	i := len(names)
+	for _, col := range dat.Columns {
+		if !added[col.Name] {
+			added[col.Name] = true
+			cols[i] = col
+			i++
+		}
 	}
 	dat.Columns = cols
 }
@@ -355,22 +365,4 @@ func (dat *Data) RenderMarkdown(w io.Writer) error {
 		fmt.Fprintln(w, "|")
 	}
 	return nil
-}
-
-type Selection func(idx *Index) *Column
-
-func (dat *Data) Select(sels ...Selection) *Data {
-	idx := dat.GetIndex()
-	res := &Data{
-		Name:    dat.Name,
-		Columns: make([]*Column, len(sels)),
-	}
-	for i, sel := range sels {
-		col := sel(idx)
-		if col == nil {
-			panic("cannot select a column")
-		}
-		res.Columns[i] = col
-	}
-	return res
 }

@@ -194,6 +194,7 @@ func reCommand() *cobra.Command {
 	var (
 		csv        bool
 		yamlFormat bool
+		freq       bool
 	)
 	re24 := &stats.ObservedRunExpectancy{}
 	c := &cobra.Command{
@@ -212,7 +213,12 @@ func reCommand() *cobra.Command {
 			if yamlFormat {
 				return re24.WriteYAML(os.Stdout)
 			}
-			data := stats.GetRunExpectancyData(re24)
+			var data *dataframe.Data
+			if freq {
+				data = re24.GetRunExpectancyFrequency()
+			} else {
+				data = stats.GetRunExpectancyData(re24)
+			}
 			if csv {
 				return data.RenderCSV(os.Stdout)
 			}
@@ -222,6 +228,7 @@ func reCommand() *cobra.Command {
 	}
 	c.Flags().BoolVar(&csv, "csv", false, "Print in CSV format")
 	c.Flags().BoolVar(&yamlFormat, "yaml", false, "Print in YAML format")
+	c.Flags().BoolVar(&freq, "freq", false, "Print the frequency of # runs scored per 24-base/out state")
 	return c
 }
 
@@ -279,9 +286,11 @@ func exportCommand() *cobra.Command {
 
 func tournamentCommand() *cobra.Command {
 	var (
-		us    string
-		plays int
-		re    reArgs
+		us             string
+		plays          int
+		re             reArgs
+		tournamentName string
+		playsOnly      bool
 	)
 	c := &cobra.Command{
 		Use:   "tournament",
@@ -299,6 +308,9 @@ func tournamentCommand() *cobra.Command {
 				return err
 			}
 			for _, gr := range tournament.GroupByTournament(games) {
+				if tournamentName != "" && !strings.Contains(strings.ToLower(gr.Name), tournamentName) {
+					continue
+				}
 				rep := &tournament.Report{
 					Us:    us,
 					Group: gr,
@@ -306,8 +318,22 @@ func tournamentCommand() *cobra.Command {
 				if err := rep.Run(re); err != nil {
 					return err
 				}
-				fmt.Println(rep.GetBattingData())
-				fmt.Println(rep.GetBestAndWorstRE24(plays))
+				if !playsOnly {
+					fmt.Println(rep.GetBattingData())
+				}
+				topPlays := rep.GetBestAndWorstRE24(plays)
+				if playsOnly {
+					topPlays = topPlays.Select(
+						dataframe.Col("Rnk"),
+						dataframe.Col("Game"),
+						dataframe.Col("ID"),
+						dataframe.Col("O"),
+						dataframe.Col("Rnr"),
+						dataframe.Col("Play"),
+						dataframe.Col("RE24"),
+					)
+				}
+				fmt.Println(topPlays)
 			}
 			return nil
 		},
@@ -315,6 +341,8 @@ func tournamentCommand() *cobra.Command {
 	re.registerFlags(c.Flags())
 	c.Flags().StringVar(&us, "us", "", "Our `team`")
 	c.Flags().IntVar(&plays, "plays", 15, "Show the top and bottom `n` plays by RE24")
+	c.Flags().StringVar(&tournamentName, "tournament", "", "Show only `tournament`")
+	c.Flags().BoolVar(&playsOnly, "plays-only", false, "Only list top plays")
 	return c
 }
 
