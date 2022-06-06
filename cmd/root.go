@@ -195,6 +195,9 @@ func reCommand() *cobra.Command {
 		csv        bool
 		yamlFormat bool
 		freq       bool
+		pivot      bool
+		kdeFreq    bool
+		bandwidth  float64
 	)
 	re24 := &stats.ObservedRunExpectancy{}
 	c := &cobra.Command{
@@ -214,9 +217,15 @@ func reCommand() *cobra.Command {
 				return re24.WriteYAML(os.Stdout)
 			}
 			var data *dataframe.Data
-			if freq {
-				data = re24.GetRunExpectancyFrequency()
-			} else {
+			switch {
+			case pivot || freq:
+				rf := re24.GetRunExpectancyFrequency()
+				if pivot {
+					data = rf.Pivot()
+				} else {
+					data = &rf.Data
+				}
+			default:
 				data = stats.GetRunExpectancyData(re24)
 			}
 			if csv {
@@ -229,6 +238,9 @@ func reCommand() *cobra.Command {
 	c.Flags().BoolVar(&csv, "csv", false, "Print in CSV format")
 	c.Flags().BoolVar(&yamlFormat, "yaml", false, "Print in YAML format")
 	c.Flags().BoolVar(&freq, "freq", false, "Print the frequency of # runs scored per 24-base/out state")
+	c.Flags().BoolVar(&pivot, "pivot", false, "Pivot the frequency data by runs")
+	c.Flags().BoolVar(&kdeFreq, "kde-freq", false, "Pivot and estimate frequency data by runs")
+	c.Flags().Float64Var(&bandwidth, "bandwidth", 0, "KDE bandwidth")
 	return c
 }
 

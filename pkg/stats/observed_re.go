@@ -3,6 +3,9 @@ package stats
 import (
 	"fmt"
 	"io"
+	"sort"
+	"strconv"
+	"strings"
 
 	"github.com/slshen/sb/pkg/dataframe"
 	"github.com/slshen/sb/pkg/game"
@@ -50,7 +53,12 @@ func (re *ObservedRunExpectancy) Read(g *game.Game) error {
 					re.totals[i].count += p.count
 					re.totals[i].runs += p.runs
 					re.runData.Columns[0].AppendInts(i)
-					re.runData.Columns[1].AppendInts(p.runs)
+					// cap # of runs to 9
+					runs := p.runs
+					if runs > 9 {
+						runs = 9
+					}
+					re.runData.Columns[1].AppendInts(runs)
 					if i == 0 {
 						re.inProgress[i].count = 1
 						re.inProgress[i].runs = 0
@@ -123,51 +131,125 @@ func (re *ObservedRunExpectancy) WriteYAML(w io.Writer) error {
 	return nil
 }
 
-func (re *ObservedRunExpectancy) GetRunExpectancyFrequency() *dataframe.Data {
+type RunFrequency struct {
+	dataframe.Data
+}
+
+func (re *ObservedRunExpectancy) GetRunExpectancyFrequency() *RunFrequency {
 	// group by Index, Runs, Count(*) as Obs
 	dat := re.runData.GroupBy("Index", "Runs").Aggregate(
-		dataframe.Aggregation{
-			Column: dataframe.NewColumn("Obs", "%4d", dataframe.EmptyInts),
-			Func: func(col *dataframe.Column, group *dataframe.Group) {
-				col.AppendInts(len(group.Rows))
-			},
-		},
+		dataframe.ACount("Obs").WithFormat("%4d"),
 	)
+	dat = dat.RSort(dataframe.Less(
+		dataframe.CompareInt(dat.Columns[0]),
+		dataframe.CompareInt(dat.Columns[1]),
+	))
 	// group by Index, Sum(Obs)
 	obsIndexDat := dat.GroupBy("Index").Aggregate(
-		dataframe.Aggregation{
-			Column: dataframe.NewColumn("ObsIndex", "%d", dataframe.EmptyInts),
-			Func: func(col *dataframe.Column, group *dataframe.Group) {
-				obs := 0
-				for _, row := range group.Rows {
-					obs += dat.Columns[2].GetInt(row)
-				}
-				col.AppendInts(obs)
-			},
-		},
+		dataframe.ASum("ObsIndex", dat.Columns[2]),
 	)
 	sumObsPerIndex := map[int]int{}
 	for i, index := range obsIndexDat.Columns[0].GetInts() {
 		sumObsPerIndex[index] = obsIndexDat.Columns[1].GetInt(i)
 	}
-	dat = dat.Select(
-		dataframe.DeriveStrings("Rnrs", func(idx *dataframe.Index, i int) string {
-			return string(OccupedBasesValues[idx.GetInt(i, "Index")%8])
-		}).WithFormat("%4s"),
-		dataframe.DeriveInts("Outs", func(idx *dataframe.Index, i int) int {
-			return idx.GetInt(i, "Index") / 8
-		}).WithFormat("%4d"),
-		dataframe.Col("Runs"),
-		dataframe.Col("Obs"),
-		dataframe.DeriveFloats("Freq", func(idx *dataframe.Index, i int) float64 {
-			index := idx.GetInt(i, "Index")
-			sum := sumObsPerIndex[index]
-			return float64(idx.GetInt(i, "Obs")) / float64(sum)
-		}).WithFormat("%5.3f"),
+	result := &dataframe.Data{
+		Columns: []*dataframe.Column{
+			dataframe.NewEmptyColumn("Index", dataframe.Int),
+			dataframe.NewEmptyColumn("Runs", dataframe.Int),
+			dataframe.NewEmptyColumn("Obs", dataframe.Int),
+			dataframe.NewEmptyColumn("Tot", dataframe.Int),
+			dataframe.NewEmptyColumn("Freq", dataframe.Float),
+		},
+	}
+	for i := 0; i < 24; i++ {
+		irow := sort.SearchInts(dat.Columns[0].GetInts(), i)
+		ip1row := sort.SearchInts(dat.Columns[0].GetInts(), i+1)
+		for runs := 0; runs < 10; runs++ {
+			result.Columns[0].AppendInts(i)
+			result.Columns[1].AppendInts(runs)
+			runValues := dat.Columns[1].GetInts()[irow:ip1row]
+			runRow := sort.SearchInts(runValues, runs)
+			var obs int
+			if runRow < len(runValues) && runValues[runRow] == runs {
+				obs = dat.Columns[2].GetInt(irow + runRow)
+			}
+			result.Columns[2].AppendInts(obs)
+			tot := sumObsPerIndex[i]
+			result.Columns[3].AppendInts(tot)
+			var freq float64
+			if tot > 0 {
+				freq = float64(obs) / float64(tot)
+			}
+			result.Columns[4].AppendFloats(freq)
+		}
+	}
+	result = result.Select(
+		deriveState24(),
+		dataframe.Rename("Runs", "R").WithFormat("%1d"),
+		dataframe.Col("Obs").WithFormat("%3d"),
+		dataframe.Col("Tot").WithFormat("%3d"),
+		dataframe.Col("Freq").WithFormat("%5.3f"),
 	)
-	return dat.RSort(dataframe.Less(
-		dataframe.Descending(dataframe.CompareString(dat.Columns[0])),
-		dataframe.CompareInt(dat.Columns[1]),
-		dataframe.CompareInt(dat.Columns[2]),
+	result = result.RSort(dataframe.Less(
+		dataframe.Descending(cmpSt24(result.Columns[0])),
+		dataframe.CompareInt(result.Columns[1]),
 	))
+	return &RunFrequency{*result}
+}
+
+func deriveState24() dataframe.Selection {
+	return dataframe.DeriveStrings("St24", func(idx *dataframe.Index, i int) string {
+		return fmt.Sprintf("%s/%d", OccupedBasesValues[idx.GetInt(i, "Index")%8],
+			idx.GetInt(i, "Index")/8)
+	}).WithFormat("%5s")
+}
+
+func (dat *RunFrequency) Pivot() *dataframe.Data {
+	idx := dat.GetIndex()
+	runsCol := idx.GetColumn("R")
+	obsCol := idx.GetColumn("Obs")
+	totCol := idx.GetColumn("Tot")
+	aggs := make([]dataframe.Aggregation, 20)
+	for i := 0; i < 10; i++ {
+		runs := i
+		aggs[i] = dataframe.AFunc(fmt.Sprintf("PcRn%d", i), dataframe.Float,
+			func(acol *dataframe.Column, group *dataframe.Group) {
+				for _, row := range group.Rows {
+					if runsCol.GetInt(row) == runs {
+						freq := float64(obsCol.GetInt(row)) / float64(totCol.GetInt(row))
+						acol.AppendFloats(100 * freq)
+						return
+					}
+				}
+				acol.AppendFloats(0)
+			}).WithFormat("%5.1f")
+		aggs[10+i] = dataframe.AFunc(fmt.Sprintf("CnRn%d", i), dataframe.Int,
+			func(acol *dataframe.Column, group *dataframe.Group) {
+				for _, row := range group.Rows {
+					if runsCol.GetInt(row) == runs {
+						acol.AppendInts(obsCol.GetInt(row))
+						return
+					}
+				}
+				acol.AppendInts(0)
+			}).WithFormat("%5d")
+	}
+	pivot := dat.GroupBy("St24").Aggregate(aggs...)
+	return pivot.RSort(dataframe.Less(
+		dataframe.Descending(cmpSt24(pivot.Columns[0])),
+	))
+}
+
+func cmpSt24(col *dataframe.Column) func(i, j int) int {
+	return func(i, j int) int {
+		s1 := col.GetString(i)
+		s2 := col.GetString(j)
+		c := strings.Compare(s1[0:3], s2[0:3])
+		if c != 0 {
+			return c
+		}
+		o1, _ := strconv.Atoi(s1[4:])
+		o2, _ := strconv.Atoi(s2[4:])
+		return o2 - o1
+	}
 }

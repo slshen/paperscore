@@ -7,17 +7,19 @@ import (
 )
 
 type gameMachine struct {
-	state       *State
-	lastState   *State
-	PA          int
-	pitcher     PlayerID
-	playCode    string
-	playFields  []string
-	basePutOuts map[string]bool
+	battingTeam  *Team
+	fieldingTeam *Team
+	state        *State
+	lastState    *State
+	PA           int
+	pitcher      PlayerID
+	playCode     string
+	playFields   []string
+	basePutOuts  map[string]bool
 	eventCodeParser
 }
 
-func newGameMachine(half Half, lastState *State) *gameMachine {
+func newGameMachine(half Half, lastState *State, battingTeam, fieldingTeam *Team) *gameMachine {
 	if lastState == nil {
 		lastState = &State{
 			InningNumber: 1,
@@ -26,7 +28,9 @@ func newGameMachine(half Half, lastState *State) *gameMachine {
 		}
 	}
 	m := &gameMachine{
-		lastState: lastState,
+		battingTeam:  battingTeam,
+		fieldingTeam: fieldingTeam,
+		lastState:    lastState,
 	}
 	return m
 }
@@ -49,7 +53,7 @@ func (m *gameMachine) runOne(playCode string) (*State, error) {
 	if !IsPlayerID(m.getPlayField(0)) {
 		return nil, m.handleSpecial()
 	}
-	m.state.Batter = PlayerID(m.getPlayField(0))
+	m.state.Batter = m.battingTeam.parsePlayerID(m.getPlayField(0))
 	if m.state.Batter == "" {
 		return nil, fmt.Errorf("no batter for %s", m.playCode)
 	}
@@ -103,7 +107,7 @@ func (m *gameMachine) parseAdvances() error {
 func (m *gameMachine) handleSpecial() error {
 	switch m.getPlayField(0) {
 	case "pitcher":
-		m.pitcher = PlayerID(m.getPlayField(1))
+		m.pitcher = m.fieldingTeam.parsePlayerID(m.getPlayField(1))
 	case "inn":
 		if len(m.playFields) > 2 {
 			inning, err := strconv.Atoi(m.getPlayField(1))
@@ -134,7 +138,7 @@ func (m *gameMachine) handleSpecial() error {
 	case "final":
 		// todo
 	case "radj":
-		runner := PlayerID(m.getPlayField(1))
+		runner := m.battingTeam.parsePlayerID(m.getPlayField(1))
 		base := m.getPlayField(2)
 		if runner == "" || !(base == "1" || base == "2" || base == "3") {
 			return fmt.Errorf("radj must be runner,base")

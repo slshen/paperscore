@@ -12,7 +12,7 @@ const (
 	Walk
 	WalkWildPitch
 	WalkPassedBall
-	StolenBase
+	StolenBase // Note - stolen base can also occur with K+
 	PickedOff
 	CatcherInterference
 	ReachedOnError

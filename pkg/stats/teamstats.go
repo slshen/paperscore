@@ -72,6 +72,7 @@ func (stats *TeamStats) RecordBatting(g *game.Game, state, lastState *game.State
 			runner.CaughtStealing++
 		}
 	case game.StolenBase:
+		// TODO account for K+SB
 		for _, runnerID := range state.Play.Runners {
 			runner := stats.GetBatting(runnerID)
 			runner.StolenBases++

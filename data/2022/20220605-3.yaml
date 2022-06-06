@@ -1,0 +1,59 @@
+date: 6/5/22
+game: 3
+visitor: Pride J/F
+visitorid: pride-2022
+home: NorCal Choppers Harrison/Stone
+start: 2:06P
+timelimit: 100m
+tournament: PGF Stockton 14u Qualifiers
+league: PGF
+visitorplays:
+  - pitcher,5
+  - 6,BFSBBB,W
+  - 17,CBX,S7/G6.B-1;1-2
+  - 26,CBFBBFX,8/L8
+  - 18,CFBX,S8/L78.B-1;1-2;2-3
+  - 00,BSX,S6/G6.B-1;1-2;2-3;3-H
+  - 11,BX,43/G4.1-2;2-3;3-H
+  - 2,BBBB,W.B-1
+  - 7,X,S7/L7.B-1;1-2;2-3;3-H
+  - 22,BX,3/P3
+  - inn,3
+  - 6,BFBCFX,S4/G4
+  - 17,C,SB2
+  - 17,CCFBBX,8/P8/SF.2-H
+  - 26,BBBB,W
+  - 18,FX,FC5/G5.B-1;1X2(54)
+  - 00,X,63/G6
+  - inn,4
+  - pitcher,28
+  - 11,BX,4/L4
+  - 2,CBBBB,W
+  - 7,BBBFCX,S8/G8.B-1;1-2
+  - 22,FBB,WP.1-2;2-3
+  - 22,FBBBB,W.B-1
+  - 6,BBFBB,W.B-1;1-2;2-3;3-H
+  - 17,CBB,WP.1-2;2-3;3-H
+  - 17,CBBFBB,W+WP.B-2;2-3;3-H
+  - 26,BBX,E4/G1.B-1;2-3;3-H
+  - 18,X,T7/L7.B-3;1-H;3-H
+  - 00,SFFBBFBX,S7/L5.B-1;3-H
+  - pitcher,11
+  - 11,FBX,FC7/P7.B-1;1X2(76)
+  - 2,BB,PB.1-2
+  - 2,BBX,63/G6
+  - inn,11
+  - 7,X,1/P1
+  - 22,X,S7/L6
+  - 6,BX,8/F8,nice catch
+  - 17,FBBBX,S8/G8.B-1;1-2
+  - 26,BX,D8/L78.B-2;1-3;2-H
+  - 18,X,53/L5
+  - inn,12
+  - 00,BCBFX,S6/G6
+  - 10,BX,S7/G6.B-1;1-2
+  - 2,BFBX,D8/F8D.B-2;1-3;2-H
+  - 7,CBX,4/P4
+  - 22,BBFX,13/G1.2-3;3-H
+  - 6,FCX,4/P4
+  - final,14
