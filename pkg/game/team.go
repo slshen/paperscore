@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"unicode"
 
 	"gopkg.in/yaml.v3"
 )
@@ -12,6 +13,8 @@ import (
 type Team struct {
 	Name    string
 	Players map[PlayerID]*Player
+
+	playerIDs map[string]PlayerID
 }
 
 type Player struct {
@@ -25,8 +28,9 @@ var playerNumberRegexp = regexp.MustCompile(`\d+`)
 
 func NewTeam(name string) *Team {
 	return &Team{
-		Name:    name,
-		Players: make(map[PlayerID]*Player),
+		Name:      name,
+		Players:   make(map[PlayerID]*Player),
+		playerIDs: make(map[string]PlayerID),
 	}
 }
 
@@ -67,6 +71,23 @@ func (team *Team) GetPlayer(id PlayerID) *Player {
 		player.Name = ""
 	}
 	return player
+}
+
+func (team *Team) parsePlayerID(s string) PlayerID {
+	if unicode.IsDigit(rune(s[0])) {
+		playerID := team.playerIDs[s]
+		if playerID != "" {
+			return playerID
+		}
+		for playerID, player := range team.Players {
+			if player.Number == s {
+				// fmt.Printf("Using %s for %s in game file\n", playerID, s)
+				team.playerIDs[s] = playerID
+				return playerID
+			}
+		}
+	}
+	return PlayerID(s)
 }
 
 func getDefaultPlayerNumber(player PlayerID) string {

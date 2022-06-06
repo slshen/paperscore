@@ -143,26 +143,12 @@ func (g *Game) GetStates() []*State {
 	return g.states
 }
 
-func (g *Game) AddVisitorPlay(playCode string) (*State, error) {
-	g.VisitorPlays = append(g.VisitorPlays, playCode)
-	var lastState *State
-	if len(g.states) > 0 {
-		lastState = g.states[len(g.states)-1]
-	}
-	m := newGameMachine(Top, lastState)
-	state, err := m.runOne(playCode)
-	if state != nil {
-		g.states = append(g.states, state)
-	}
-	return state, err
-}
-
 func (g *Game) generateStates() (errs error) {
-	visitorStates, err := g.runPlays(Top, g.VisitorPlays)
+	visitorStates, err := g.runPlays(g.VisitorTeam, g.HomeTeam, Top, g.VisitorPlays)
 	if err != nil {
 		errs = multierror.Append(errs, err)
 	}
-	homeStates, err := g.runPlays(Bottom, g.HomePlays)
+	homeStates, err := g.runPlays(g.HomeTeam, g.VisitorTeam, Bottom, g.HomePlays)
 	if err != nil {
 		errs = multierror.Append(errs, err)
 	}
@@ -195,8 +181,8 @@ func (g *Game) generateStates() (errs error) {
 	return
 }
 
-func (g *Game) runPlays(half Half, playCodes []string) (states []*State, errs error) {
-	m := newGameMachine(half, nil)
+func (g *Game) runPlays(battingTeam, fieldingTeam *Team, half Half, playCodes []string) (states []*State, errs error) {
+	m := newGameMachine(half, nil, battingTeam, fieldingTeam)
 	for _, play := range playCodes {
 		state, err := m.runOne(play)
 		if err != nil {

@@ -1,0 +1,78 @@
+date: 6/5/22
+game: 1
+visitor: Pride J/F
+visitorid: pride-2022
+home: AASA Bryson
+start: 10:19A
+timelimit: 100m
+tournament: PGF Stockton 14u Qualifiers
+league: PGF
+visitorplays:
+  - pitcher,99
+  - 6,CSX,43/G4
+  - 17,BBBCCX,63/G6
+  - 26,SFX,D7/L7
+  - 18,CX,8/L8
+  - inn,0
+  - 00,X,8/F8D
+  - 11,BFFFBBS,K
+  - 2,CBX,43/P3D
+  - inn,0
+  - 7,BBBCX,63/G6
+  - 22,BCCS,K
+  - 6,X,13/G1
+  - inn,0
+  - 17,SH,HP
+  - 26,CFX,E6/G6/TH.B-1;1-2
+  - pitcher,8
+  - 18,BFFFFX,4/P4/IF
+  - 00,BSFX,FC6.B-1;1-2;2X3(65)
+  - 11,BSX,43/G4
+  - inn,0
+  - 2,CBBX,6/P6
+  - 7,BSCS,K23
+  - 22,CX,4/P4
+  - 6,CSBS,K
+  - 17,BCX,6/P6
+  - 26,SSX,63/L6
+  - inn,0
+  - 18,X,53/G5
+  - 00,CX,7/F7
+  - 11,SFBX,S4/G45
+  - 2,CB,PO1(23)
+  - final,0
+homeplays:
+  - pitcher,11
+  - 3,BX,43/G4
+  - 15,X,S8/L6
+  - 99,BFFS,K
+  - 10,B,SB2,delayed steal
+  - 10,BFX,53/G5,nice pick
+  - 4,X,S7/G6
+  - 25,CSBBS,K
+  - 5,BFCX,FC6.B-1;1X2(64),failed to turn DP
+  - 26,SFBFBFX,1/P1
+  - inn,0
+  - 13,CSFBS,K
+  - 3,BSBCC,K
+  - 15,SBBFBX,S7/L6
+  - 99,SX,S4/G4.B-2;1-H(E6/TH)
+  - 10,CBFX,13/G1
+  - inn,1
+  - 4,BBX,13/G1
+  - 25,X,D9/L89
+  - 5,FSFBX,E6/G6.B-1
+  - 26,BX,FC6.B-1;1X2(6);2-H(E6/TH)
+  - 13,BB,WP.1-2
+  - 13,BBCCS,K
+  - inn,2
+  - 3,FBFX,E4/G4.B-1
+  - 15,CX,6/P6
+  - 99,X,D8/L78.B-2;1-3
+  - 10,BS,PO3(25)
+  - 10,BSX,S8/L8.B-1;2-H
+  - 4,X,S7/G7.B-1;1-2
+  - 25,X,D7/L78.B-2;1-H;2-H
+  - pitcher,00
+  - 5,CX,4/P4
+  - inn,5

@@ -49,6 +49,8 @@ func (p *Pitching) Record(state *game.State, lastState *game.State) {
 		p.WP++
 	case game.StolenBase:
 		p.StolenBases += len(state.Play.Runners)
+	case game.StrikeOut:
+		p.StolenBases += len(state.StolenBases)
 	}
 	if state.Complete || state.Outs == 3 {
 		p.Pitches += len(state.Pitches)

@@ -18,8 +18,8 @@ type GroupBy struct {
 }
 
 type Aggregation struct {
-	Column *Column
-	Func   func(col *Column, group *Group)
+	createColumnFunc func() *Column
+	aggregateFunc    func(acol *Column, group *Group)
 }
 
 func (dat *Data) GroupBy(cols ...string) *GroupBy {
@@ -64,7 +64,7 @@ func (g *GroupBy) Aggregate(aggrs ...Aggregation) *Data {
 		dat.Columns = append(dat.Columns, gc)
 	}
 	for _, agg := range aggrs {
-		dat.Columns = append(dat.Columns, agg.Column)
+		dat.Columns = append(dat.Columns, agg.createColumnFunc())
 	}
 	nc := len(g.Columns)
 	for _, group := range g.Groups {
@@ -72,8 +72,86 @@ func (g *GroupBy) Aggregate(aggrs ...Aggregation) *Data {
 			dat.Columns[i].AppendValue(group.Values[i])
 		}
 		for j, agg := range aggrs {
-			agg.Func(dat.Columns[nc+j], group)
+			agg.aggregateFunc(dat.Columns[nc+j], group)
 		}
 	}
 	return dat
+}
+
+func (a Aggregation) WithFormat(f string) Aggregation {
+	return Aggregation{
+		createColumnFunc: func() *Column {
+			col := a.createColumnFunc()
+			col.Format = f
+			return col
+		},
+		aggregateFunc: a.aggregateFunc,
+	}
+}
+
+func (a Aggregation) WithSummary(s SummaryType) Aggregation {
+	return Aggregation{
+		createColumnFunc: func() *Column {
+			col := a.createColumnFunc()
+			col.Summary = s
+			return col
+		},
+		aggregateFunc: a.aggregateFunc,
+	}
+}
+
+func (a Aggregation) WithSummaryFormat(f string) Aggregation {
+	return Aggregation{
+		createColumnFunc: func() *Column {
+			col := a.createColumnFunc()
+			col.SummaryFormat = f
+			return col
+		},
+		aggregateFunc: a.aggregateFunc,
+	}
+}
+
+func AFunc(name string, columnType Type, f func(acol *Column, group *Group)) Aggregation {
+	return Aggregation{
+		createColumnFunc: func() *Column { return NewEmptyColumn(name, columnType) },
+		aggregateFunc:    f,
+	}
+}
+
+func ACount(name string) Aggregation {
+	return Aggregation{
+		createColumnFunc: func() *Column {
+			return NewEmptyColumn(name, Int)
+		},
+		aggregateFunc: func(acol *Column, group *Group) {
+			acol.AppendInts(len(group.Rows))
+		},
+	}
+}
+
+func ASum(name string, col *Column) Aggregation {
+	if t := col.GetType(); t != Int && t != Float {
+		panic("can only sum int or floats")
+	}
+	return Aggregation{
+		createColumnFunc: func() *Column {
+			return NewEmptyColumn(name, col.GetType())
+		},
+		aggregateFunc: func(acol *Column, group *Group) {
+			switch col.GetType() {
+			case Int:
+				sum := 0
+				for _, row := range group.Rows {
+					sum += col.GetInt(row)
+				}
+				acol.AppendInts(sum)
+			case Float:
+				sum := 0.
+				for _, row := range group.Rows {
+					sum += col.GetFloat(row)
+				}
+				acol.AppendFloats(sum)
+			}
+		},
+	}
 }

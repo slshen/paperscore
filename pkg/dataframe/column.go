@@ -45,6 +45,18 @@ func NewColumn(name, format string, values interface{}) *Column {
 	}
 }
 
+func NewEmptyColumn(name string, columnType Type) *Column {
+	switch columnType {
+	case Int:
+		return &Column{Name: name, Values: EmptyInts}
+	case Float:
+		return &Column{Name: name, Values: EmptyFloats}
+	case String:
+		return &Column{Name: name, Values: EmptyStrings}
+	}
+	panic(fmt.Sprintf("uknown type %v", columnType))
+}
+
 func (col *Column) GetType() Type {
 	switch col.Values.(type) {
 	case []int:

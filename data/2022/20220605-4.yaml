@@ -1,0 +1,60 @@
+date: 6/5/22
+game: 4
+visitor: Pride J/F
+visitorid: pride-2022
+home: AASA Escobar/Marietti
+start: 4:17P
+timelimit: 100m
+tournament: PGF Stockton 14u Qualifiers
+league: PGF
+visitorplays:
+  - pitcher,9
+  - 6,CBBBX,S7/L7S
+  - 17,CX,S8/G8.B-1;1-2
+  - 26,BCBFBX,S7/L7.B-1;1-2;2-3
+  - 18,BFBX,4/P4/IF
+  - 00,BCFX,S9/P4D.B-1;1-2;2-3;3-H
+  - 11,CX,S8/L8S.B-1;1-2;2-3;3-H
+  - 2,X,3/P3
+  - 7,BBFBX,13/G1
+  - inn,2
+  - 22,X,3/P3
+  - 6,BFFBS,K
+  - 17,FBX,S4/G4
+  - 26,CB,SB2
+  - 26,CBX,63/G6
+  - inn,2
+  - 18,BFBX,D7/L7
+  - 00,X,6/P5D
+  - 11,FX,S8/8.B-1;2-H
+  - 2,BFX,D8/L89.B-2;1-H
+  - 7,FBFBS,K
+  - 22,BFX,E6/P6.B-1;2-3
+  - 6,CX,9/P9
+  - inn,4
+  - 17,BX,6/P64
+  - 26,FX,3/P3
+  - 18,X,6/P6
+  - inn,4
+  - 00,BCX,8/F8
+  - 11,FBCX,6/L6
+  - 2,BFX,S8/P8S
+  - 7,X,S7/L7S.B-1;1-2
+  - 22,BX,6/P6
+  - 6,BX,E1/G1.B-1
+  - 17,BFBX,S7/G7.B-1;1-2
+  - 26,X,23/G2.1-2;2-3
+  - 18,X,S7/L7.B-1;2-3;3-H
+  - 00,B,SB2
+  - 00,BX,S8/L8.B-1;2-3;3-H
+  - 11,CBFX,7/L7
+  - 2,B,SB2,no 3-H?
+  - 2,BCBH,HP
+  - 7,FBFX,5/L5
+  - inn,6
+  - 22,BBCBX,13/G1
+  - 6,BSX,S8/L8
+  - 17,C,SB2
+  - 17,CFX,6/P6
+  - 26,X,43/G4
+  - final,6

@@ -258,8 +258,8 @@ func batterPlayDescription(state *game.State) string {
 
 func runningPlayDescription(team *game.Team, state, lastState *game.State) string {
 	play := state.Play
-	switch state.Play.Type {
-	case game.StolenBase:
+	switch {
+	case len(play.StolenBases) > 0:
 		var sb []string
 		for _, base := range play.StolenBases {
 			var runner game.PlayerID
@@ -278,11 +278,11 @@ func runningPlayDescription(team *game.Team, state, lastState *game.State) strin
 				fmt.Sprintf("%s steals %s", team.GetPlayer(runner).NameOrNumber(), base))
 		}
 		return strings.Join(sb, ", ")
-	case game.CaughtStealing:
+	case state.Play.Type == game.CaughtStealing:
 		return fmt.Sprintf("%s is caught stealing %s", team.GetPlayer(play.Runners[0]).NameOrNumber(), play.Base)
-	case game.WildPitch:
+	case state.Play.Type == game.WildPitch:
 		return "On a wild pitch"
-	case game.PassedBall:
+	case state.Play.Type == game.PassedBall:
 		return "On a passed ball"
 	default:
 		return ""
