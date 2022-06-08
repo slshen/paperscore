@@ -58,3 +58,38 @@ visitorplays:
   - 17,CFX,6/P6
   - 26,X,43/G4
   - final,6
+homeplays:
+  - pitcher,11
+  - 48,BFFBX,S9/P9S
+  - 11,X,S8/L8.B-1;1-2
+  - 20,BBX,FC8/P8S.B-1;1-2;2X3(85)
+  - 15,FFX,6(B)6(2)/LDP
+  - inn,0
+  - 9,X,4/P4
+  - 2,BFBX,43/G4
+  - 33,X,S7/L7
+  - 00,X,FC4/G4.B-1;1X2(46)
+  - inn,0
+  - 20,X,63/G6
+  - 21,FSX,E3/G4.B-1
+  - 9,BX,FC6/G6.B-1;1X2(64)
+  - 2,BX,8/P8S
+  - inn,0
+  - 33,BBFFFFX,3/P3
+  - 00,FFBFBX,S9/P3D
+  - 16,BBX,3/P3
+  - 48,BB,WP.1-2
+  - 48,BBBCCX,43/G4
+  - inn,0
+  - 11,BCFX,S8/G4
+  - 20,BBX,4/P4
+  - 21,BBX,D9/L9.B-2;1-H
+  - 9,X,S8/P3.B-1;2-3,misplay no call for ball
+  - 2,FX,4/P4
+  - 33,X,53/G5
+  - inn,1
+  - 29,X,S9/G4
+  - 16,BBCSS,K
+  - 48,BX,9/F9
+  - 11,BFX,8/L8
+  - final,1
