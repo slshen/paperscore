@@ -131,6 +131,13 @@ func (re *ObservedRunExpectancy) WriteYAML(w io.Writer) error {
 	return nil
 }
 
+func (re *ObservedRunExpectancy) GetRunData() *dataframe.Data {
+	return re.runData.Select(
+		deriveState24(),
+		dataframe.Col("Runs").WithFormat("%4d"),
+	)
+}
+
 type RunFrequency struct {
 	dataframe.Data
 }
