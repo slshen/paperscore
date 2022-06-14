@@ -9,13 +9,13 @@
 {{if (not (or .IncludePlays .IncludeScoringPlays))}}
 {{- range .Comments}}{{.Half}} {{ordinal .Inning}}, {{.Outs}} Outs - {{.Text}}
 {{end}}{{end}}
-{{- range .Game.Comments}}* {{.}}
-{{end}}
 {{- if (or .IncludeScoringPlays .IncludePlays)}}
 {{.ScoringPlays}}{{end}}
-{{- with .Game}}
-* Start - {{.Start}}
-* Time Limit - {{.TimeLimit}}
-{{if .Venue}}* Venue - {{.Venue}}{{end}}
+{{- with .Game.File}}
+{{range $key, $value := .Properties}}
+{{- if (eq $key "comments" "start" "timelimit")}}
+* {{$key}} - {{$value}}
+{{- end}}
+{{- end}}
 {{end}}
 

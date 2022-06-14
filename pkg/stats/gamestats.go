@@ -41,11 +41,7 @@ func (gs *GameStats) Read(g *game.Game) error {
 		battingTeamStats := gs.GetStats(battingTeam)
 		fieldingTeamStats := gs.GetStats(fieldingTeam)
 		lastState := getLastState(states, i)
-		var advances game.Advances
-		if !state.Complete {
-			advances = state.Advances
-		}
-		reChange := gs.red.Record(g.ID, state, lastState, advances)
+		reChange := gs.red.Record(g.ID, state, lastState)
 		battingTeamStats.RecordBatting(g, state, lastState, reChange)
 		fieldingTeamStats.RecordFielding(g, state, lastState)
 	}

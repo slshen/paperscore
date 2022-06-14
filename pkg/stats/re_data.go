@@ -38,7 +38,7 @@ func (red *REData) GetData() *dataframe.Data {
 	}
 }
 
-func (red *REData) Record(gameID string, state, lastState *game.State, advances game.Advances) float64 {
+func (red *REData) Record(gameID string, state, lastState *game.State) float64 {
 	if red.re == nil {
 		return 0
 	}
@@ -63,8 +63,8 @@ func (red *REData) Record(gameID string, state, lastState *game.State, advances 
 	red.r.AppendInts(runsScored)
 	red.re24.AppendFloats(change)
 	var runnersStrings []string
-	for _, from := range []string{"B", "1", "2", "3"} {
-		adv := advances[from]
+	for _, from := range []string{"1", "2", "3"} {
+		adv := state.Advances[from]
 		if adv != nil {
 			runnersStrings = append(runnersStrings, string(adv.Runner))
 		}

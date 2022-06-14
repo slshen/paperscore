@@ -3,7 +3,8 @@ package game
 import (
 	"fmt"
 	"regexp"
-	"strings"
+
+	"github.com/slshen/sb/pkg/gamefile"
 )
 
 type Advance struct {
@@ -12,10 +13,10 @@ type Advance struct {
 	Out                bool  `yaml:",omitempty"`
 	Fielders           []int `yaml:",omitempty,flow"`
 	RunnerInterference bool  `yaml:",omitempty"`
-	Implied            bool
+	Implied            bool  `yaml:",omitempty"`
 	Runner             PlayerID
-	WildPitch          bool
-	PassedBall         bool
+	WildPitch          bool `yaml:",omitempty"`
+	PassedBall         bool `yaml:",omitempty"`
 	*FieldingError     `yaml:",omitempty"`
 }
 
@@ -43,7 +44,7 @@ func (a *Advance) GoString() string {
 	return a.Code
 }
 
-func parseAdvance(s string) (*Advance, error) {
+func parseAdvance(play *gamefile.Play, s string) (*Advance, error) {
 	m := advanceRegexp.FindStringSubmatch(s)
 	if m == nil {
 		return nil, fmt.Errorf("illegal advance code %s", s)
@@ -76,7 +77,7 @@ func parseAdvance(s string) (*Advance, error) {
 		a.PassedBall = true
 	case m[4] != "":
 		var err error
-		a.FieldingError, err = parseFieldingError(m[4])
+		a.FieldingError, err = parseFieldingError(play, m[4])
 		if err != nil {
 			return nil, err
 		}
@@ -84,34 +85,34 @@ func parseAdvance(s string) (*Advance, error) {
 	return a, nil
 }
 
-func parseAdvances(advancesCode string, batter PlayerID, runners []PlayerID) (advances Advances, err error) {
+func parseAdvances(play *gamefile.Play, batter PlayerID, runners []PlayerID) (advances Advances, err error) {
 	advances = make(Advances)
-	if len(advancesCode) > 0 {
-		for _, as := range strings.Split(advancesCode, ";") {
-			var advance *Advance
-			advance, err = parseAdvance(as)
-			if err != nil {
-				return
-			}
-			if advances[advance.From] != nil {
-				err = fmt.Errorf("cannot advance %s twice in %s", advance.From, advancesCode)
-				return
-			}
-			if advance.From == "B" {
-				advance.Runner = batter
-			} else {
-				if runners == nil {
-					err = fmt.Errorf("no runner to advance from %s at the start of a half-inning", advance.From)
-					return
-				}
-				advance.Runner = runners[runnerNumber[advance.From]]
-				if advance.Runner == "" {
-					err = fmt.Errorf("no runner to advance from %s in %s", advance.From, advancesCode)
-					return
-				}
-			}
-			advances[advance.From] = advance
+	for _, as := range play.Advances {
+		var advance *Advance
+		advance, err = parseAdvance(play, as)
+		if err != nil {
+			return
 		}
+		if advances[advance.From] != nil {
+			err = fmt.Errorf("%s: cannot advance %s twice in %s", play.Pos, advance.From, as)
+			return
+		}
+		if advance.From == "B" {
+			advance.Runner = batter
+		} else {
+			if runners == nil {
+				err = fmt.Errorf("%s: no runner to advance from %s at the start of a half-inning",
+					play.Pos, advance.From)
+				return
+			}
+			advance.Runner = runners[runnerNumber[advance.From]]
+			if advance.Runner == "" {
+				err = fmt.Errorf("%s: no runner to advance from %s in %s", play.Pos,
+					advance.From, as)
+				return
+			}
+		}
+		advances[advance.From] = advance
 	}
 	return
 }

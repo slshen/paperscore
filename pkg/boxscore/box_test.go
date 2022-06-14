@@ -12,8 +12,13 @@ import (
 func TestBox(t *testing.T) {
 	assert := assert.New(t)
 	for _, f := range []string{ /*"20211016-3.yaml",*/
+		"../gamefile/testdata/test.gm",
 		"20211119-2.yaml" /*"20211009-1.yaml" "20210926-1.yaml", "20210925-3.yaml"*/} {
-		g, err := game.ReadGameFile(filepath.Join("../../data/2021", f))
+		path := f
+		if f[0] != '.' {
+			path = filepath.Join("../../data/2021", f)
+		}
+		g, err := game.ReadGameFile(path)
 		if !assert.Nil(err) {
 			return
 		}
