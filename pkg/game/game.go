@@ -2,8 +2,6 @@ package game
 
 import (
 	"fmt"
-	"io"
-	"os"
 	"path/filepath"
 	"regexp"
 	"sort"
@@ -11,31 +9,25 @@ import (
 	"time"
 
 	"github.com/hashicorp/go-multierror"
-	"gopkg.in/yaml.v3"
+	"github.com/slshen/sb/pkg/gamefile"
 )
 
 type Game struct {
+	File          *gamefile.File `yaml:"-"`
 	ID            string
 	Home, Visitor string
-	Date          string
-	Number        int `yaml:"game"`
-	Start         string
-	TimeLimit     time.Duration
 	Final         *struct {
 		Visitor, Home int
 	} `yaml:",omitempty"`
-	VisitorPlays          []string `yaml:"visitorplays"`
-	HomePlays             []string `yaml:"homeplays"`
-	HomeID                string   `yaml:"homeid"`
-	VisitorID             string   `yaml:"visitorid"`
+	HomeID                string `yaml:"homeid"`
+	VisitorID             string `yaml:"visitorid"`
 	HomeTeam, VisitorTeam *Team
-	Comments              []string
-	Venue                 string
 	League                string
 	Tournament            string
+	Date                  time.Time
+	Number                string
 
 	states []*State
-	date   time.Time
 }
 
 var gameFileRegexp = regexp.MustCompile(`\d\d\d\d\d\d\d\d-\d.yaml`)
@@ -45,6 +37,11 @@ func ReadGamesDir(dir string) ([]*Game, error) {
 	if err != nil {
 		return nil, err
 	}
+	gmfiles, err := filepath.Glob(filepath.Join(dir, "*.gm"))
+	if err != nil {
+		return nil, err
+	}
+	files = append(files, gmfiles...)
 	var gameFiles []string
 	for _, f := range files {
 		if gameFileRegexp.MatchString(f) {
@@ -74,25 +71,44 @@ func ReadGameFiles(paths []string) (games []*Game, errs error) {
 }
 
 func ReadGameFile(path string) (*Game, error) {
-	f, err := os.Open(path)
+	var (
+		gf  *gamefile.File
+		err error
+	)
+	if strings.HasSuffix(path, ".yaml") {
+		gf, err = gamefile.ParseYAMLFile(path)
+	} else {
+		gf, err = gamefile.ParseFile(path)
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
-	return ReadGame(path, f)
+	return newGame(gf)
 }
 
-func ReadGame(path string, in io.Reader) (*Game, error) {
-	g := &Game{}
-	dec := yaml.NewDecoder(in)
-	dec.KnownFields(true)
-	if err := dec.Decode(g); err != nil {
-		return nil, err
+func parseGameDate(d string) (time.Time, error) {
+	t, err := time.Parse("1/2/06", d)
+	if err != nil {
+		t, err = time.Parse("1/2/2006", d)
+	}
+	return t, err
+}
+
+func newGame(gf *gamefile.File) (*Game, error) {
+	g := &Game{
+		File:       gf,
+		Home:       gf.Properties["home"],
+		HomeID:     gf.Properties["homeid"],
+		Visitor:    gf.Properties["visitor"],
+		VisitorID:  gf.Properties["visitorid"],
+		Tournament: gf.Properties["tournament"],
+		League:     gf.Properties["league"],
+		Number:     gf.Properties["number"],
 	}
 	var errs error
-	if path != "" {
+	if gf.Path != "" {
 		var err error
-		dir := filepath.Dir(path)
+		dir := filepath.Dir(gf.Path)
 		if g.HomeID != "" {
 			g.HomeTeam, err = ReadTeamFile(g.Home, filepath.Join(dir, fmt.Sprintf("%s.yaml", g.HomeID)))
 			if err != nil {
@@ -113,7 +129,7 @@ func ReadGame(path string, in io.Reader) (*Game, error) {
 		g.VisitorTeam = NewTeam(g.Visitor)
 	}
 	if g.ID == "" {
-		id := filepath.Base(path)
+		id := filepath.Base(gf.Path)
 		dot := strings.LastIndex(id, ".")
 		if dot > 0 {
 			id = id[0:dot]
@@ -121,7 +137,7 @@ func ReadGame(path string, in io.Reader) (*Game, error) {
 		g.ID = id
 	}
 	var err error
-	g.date, err = parseGameDate(g.Date)
+	g.Date, err = parseGameDate(g.File.Properties["date"])
 	if err != nil {
 		errs = multierror.Append(errs, err)
 	}
@@ -131,24 +147,18 @@ func ReadGame(path string, in io.Reader) (*Game, error) {
 	return g, errs
 }
 
-func parseGameDate(d string) (time.Time, error) {
-	t, err := time.Parse("1/2/06", d)
-	if err != nil {
-		t, err = time.Parse("1/2/2006", d)
-	}
-	return t, err
-}
-
 func (g *Game) GetStates() []*State {
 	return g.states
 }
 
 func (g *Game) generateStates() (errs error) {
-	visitorStates, err := g.runPlays(g.VisitorTeam, g.HomeTeam, Top, g.VisitorPlays)
+	visitorStates, err := g.runPlays(g.VisitorTeam, g.HomeTeam, Top,
+		g.File.GetVisitorEvents())
 	if err != nil {
 		errs = multierror.Append(errs, err)
 	}
-	homeStates, err := g.runPlays(g.HomeTeam, g.VisitorTeam, Bottom, g.HomePlays)
+	homeStates, err := g.runPlays(g.HomeTeam, g.VisitorTeam, Bottom,
+		g.File.GetHomeEvents())
 	if err != nil {
 		errs = multierror.Append(errs, err)
 	}
@@ -181,20 +191,31 @@ func (g *Game) generateStates() (errs error) {
 	return
 }
 
-func (g *Game) runPlays(battingTeam, fieldingTeam *Team, half Half, playCodes []string) (states []*State, errs error) {
+func (g *Game) runPlays(battingTeam, fieldingTeam *Team, half Half, events *gamefile.TeamEvents) (states []*State, errs error) {
+	if events == nil {
+		return
+	}
 	m := newGameMachine(half, nil, battingTeam, fieldingTeam)
-	for _, play := range playCodes {
-		state, err := m.runOne(play)
-		if err != nil {
-			errs = multierror.Append(errs, err)
+	for _, event := range events.Events {
+		if event.Empty {
+			continue
 		}
-		if state != nil {
-			states = append(states, state)
+		if m.final {
+			errs = multierror.Append(errs,
+				fmt.Errorf("%s: cannot have more plays after final score", event.Pos))
+			break
+		}
+		if event.Play != nil {
+			state, err := m.handlePlay(event.Play)
+			if err != nil {
+				errs = multierror.Append(errs, err)
+			}
+			if state != nil {
+				states = append(states, state)
+			}
+		} else if err := m.handleSpecialEvent((event)); err != nil {
+			errs = multierror.Append(errs, err)
 		}
 	}
 	return
-}
-
-func (g *Game) GetDate() time.Time {
-	return g.date
 }
