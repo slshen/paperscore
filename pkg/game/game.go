@@ -24,10 +24,11 @@ type Game struct {
 	HomeTeam, VisitorTeam *Team
 	League                string
 	Tournament            string
-	Date                  time.Time
+	Date                  string
 	Number                string
 
 	states []*State
+	date   time.Time
 }
 
 var gameFileRegexp = regexp.MustCompile(`\d\d\d\d\d\d\d\d-\d.yaml`)
@@ -103,7 +104,8 @@ func newGame(gf *gamefile.File) (*Game, error) {
 		VisitorID:  gf.Properties["visitorid"],
 		Tournament: gf.Properties["tournament"],
 		League:     gf.Properties["league"],
-		Number:     gf.Properties["number"],
+		Number:     gf.Properties["game"],
+		Date:       gf.Properties["date"],
 	}
 	var errs error
 	if gf.Path != "" {
@@ -128,6 +130,12 @@ func newGame(gf *gamefile.File) (*Game, error) {
 	if g.VisitorTeam == nil {
 		g.VisitorTeam = NewTeam(g.Visitor)
 	}
+	if g.Home == "" {
+		g.Home = g.HomeTeam.Name
+	}
+	if g.Visitor == "" {
+		g.Visitor = g.VisitorTeam.Name
+	}
 	if g.ID == "" {
 		id := filepath.Base(gf.Path)
 		dot := strings.LastIndex(id, ".")
@@ -137,7 +145,7 @@ func newGame(gf *gamefile.File) (*Game, error) {
 		g.ID = id
 	}
 	var err error
-	g.Date, err = parseGameDate(g.File.Properties["date"])
+	g.date, err = parseGameDate(g.File.Properties["date"])
 	if err != nil {
 		errs = multierror.Append(errs, err)
 	}
@@ -218,4 +226,8 @@ func (g *Game) runPlays(battingTeam, fieldingTeam *Team, half Half, events *game
 		}
 	}
 	return
+}
+
+func (g *Game) GetDate() time.Time {
+	return g.date
 }

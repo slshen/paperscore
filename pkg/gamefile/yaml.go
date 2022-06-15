@@ -45,11 +45,13 @@ func (p *YAMLParser) parse(path string, dat []byte) (*File, error) {
 				teamID = p.toTeamID(m["visitor"])
 			}
 		default:
-			f.PropertyList = append(f.PropertyList, &Property{
-				Pos:   pos,
-				Key:   key,
-				Value: p.toString(value),
-			})
+			if val := p.toString(value); val != "" {
+				f.PropertyList = append(f.PropertyList, &Property{
+					Pos:   pos,
+					Key:   key,
+					Value: val,
+				})
+			}
 			continue
 		}
 		if values, ok := value.([]interface{}); ok {

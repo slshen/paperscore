@@ -12,7 +12,7 @@ func TestParser(t *testing.T) {
 	f, err := ParseFile("testdata/test.gm")
 	assert.NoError(err)
 	assert.NotNil(f)
-	assert.Equal("pride-2022", f.Properties["us"])
+	assert.Equal("pride-2022", f.Properties["visitorid"])
 	if !assert.Len(f.TeamEvents, 2) {
 		return
 	}

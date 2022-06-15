@@ -11,7 +11,7 @@ import (
 )
 
 type Team struct {
-	Name    string
+	Name    string `yaml:"name"`
 	Players map[PlayerID]*Player
 
 	playerIDs map[string]PlayerID
