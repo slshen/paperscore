@@ -4,8 +4,8 @@ start: 7:53AM
 timelimit: 80m
 tournament: PGF Best on Dirt
 league: PGF
-us: pride-2022
-them: Firecrackers Everett/Parry
+visitorid: pride-2022
+home: Firecrackers Everett/Parry
 ---
 plays pride-2022
 pitching 2
@@ -45,7 +45,7 @@ score 1
 24 25 CX 6/L6
 final 7
 
-plays them
+plays home
 pitching 11
 1 48 SCX 8/F8
 2 6 CFBX 43/G4

@@ -9,14 +9,15 @@ import (
 var parser = participle.MustBuild(&File{}, participle.Lexer(gameFileDef))
 
 func ParseFile(path string) (*File, error) {
-	file := &File{Path: path}
 	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
 	defer f.Close()
+	file := &File{}
 	if err := parser.Parse(path, f, file); err != nil {
 		return nil, err
 	}
+	file.Path = path
 	return file, file.validate()
 }

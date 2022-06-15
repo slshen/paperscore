@@ -2,6 +2,8 @@ package gamefile
 
 import (
 	"fmt"
+	"io"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -54,9 +56,9 @@ type Play struct {
 }
 
 type Alternative struct {
-	Code     string    `parser:"@Code"`
-	Advances []*string `parser:"@Code*"`
-	Comment  string    `parser:" @Text?"`
+	Code     string   `parser:"@Code"`
+	Advances []string `parser:"@Code*"`
+	Comment  string   `parser:" @Text?"`
 }
 
 func (n *Numbers) UnmarshalText(dat []byte) error {
@@ -113,4 +115,80 @@ func (f *File) validate() error {
 		f.Properties[prop.Key] = prop.Value
 	}
 	return nil
+}
+
+func (f *File) Write(w io.Writer) {
+	printed := map[string]bool{}
+	for _, name := range []string{"date", "game", "visitor", "visitorid", "home", "homeid", "start", "timelimit", "tournament", "league"} {
+		val := f.Properties[name]
+		printed[name] = true
+		if val != "" {
+			fmt.Fprintf(w, "%s: %s\n", name, val)
+		}
+	}
+	var names []string
+	for name := range f.Properties {
+		if !printed[name] {
+			printed[name] = true
+			names = append(names, name)
+		}
+	}
+	sort.Strings(names)
+	for _, name := range names {
+		val := f.Properties[name]
+		fmt.Fprintf(w, "%s: %s\n", name, val)
+	}
+	fmt.Fprintln(w, "---")
+	f.writeEvents(w, f.GetVisitorEvents())
+	f.writeEvents(w, f.GetHomeEvents())
+}
+
+func (f *File) writeEvents(w io.Writer, events *TeamEvents) {
+	if events == nil {
+		return
+	}
+	fmt.Fprintf(w, "plays %s\n", events.TeamID)
+	var pa int
+	for _, event := range events.Events {
+		switch {
+		case event.Play != nil:
+			play := event.Play
+			if !play.ContinuedPlateAppearance {
+				if i := play.PlateAppearance.Int(); i != 0 {
+					pa = i
+				} else {
+					pa += 1
+				}
+				fmt.Fprintf(w, "%d %s ", pa, play.Batter.String())
+			} else {
+				fmt.Fprintf(w, "  ... ")
+			}
+			fmt.Fprintf(w, "%s ", play.PitchSequence)
+			f.writeCodeAdvancesComment(w, play.Code, play.Advances, play.Comment)
+		case event.Alternative != nil:
+			alt := event.Alternative
+			fmt.Fprintf(w, "  alt")
+			f.writeCodeAdvancesComment(w, alt.Code, alt.Advances, alt.Comment)
+		case event.Pitcher != "":
+			fmt.Fprintf(w, "pitching %s\n", event.Pitcher)
+		case event.RAdjBase != "":
+			fmt.Fprintf(w, "radj %s %s\n", event.RAdjRunner, event.RAdjBase)
+		case event.Score != "":
+			fmt.Fprintf(w, "score %s\n", event.Score)
+		case event.Final != "":
+			fmt.Fprintf(w, "final %s\n", event.Final)
+		}
+	}
+	fmt.Fprintln(w)
+}
+
+func (f *File) writeCodeAdvancesComment(w io.Writer, code string, advances []string, comment string) {
+	fmt.Fprintf(w, "%s", code)
+	for _, adv := range advances {
+		fmt.Fprintf(w, " %s", adv)
+	}
+	if comment != "" {
+		fmt.Fprintf(w, " : %s", comment)
+	}
+	fmt.Fprintln(w)
 }
