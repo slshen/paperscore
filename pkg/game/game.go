@@ -27,9 +27,14 @@ type Game struct {
 	Date                  string
 	Number                string
 
-	states []*State
-	date   time.Time
+	visitorStates []*State
+	homeStates    []*State
+	states        []*State
+	altStates     altStatesMap
+	date          time.Time
 }
+
+type altStatesMap map[*State][]*State
 
 var gameFileRegexp = regexp.MustCompile(`\d\d\d\d\d\d\d\d-\d.yaml`)
 
@@ -106,6 +111,7 @@ func newGame(gf *gamefile.File) (*Game, error) {
 		League:     gf.Properties["league"],
 		Number:     gf.Properties["game"],
 		Date:       gf.Properties["date"],
+		altStates:  make(altStatesMap),
 	}
 	var errs error
 	if gf.Path != "" {
@@ -160,28 +166,29 @@ func (g *Game) GetStates() []*State {
 }
 
 func (g *Game) generateStates() (errs error) {
-	visitorStates, err := g.runPlays(g.VisitorTeam, g.HomeTeam, Top,
+	var err error
+	g.visitorStates, err = g.runPlays(g.VisitorTeam, g.HomeTeam, Top,
 		g.File.GetVisitorEvents())
 	if err != nil {
 		errs = multierror.Append(errs, err)
 	}
-	homeStates, err := g.runPlays(g.HomeTeam, g.VisitorTeam, Bottom,
+	g.homeStates, err = g.runPlays(g.HomeTeam, g.VisitorTeam, Bottom,
 		g.File.GetHomeEvents())
 	if err != nil {
 		errs = multierror.Append(errs, err)
 	}
-	g.states = make([]*State, 0, len(visitorStates)+len(homeStates))
+	g.states = make([]*State, 0, len(g.visitorStates)+len(g.homeStates))
 	half := Top
-	for i, j := 0, 0; i < len(visitorStates) || j < len(homeStates); {
+	for i, j := 0, 0; i < len(g.visitorStates) || j < len(g.homeStates); {
 		var state *State
 		if half == Top {
-			if i < len(visitorStates) {
-				state = visitorStates[i]
+			if i < len(g.visitorStates) {
+				state = g.visitorStates[i]
 				i++
 			}
 		} else {
-			if j < len(homeStates) {
-				state = homeStates[j]
+			if j < len(g.homeStates) {
+				state = g.homeStates[j]
 				j++
 			}
 		}
@@ -203,7 +210,12 @@ func (g *Game) runPlays(battingTeam, fieldingTeam *Team, half Half, events *game
 	if events == nil {
 		return
 	}
-	m := newGameMachine(half, nil, battingTeam, fieldingTeam)
+	m := newGameMachine(half, battingTeam, fieldingTeam)
+	lastState := &State{
+		InningNumber: 1,
+		Half:         half,
+		Runners:      make([]PlayerID, 3),
+	}
 	for _, event := range events.Events {
 		if event.Empty {
 			continue
@@ -213,19 +225,39 @@ func (g *Game) runPlays(battingTeam, fieldingTeam *Team, half Half, events *game
 				fmt.Errorf("%s: cannot have more plays after final score", event.Pos))
 			break
 		}
-		if event.Play != nil {
-			state, err := m.handlePlay(event.Play)
+		switch {
+		case event.Play != nil:
+			state, err := m.handleActualPlay(event.Play, lastState)
 			if err != nil {
 				errs = multierror.Append(errs, err)
 			}
 			if state != nil {
 				states = append(states, state)
+				lastState = state
 			}
-		} else if err := m.handleSpecialEvent((event)); err != nil {
-			errs = multierror.Append(errs, err)
+		case event.Alternative != nil:
+			state, err := m.handleAlternative(event.Alternative, lastState)
+			if err != nil {
+				errs = multierror.Append(errs, err)
+			}
+			if state != nil {
+				g.altStates[lastState] = append(g.altStates[lastState], state)
+			}
+		default:
+			s, err := m.handleSpecialEvent(event, lastState)
+			if err != nil {
+				errs = multierror.Append(errs, err)
+			}
+			if s != nil {
+				lastState = s
+			}
 		}
 	}
 	return
+}
+
+func (g *Game) GetAlternativeStates(state *State) []*State {
+	return g.altStates[state]
 }
 
 func (g *Game) GetDate() time.Time {

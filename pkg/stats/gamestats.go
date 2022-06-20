@@ -13,6 +13,7 @@ type GameStats struct {
 	RE        RunExpectancy
 
 	red   *REData
+	alt   *AltData
 	teams map[string]*game.Team
 }
 
@@ -21,6 +22,7 @@ func NewGameStats(re RunExpectancy) *GameStats {
 		TeamStats: make(map[string]*TeamStats),
 		RE:        re,
 		red:       NewREData(re),
+		alt:       NewAltData(re),
 		teams:     make(map[string]*game.Team),
 	}
 }
@@ -29,7 +31,7 @@ func (gs *GameStats) Read(g *game.Game) error {
 	gs.teams[g.Home] = g.HomeTeam
 	gs.teams[g.Visitor] = g.VisitorTeam
 	states := g.GetStates()
-	for i, state := range states {
+	for _, state := range states {
 		var battingTeam, fieldingTeam *game.Team
 		if state.Top() {
 			battingTeam = g.VisitorTeam
@@ -40,22 +42,12 @@ func (gs *GameStats) Read(g *game.Game) error {
 		}
 		battingTeamStats := gs.GetStats(battingTeam)
 		fieldingTeamStats := gs.GetStats(fieldingTeam)
-		lastState := getLastState(states, i)
-		reChange := gs.red.Record(g.ID, state, lastState)
-		battingTeamStats.RecordBatting(g, state, lastState, reChange)
-		fieldingTeamStats.RecordFielding(g, state, lastState)
-	}
-	return nil
-}
-
-func getLastState(states []*game.State, i int) *game.State {
-	if i == 0 {
-		return nil
-	}
-	state := states[i]
-	lastState := states[i-1]
-	if state.InningNumber == lastState.InningNumber && state.Half == lastState.Half {
-		return lastState
+		reChange := gs.red.Record(g.ID, state)
+		for _, alt := range g.GetAlternativeStates(state) {
+			gs.alt.Record(g.ID, alt)
+		}
+		battingTeamStats.RecordBatting(g, state, reChange)
+		fieldingTeamStats.RecordFielding(g, state)
 	}
 	return nil
 }
@@ -84,18 +76,6 @@ func (gs *GameStats) GetPitchingData() *dataframe.Data {
 	})
 }
 
-func (gs *GameStats) GetXRAData() *dataframe.Data {
-	var dat *dataframe.Data
-	for _, stats := range gs.TeamStats {
-		if dat == nil {
-			dat = stats.GetXRAData()
-		} else {
-			dat.Append(stats.GetXRAData())
-		}
-	}
-	return dat
-}
-
 func comparePlayers(idx *dataframe.Index, r1, r2 int) bool {
 	n1 := fmt.Sprintf("%v/%v", idx.GetValue(r1, "Team"), idx.GetValue(r1, "Name"))
 	n2 := fmt.Sprintf("%v/%v", idx.GetValue(r2, "Team"), idx.GetValue(r2, "Name"))
@@ -112,6 +92,10 @@ func (gs *GameStats) GetAllBattingData() *dataframe.Data {
 
 func (gs *GameStats) GetRE24Data() *dataframe.Data {
 	return gs.red.GetData()
+}
+
+func (gs *GameStats) GetAltData() *dataframe.Data {
+	return gs.alt.GetData()
 }
 
 func (gs *GameStats) getBattingData(includeInactiveBatters bool) *dataframe.Data {

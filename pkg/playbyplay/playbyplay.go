@@ -127,7 +127,7 @@ func (gen *Generator) Generate(w io.Writer) error {
 				}
 			}
 			if !gen.ScoringOnly || len(state.ScoringRunners) > 0 {
-				fmt.Fprintf(line, ". %s", state.EventCode)
+				fmt.Fprintf(line, ". %s", state.PlayCode)
 				fmt.Fprint(w, text.WrapIndent(line.String(), 80, "  "))
 				fmt.Fprintln(w)
 				fmt.Fprintln(w)
@@ -236,6 +236,8 @@ func batterPlayDescription(state *game.State) string {
 	case game.StrikeOutPassedBall:
 		return "reaches on a striekout passed ball"
 	case game.StrikeOut:
+		return "strikes out"
+	case game.StrikeOutPickedOff:
 		return "strikes out"
 	case game.GroundOut:
 		verb := "is out"

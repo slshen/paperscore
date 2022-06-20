@@ -15,18 +15,14 @@ type TeamStats struct {
 	Batters  []game.PlayerID
 	Pitchers []game.PlayerID
 	Team     *game.Team
-	*ExcessRunsAllowed
 }
 
 func NewStats(team *game.Team, re RunExpectancy) *TeamStats {
 	return &TeamStats{
 		Team:          team,
 		FieldingStats: newFieldingStats(),
-		ExcessRunsAllowed: &ExcessRunsAllowed{
-			re: re,
-		},
-		Batting:  make(map[game.PlayerID]*Batting),
-		Pitching: make(map[game.PlayerID]*Pitching),
+		Batting:       make(map[game.PlayerID]*Batting),
+		Pitching:      make(map[game.PlayerID]*Pitching),
 	}
 }
 
@@ -58,7 +54,7 @@ func (stats *TeamStats) GetBattingData() *dataframe.Data {
 	return dat
 }
 
-func (stats *TeamStats) RecordBatting(g *game.Game, state, lastState *game.State, reChange float64) {
+func (stats *TeamStats) RecordBatting(g *game.Game, state *game.State, reChange float64) {
 	batting := stats.GetBatting(state.Batter)
 	stats.LOB += batting.Record(state)
 	if state.Complete {
@@ -78,11 +74,11 @@ func (stats *TeamStats) RecordBatting(g *game.Game, state, lastState *game.State
 			runner.StolenBases++
 		}
 	}
-	if lastState != nil {
+	if state.LastState != nil {
 		// look for a lead runnerID on first
 		var runnerID game.PlayerID
-		if lastState.Runners[2] == "" && lastState.Runners[1] == "" {
-			runnerID = lastState.Runners[0]
+		if state.LastState.Runners[2] == "" && state.LastState.Runners[1] == "" {
+			runnerID = state.LastState.Runners[0]
 		}
 		if runnerID != "" {
 			// count SB2 and stolen base opportunties
@@ -91,8 +87,8 @@ func (stats *TeamStats) RecordBatting(g *game.Game, state, lastState *game.State
 				runner.SB2++
 			}
 			i := 0
-			if !(lastState.Complete || lastState.Incomplete) {
-				i = len(lastState.Pitches)
+			if !(state.LastState.Complete || state.LastState.Incomplete) {
+				i = len(state.LastState.Pitches)
 			}
 			one := false
 			for j, pitch := range state.Pitches[i:] {
@@ -102,7 +98,9 @@ func (stats *TeamStats) RecordBatting(g *game.Game, state, lastState *game.State
 						if pitch == 'B' && state.Play.Type == game.Walk {
 							continue
 						}
-						if (pitch == 'S' || pitch == 'C') && state.Play.Type == game.StrikeOut && state.Outs == 3 {
+						if (pitch == 'S' || pitch == 'C') &&
+							(state.Play.Type == game.StrikeOut || state.Play.Type == game.StrikeOutPickedOff) &&
+							state.Outs == 3 {
 							continue
 						}
 					}
@@ -167,9 +165,9 @@ func (stats *TeamStats) GetPitching(pitcher game.PlayerID) *Pitching {
 	return p
 }
 
-func (stats *TeamStats) RecordFielding(g *game.Game, state, lastState *game.State) {
+func (stats *TeamStats) RecordFielding(g *game.Game, state *game.State) {
 	pitching := stats.GetPitching(state.Pitcher)
-	pitching.Record(state, lastState)
+	pitching.Record(state)
 	pitching.GameAppearances[g.ID] = true
 	switch state.Play.Type {
 	case game.ReachedOnError:
@@ -188,5 +186,4 @@ func (stats *TeamStats) RecordFielding(g *game.Game, state, lastState *game.Stat
 			stats.recordError(adv.FieldingError)
 		}
 	}
-	stats.ExcessRunsAllowed.record(state, lastState)
 }

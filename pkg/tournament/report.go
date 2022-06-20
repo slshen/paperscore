@@ -39,6 +39,12 @@ func (r *Report) GetBestAndWorstRE24(n int) *dataframe.Data {
 	return dat
 }
 
+func (r *Report) GetAltPlays() *dataframe.Data {
+	dat := r.gs.GetAltData()
+	dat.Name = fmt.Sprintf("%s Alternate Reality (%d games)", r.Group.Name, len(r.Group.Games))
+	return dat
+}
+
 func (r *Report) GetBattingData() *dataframe.Data {
 	dat := r.gs.GetBattingData()
 	idx := dat.GetIndex()

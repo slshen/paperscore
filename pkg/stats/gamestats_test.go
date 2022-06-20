@@ -1,6 +1,7 @@
 package stats
 
 import (
+	"fmt"
 	"path/filepath"
 	"testing"
 
@@ -24,5 +25,17 @@ func TestGameStats(t *testing.T) {
 	}
 	assert.NotNil(gs.GetBattingData())
 	assert.NotNil(gs.GetPitchingData())
-	assert.NotNil(gs.GetXRAData())
+}
+
+func TestAlt(t *testing.T) {
+	assert := assert.New(t)
+	re, err := ReadREMatrix("../../data/tweaked_re.csv")
+	assert.NoError(err)
+	gs := NewGameStats(re)
+	games, err := game.ReadGameFiles([]string{"../gamefile/testdata/test.gm"})
+	assert.NoError(err)
+	assert.Len(games, 1)
+	assert.NoError(gs.Read(games[0]))
+	fmt.Println(gs.GetAltData())
+	// t.Fail()
 }

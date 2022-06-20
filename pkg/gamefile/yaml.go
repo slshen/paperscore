@@ -88,13 +88,13 @@ func (p *YAMLParser) parseYAMLEvents(pos lexer.Position, plays []interface{}) (e
 		case "radj":
 			events = append(events, &Event{
 				Pos:        pos,
-				RAdjRunner: p.getPart(parts, 1),
+				RAdjRunner: Numbers(p.getPart(parts, 1)),
 				RAdjBase:   p.getPart(parts, 2),
 			})
 		case "err":
 			// ignore
 		default:
-			play := &Play{
+			play := &ActualPlay{
 				Pos:           pos,
 				Batter:        p.parseBatter(p.getPart(parts, 0)),
 				PitchSequence: p.getPart(parts, 1),
