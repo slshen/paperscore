@@ -374,7 +374,7 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 			},
 		}
 		state.NotOutOnPlay = true
-	case pp.playIs("PO%($$)"):
+	case pp.playIs("PO%($$)") || pp.playIs("PO%($$$)") || pp.playIs("PO%($$$$)"):
 		from := pp.playMatches[0]
 		if !(from == "1" || from == "2" || from == "3") {
 			return fmt.Errorf("%s: illegal picked off base in %s", play.GetPos(), pp.playCode)
@@ -386,7 +386,7 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 		state.Play = &Play{
 			Type:     PickedOff,
 			Runners:  []PlayerID{runner},
-			Fielders: pp.getFielders(1, 2),
+			Fielders: pp.getAllFielders(1),
 		}
 		advance := state.Advances[from]
 		if advance == nil {

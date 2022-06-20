@@ -117,6 +117,16 @@ func (dat *Data) Arrange(names ...string) {
 	dat.Columns = cols
 }
 
+func (dat *Data) RemoveColumn(name string) {
+	cols := make([]*Column, 0, len(dat.Columns)-1)
+	for _, col := range dat.Columns {
+		if col.Name != name {
+			cols = append(cols, col)
+		}
+	}
+	dat.Columns = cols
+}
+
 func (dat *Data) GetIndex() *Index {
 	idx := &Index{data: dat}
 	idx.Update()

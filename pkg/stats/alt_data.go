@@ -6,23 +6,26 @@ import (
 )
 
 type AltData struct {
-	re                                               RunExpectancy
-	game, bat, o, rnr, play, alt, ore24, are24, cost *dataframe.Column
+	re                                                        RunExpectancy
+	game, bat, o, rnr, play, alt, ore24, are24, cost, comment *dataframe.Column
 }
 
 func NewAltData(re RunExpectancy) *AltData {
-	return &AltData{
-		re:    re,
-		game:  dataframe.NewColumn("Game", "%10s", dataframe.EmptyStrings),
-		bat:   dataframe.NewColumn("Bat", "%4s", dataframe.EmptyStrings),
-		o:     dataframe.NewColumn("O", "%1d", dataframe.EmptyInts),
-		rnr:   dataframe.NewColumn("Rnr", "%3s", dataframe.EmptyStrings),
-		play:  dataframe.NewColumn("Play", "%30s", dataframe.EmptyStrings),
-		alt:   dataframe.NewColumn("Alt", "%30s", dataframe.EmptyStrings),
-		ore24: dataframe.NewColumn("ORE24", "% 6.2f", dataframe.EmptyFloats),
-		are24: dataframe.NewColumn("ARE24", "% 6.2f", dataframe.EmptyFloats),
-		cost:  dataframe.NewColumn("COST", "%6.2f", dataframe.EmptyFloats),
+	alt := &AltData{
+		re:      re,
+		game:    dataframe.NewColumn("Game", "%10s", dataframe.EmptyStrings),
+		bat:     dataframe.NewColumn("Bat", "%4s", dataframe.EmptyStrings),
+		o:       dataframe.NewColumn("O", "%1d", dataframe.EmptyInts),
+		rnr:     dataframe.NewColumn("Rnr", "%3s", dataframe.EmptyStrings),
+		play:    dataframe.NewColumn("Play", "%30s", dataframe.EmptyStrings),
+		alt:     dataframe.NewColumn("Alt", "%30s", dataframe.EmptyStrings),
+		ore24:   dataframe.NewColumn("ORE24", "% 6.2f", dataframe.EmptyFloats),
+		are24:   dataframe.NewColumn("ARE24", "% 6.2f", dataframe.EmptyFloats),
+		cost:    dataframe.NewColumn("COST", "%6.2f", dataframe.EmptyFloats),
+		comment: dataframe.NewColumn("COM", "%-15s", dataframe.EmptyStrings),
 	}
+	alt.cost.Summary = dataframe.Sum
+	return alt
 }
 
 func (alt *AltData) GetData() *dataframe.Data {
@@ -30,7 +33,7 @@ func (alt *AltData) GetData() *dataframe.Data {
 		Name: "ALTRE24",
 		Columns: []*dataframe.Column{
 			alt.game, alt.bat, alt.o, alt.rnr, alt.play, alt.ore24,
-			alt.alt, alt.are24, alt.cost,
+			alt.alt, alt.are24, alt.cost, alt.comment,
 		},
 	}
 	return dat.RSort(dataframe.Less(dataframe.CompareFloat(alt.cost)))
@@ -59,6 +62,7 @@ func (alt *AltData) Record(gameID string, state *game.State) float64 {
 		cost = -cost
 	}
 	alt.cost.AppendFloats(cost)
+	alt.comment.AppendString(state.Comment)
 	return change
 }
 

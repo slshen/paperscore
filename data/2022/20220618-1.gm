@@ -1,0 +1,72 @@
+date: 6/18/22
+game: 1
+start: 9:53A
+timelimit: 90m
+tournament: PGF State Championship
+league: PGF
+visitorid: pride-2022
+home: Valley Rage
+---
+plays pride-2022
+pitching 21
+1 6 FFBBBX S8/G6
+2 17 CFB SB2
+... FBBX 13/G1 2-3
+3 26 X S8/G8 B-1 3-H
+4 00 BX D8/G6 B-2 1-H
+5 18 CX S8/P8S B-2 2-H(E8/TH)
+6 11 BBFCFX S9/F92 B-1 2-3
+7 10 B SB2
+  alt SB2 3-H : no advance on throw
+... F FLE2
+... FH HP
+8 2 CBBBFFS K
+9 7 X E6/P6 B-1 1-2 2-H 3-H
+10 6 BFBBB W B-1 1-2 2-3
+11 17 CFBBFFBFS K
+score 5
+
+12 26 BBX E7/F7 B-2
+13 00 FX H/L7 B-H 2-H
+pitching 11
+14 18 CFBBFX S7/G6
+15 11 X S8/L8S B-1 1-2
+16 10 BBBB W B-1 1-2 2-3
+17 2 BBBB W B-1 1-2 2-3 3-H
+18 7 BH HP B-1 1-2 2-3 3-H
+19 6 CX 43/G4 1-2 2-3 3-H
+20 17 FBCX FC5/G5 B-1 : frozen fielder
+21 26 CBX 43/G4 1-3 2-H(E3/TH) 3-H
+22 00 CX S8/G8 B-1 3-H
+23 18 X 2/P2
+score 13
+
+24 11 BBBB W
+25 10 FBBX 8/F78
+26 88 CBBBCFB W B-1 1-2
+27 7 CCX S7/L7S B-1 1-2 2-3
+28 6 X FC4/G4 B-1 1X2(4) 2-3 3-H
+29 17 X S3/G3/B B-1 1-2 3-H
+30 26 X FC4/G4 1X2(4)
+score 15
+
+plays home
+pitching 11
+1 00 BSSSFFX 63/G6
+2 33 CBBBB W
+3 5 CCX S8/L8 B-1 1-2
+4 11 SX FC6/G6 B-1 1X2(6) 2-3
+5 16 BSX S7/G6 B-1 1-2 3-H
+6 28 CBSFS K23
+score 1
+
+7 10 SCX 13/G1
+8 77 SBSS K
+9 9 SSC K
+score 1
+
+10 00 BBFX 53/G5
+11 53 BCBBB W
+12 5 BX 13/G1 1-2
+13 11 CFX 63/G6
+final 1

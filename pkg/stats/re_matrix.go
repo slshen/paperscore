@@ -27,6 +27,9 @@ func ReadREMatrix(path string) (RunExpectancy, error) {
 		if rec == nil {
 			break
 		}
+		if len(rem) == 0 && rec[0] == "Runr" {
+			continue
+		}
 		vals := make([]float64, 3)
 		rem[rec[0]] = vals
 		for i, field := range rec[1:4] {

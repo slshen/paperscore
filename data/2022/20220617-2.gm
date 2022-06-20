@@ -1,0 +1,81 @@
+date: 6/17/22
+game: 2
+start: 4:34
+timelimit: 90m
+tournament: PGF State Championship
+league: PGF
+visitorid: pride-2022
+home: NorCal Choppers Cagiga
+---
+plays pride-2022
+pitching 22
+1 6 CBBBX 5/P5
+2 17 X 53/G5
+3 26 BFBH HP
+4 18 BCCBX 63/G6
+score 0
+
+5 00 FBBX D9/F9 : wind aided
+6 11 BBBCFB W
+7 7 BBBCB W B-1 1-2 2-3
+pitching 91
+8 10 CX 8/L8/SF 1-2 2-3 3-H
+9 2 BCBFX S6/G6 B-1 2-3 3-H
+10 22 FCBBX FC6/G6 B-1 1X2(64) 3-H
+11 13 CCFBS K
+score 3
+
+12 88 BBX 13/G1
+13 6 BFBX 4/P4
+14 17 X S6/G6
+15 26 X S6/G6 B-1 1-3
+16 18 BCFFX 8/L8
+score 3
+
+17 00 FBX D8/F89
+18 11 BBBCB W
+19 7 B NP
+pitching 91
+... BBB W B-1 1-2 2-3
+20 10 BBX FC5/G5 B-1(E5/TH) 1-3 2X3(5) 3-H
+21 2 BBBB W B-1 1-2
+22 22 BBFCBX 63/G1 1-2 2-3 3-H
+23 13 CX 8/F89
+final 5
+
+plays home
+pitching 11
+1 4 FCX 43/G4
+2 16 BBCBB W
+3 23 CB SB2
+... FFFX 63/G6 2-3
+4 08 BBB WP 3-H
+... CB W
+5 00 FX S6/G6 B-2 1-3
+  alt 53/G5 : confusion
+6 25 BFCS K23
+score 1
+
+7 91 CSBBFX 13/G1
+8 28 X 9/F9
+9 15 FFFX S7/G7 B-2(E7/TH)
+  alt S7/G7
+10 88 FX E4/G5 2XH(542)
+score 1
+
+11 22 BFX 13/G1
+12 4 BBX 43/G4
+13 16 X 8/F8
+score 1
+
+14 23 FX E5/G5/TH B-2
+  alt 53/G5
+15 08 X S6/G6 BX2(6324) 2-H
+16 00 BBBFFX S6/G6
+  alt 63/G6 : maybe error?
+17 25 BCCS K
+18 91 X E6/G6 B-1 1-2
+  alt 63/G6
+19 28 BB SB2;SB3
+... BCX 53/G5
+score 2

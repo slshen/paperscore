@@ -1,0 +1,99 @@
+date: 6/17/22
+game: 1
+start: 2:48p
+timelimit: 90m
+tournament: PGF State Championship
+league: PGF
+visitorid: pride-2022
+home: San Matteo Eagles
+---
+plays pride-2022
+pitching 17
+1 6 FBX 53/G5/B
+2 17 CBBBB W
+3 26 BB SB2
+... CFX E3/G6 B-1 2-H
+4 18 X 4/P4
+5 00 B SB2
+... BBB W
+6 11 X S8/F8S B-1 1-2 2-H
+7 7 CX 6/L6
+score 2
+
+8 10 X D8/F8D
+9 2 BB WP 2-3
+... CFBB W
+10 22 BB SB2
+... BCX 8/F8/SF 3-H
+11 13 CBX E4/G4 B-1 2-3
+12 88 SB SB2;SBH
+... X S7/G7 B-1 2-3
+13 6 BBC SB2
+... BX S4/G4 B-1 2-3 3-H
+14 17 C SB2
+... CBBFFBX 6/P6
+15 26 FSC K
+score 5
+
+16 18 BFBBB W
+17 00 FX H/F8 B-H 1-H
+18 11 SX S6/G6
+19 7 FB WP 1-2
+... X S1/G1/B B-1 2-3
+20 10 B SB2
+... CBBX 8/L8/SF 2-3 3-H
+21 2 BBCFFBS K
+22 22 BBBB W B-2 3-H
+23 13 CBFFX 9/L9
+score 9
+
+24 88 CX 8/F8
+25 6 BFCFBX S9/G4
+26 17 C SB2
+... BX 43/G4
+27 26 X 63/G6
+score 9
+
+plays home
+pitching 22
+1 4 X 53/G5
+2 13 BX 53/G5
+3 3 BFBX 8/F8
+score 0
+
+4 28 B E7/L7 B-2
+  alt 7/L7
+5 64 BCB PO2(E5) 2-3
+  alt PO2(2654)
+... BB W
+6 12 CBX S8/L4 B-1 1-H 3-H
+7 17 X 13/G1 1-2
+8 7 FFBX 8/P8S
+9 9 BCBFFFBX S7/G7 B-2 2-H
+10 34 BBBB W
+11 4 BX E6/G6 B-1 1-2 2-3
+  alt 64/G6
+12 13 CBBBCX 7/L7
+score 3
+
+13 3 BBBB W
+14 28 BFB SB2
+... BX S8/G8 B-2 2-3
+  alt S8/G8 B-1 2-3 : no cut
+15 64 BBFSBC K
+16 12 BBBB W
+17 17 BX 6/P6/IF
+18 7 CX 43/G4
+score 3
+
+19 9 BBBCB W
+20 34 BBCBCFB W B-1 1-2
+21 4 CX 8/F8
+22 13 FBBB PB 1-2 2-3
+... X D7/L7 B-2 2-H 3-H
+  alt 7/L7
+23 3 B WP 2-3
+... FSFB WP 3-H
+... C K
+24 28 X 63/G6
+final 6
