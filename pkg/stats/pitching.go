@@ -34,9 +34,9 @@ func (p *Pitching) Update() {
 	p.IP = fmt.Sprintf("%d.%d", p.Outs/3, p.Outs%3)
 }
 
-func (p *Pitching) Record(state *game.State, lastState *game.State) {
+func (p *Pitching) Record(state *game.State) {
 	p.Outs += state.OutsOnPlay
-	if lastState == nil || lastState.Batter != state.Batter || lastState.Pitcher != state.Pitcher {
+	if state.LastState == nil || state.LastState.Batter != state.Batter || state.LastState.Pitcher != state.Pitcher {
 		p.BattersFaced++
 	}
 	for _, adv := range state.Advances {
@@ -75,6 +75,8 @@ func (p *Pitching) Record(state *game.State, lastState *game.State) {
 		case game.StrikeOutPassedBall:
 			fallthrough
 		case game.StrikeOutWildPitch:
+			fallthrough
+		case game.StrikeOutPickedOff:
 			p.StrikeOuts++
 			if state.Pitches.Last() == "C" {
 				p.StrikeOutsLooking++

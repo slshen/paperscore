@@ -31,13 +31,14 @@ func _() {
 	_ = x[StrikeOut-20]
 	_ = x[StrikeOutPassedBall-21]
 	_ = x[StrikeOutWildPitch-22]
-	_ = x[FoulFlyError-23]
-	_ = x[NoPlay-24]
+	_ = x[StrikeOutPickedOff-23]
+	_ = x[FoulFlyError-24]
+	_ = x[NoPlay-25]
 }
 
-const _PlayType_name = "SingleDoubleTripleHomeRunCaughtStealingHitByPitchWalkWalkWildPitchWalkPassedBallStolenBasePickedOffCatcherInterferenceReachedOnErrorFieldersChoiceWildPitchPassedBallGroundOutFlyOutDoublePlayTriplePlayStrikeOutStrikeOutPassedBallStrikeOutWildPitchFoulFlyErrorNoPlay"
+const _PlayType_name = "SingleDoubleTripleHomeRunCaughtStealingHitByPitchWalkWalkWildPitchWalkPassedBallStolenBasePickedOffCatcherInterferenceReachedOnErrorFieldersChoiceWildPitchPassedBallGroundOutFlyOutDoublePlayTriplePlayStrikeOutStrikeOutPassedBallStrikeOutWildPitchStrikeOutPickedOffFoulFlyErrorNoPlay"
 
-var _PlayType_index = [...]uint16{0, 6, 12, 18, 25, 39, 49, 53, 66, 80, 90, 99, 118, 132, 146, 155, 165, 174, 180, 190, 200, 209, 228, 246, 258, 264}
+var _PlayType_index = [...]uint16{0, 6, 12, 18, 25, 39, 49, 53, 66, 80, 90, 99, 118, 132, 146, 155, 165, 174, 180, 190, 200, 209, 228, 246, 264, 276, 282}
 
 func (i PlayType) String() string {
 	if i >= PlayType(len(_PlayType_index)-1) {

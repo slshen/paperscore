@@ -12,12 +12,12 @@ type FieldingError struct {
 	Modifiers
 }
 
-func parseFieldingError(play *gamefile.Play, s string) (*FieldingError, error) {
+func parseFieldingError(play gamefile.Play, s string) (*FieldingError, error) {
 	if len(s) < 2 || s[0] != 'E' || (len(s) > 2 && s[2] != '/') {
-		return nil, fmt.Errorf("%s: illegal error code %s", play.Pos, s)
+		return nil, fmt.Errorf("%s: illegal error code %s", play.GetPos(), s)
 	}
 	if s[1] < '1' || s[1] > '9' {
-		return nil, fmt.Errorf("%s: illegal fielder %c in error code %s", play.Pos, s[1], s)
+		return nil, fmt.Errorf("%s: illegal fielder %c in error code %s", play.GetPos(), s[1], s)
 	}
 	fe := &FieldingError{
 		Fielder: int(s[1] - '0'),

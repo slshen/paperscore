@@ -8,15 +8,15 @@ import (
 )
 
 type REData struct {
-	re                                                      RunExpectancy
-	game, id, o, rnr, play, after, before, r, re24, runners *dataframe.Column
+	re                                                       RunExpectancy
+	game, bat, o, rnr, play, after, before, r, re24, runners *dataframe.Column
 }
 
 func NewREData(re RunExpectancy) *REData {
 	return &REData{
 		re:      re,
 		game:    dataframe.NewColumn("Game", "%10s", dataframe.EmptyStrings),
-		id:      dataframe.NewColumn("ID", "%4s", dataframe.EmptyStrings),
+		bat:     dataframe.NewColumn("Bat", "%4s", dataframe.EmptyStrings),
 		o:       dataframe.NewColumn("O", "%1d", dataframe.EmptyInts),
 		rnr:     dataframe.NewColumn("Rnr", "%3s", dataframe.EmptyStrings),
 		play:    dataframe.NewColumn("Play", "%30s", dataframe.EmptyStrings),
@@ -32,32 +32,26 @@ func (red *REData) GetData() *dataframe.Data {
 	return &dataframe.Data{
 		Name: "RE24",
 		Columns: []*dataframe.Column{
-			red.game, red.id, red.o, red.rnr, red.play, red.after, red.before,
+			red.game, red.bat, red.o, red.rnr, red.play, red.after, red.before,
 			red.r, red.re24, red.runners,
 		},
 	}
 }
 
-func (red *REData) Record(gameID string, state, lastState *game.State) float64 {
+func (red *REData) Record(gameID string, state *game.State) float64 {
 	if red.re == nil {
 		return 0
 	}
-	runsBefore := GetExpectedRuns(red.re, lastState)
-	var runsAfter float64
-	if state.Outs < 3 {
-		runsAfter = GetExpectedRuns(red.re, state)
-	}
-	runsScored := len(state.ScoringRunners)
-	change := runsAfter - runsBefore + float64(runsScored)
+	runsBefore, runsAfter, runsScored, change := getREChange(red.re, state)
 	var outs int
-	if lastState != nil {
-		outs = lastState.Outs
+	if state.LastState != nil {
+		outs = state.LastState.Outs
 	}
 	red.game.AppendString(gameID)
-	red.id.AppendString(string(state.Batter))
+	red.bat.AppendString(string(state.Batter))
 	red.o.AppendInts(outs)
-	red.rnr.AppendString(string(GetOccupiedBases(lastState)))
-	red.play.AppendString(state.EventCode)
+	red.rnr.AppendString(string(GetOccupiedBases(state.LastState)))
+	red.play.AppendString(state.GetPlayAdvancesCode())
 	red.after.AppendFloats(runsAfter)
 	red.before.AppendFloats(runsBefore)
 	red.r.AppendInts(runsScored)
@@ -71,4 +65,14 @@ func (red *REData) Record(gameID string, state, lastState *game.State) float64 {
 	}
 	red.runners.AppendString(strings.Join(runnersStrings, " "))
 	return change
+}
+
+func getREChange(re RunExpectancy, state *game.State) (runsBefore float64, runsAfter float64, runsScored int, change float64) {
+	runsBefore = GetExpectedRuns(re, state.LastState)
+	if state.Outs < 3 {
+		runsAfter = GetExpectedRuns(re, state)
+	}
+	runsScored = len(state.ScoringRunners)
+	change = runsAfter - runsBefore + float64(runsScored)
+	return
 }

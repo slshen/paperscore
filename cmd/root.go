@@ -349,6 +349,8 @@ func tournamentCommand() *cobra.Command {
 					)
 				}
 				fmt.Println(topPlays)
+				altPlays := rep.GetAltPlays()
+				fmt.Println(altPlays)
 			}
 			return nil
 		},

@@ -44,10 +44,10 @@ func (a *Advance) GoString() string {
 	return a.Code
 }
 
-func parseAdvance(play *gamefile.Play, s string) (*Advance, error) {
+func parseAdvance(play gamefile.Play, s string) (*Advance, error) {
 	m := advanceRegexp.FindStringSubmatch(s)
 	if m == nil {
-		return nil, fmt.Errorf("illegal advance code %s", s)
+		return nil, fmt.Errorf("%s: illegal advance code %s", play.GetPos(), s)
 	}
 	a := &Advance{
 		Code: s,
@@ -64,11 +64,13 @@ func parseAdvance(play *gamefile.Play, s string) (*Advance, error) {
 				if f >= '1' && f <= '9' {
 					a.Fielders = append(a.Fielders, int(f-'1')+1)
 				} else {
-					return nil, fmt.Errorf("illegal fielder %c for put out in advance code %s", f, s)
+					return nil, fmt.Errorf("%s: illegal fielder %c for put out in advance code %s",
+						play.GetPos(), f, s)
 				}
 			}
 			if len(a.Fielders) == 0 {
-				return nil, fmt.Errorf("no fielders for put out in advancde code %s", s)
+				return nil, fmt.Errorf("%s: no fielders for put out in advancde code %s",
+					play.GetPos(), s)
 			}
 		}
 	case m[4] == "WP":
@@ -85,16 +87,16 @@ func parseAdvance(play *gamefile.Play, s string) (*Advance, error) {
 	return a, nil
 }
 
-func parseAdvances(play *gamefile.Play, batter PlayerID, runners []PlayerID) (advances Advances, err error) {
+func parseAdvances(play gamefile.Play, batter PlayerID, runners []PlayerID) (advances Advances, err error) {
 	advances = make(Advances)
-	for _, as := range play.Advances {
+	for _, as := range play.GetAdvances() {
 		var advance *Advance
 		advance, err = parseAdvance(play, as)
 		if err != nil {
 			return
 		}
 		if advances[advance.From] != nil {
-			err = fmt.Errorf("%s: cannot advance %s twice in %s", play.Pos, advance.From, as)
+			err = fmt.Errorf("%s: cannot advance %s twice in %s", play.GetPos(), advance.From, as)
 			return
 		}
 		if advance.From == "B" {
@@ -102,12 +104,12 @@ func parseAdvances(play *gamefile.Play, batter PlayerID, runners []PlayerID) (ad
 		} else {
 			if runners == nil {
 				err = fmt.Errorf("%s: no runner to advance from %s at the start of a half-inning",
-					play.Pos, advance.From)
+					play.GetPos(), advance.From)
 				return
 			}
 			advance.Runner = runners[runnerNumber[advance.From]]
 			if advance.Runner == "" {
-				err = fmt.Errorf("%s: no runner to advance from %s in %s", play.Pos,
+				err = fmt.Errorf("%s: no runner to advance from %s in %s", play.GetPos(),
 					advance.From, as)
 				return
 			}

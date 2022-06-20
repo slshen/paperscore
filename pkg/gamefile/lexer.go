@@ -14,8 +14,8 @@ var gameFileDef = lexer.MustStateful(
 		"Plays": {
 			rule("Numbers", `[0-9]+[ \t]`, nil),
 			rule("Keyword", `[a-z][-a-z0-9]*`, nil),
-			rule("Code", `[0-9A-Z][^ \n\t]*`, nil),
 			rule("Dots", `\.\.\.`, nil),
+			rule("Code", `[.0-9A-Z][^ \n\t]*`, nil),
 			rule("NL", `[\n\r]`, nil),
 			rule("whitespace", `[ \t]+`, nil),
 			rule("textStart", `:[ \t]*`, lexer.Push("Text")),

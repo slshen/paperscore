@@ -34,17 +34,24 @@ type TeamEvents struct {
 
 type Event struct {
 	Pos         lexer.Position
-	Play        *Play        `parser:"@@ (NL|EOF)"`
+	Play        *ActualPlay  `parser:"@@ (NL|EOF)"`
 	Alternative *Alternative `parser:"| 'alt' @@ (NL|EOF)"`
 	Pitcher     string       `parser:"| ('pitcher'|'pitching') @Code (NL|EOF)"`
-	RAdjRunner  string       `parser:"| 'radj' @Numbers"`
+	RAdjRunner  Numbers      `parser:"| 'radj' @Numbers"`
 	RAdjBase    string       `parser:"      @Code (NL|EOF)"`
 	Score       string       `parser:"| 'score' @Code (NL|EOF)"`
 	Final       string       `parser:"| 'final' @Code (NL|EOF)"`
 	Empty       bool         `parser:"| @NL"`
 }
 
-type Play struct {
+type Play interface {
+	GetPos() lexer.Position
+	GetCode() string
+	GetAdvances() []string
+	GetComment() string
+}
+
+type ActualPlay struct {
 	Pos                      lexer.Position
 	PlateAppearance          Numbers  `parser:"((@Numbers"`
 	Batter                   Numbers  `parser:"  @Numbers)"`
@@ -55,11 +62,16 @@ type Play struct {
 	Comment                  string   `parser:" @Text?"`
 }
 
+var _ Play = (*ActualPlay)(nil)
+
 type Alternative struct {
+	Pos      lexer.Position
 	Code     string   `parser:"@Code"`
 	Advances []string `parser:"@Code*"`
 	Comment  string   `parser:" @Text?"`
 }
+
+var _ Play = (*Alternative)(nil)
 
 func (n *Numbers) UnmarshalText(dat []byte) error {
 	*n = Numbers(strings.TrimRight(string(dat), " \t"))
@@ -191,4 +203,36 @@ func (f *File) writeCodeAdvancesComment(w io.Writer, code string, advances []str
 		fmt.Fprintf(w, " : %s", comment)
 	}
 	fmt.Fprintln(w)
+}
+
+func (p *ActualPlay) GetPos() lexer.Position {
+	return p.Pos
+}
+
+func (p *ActualPlay) GetCode() string {
+	return p.Code
+}
+
+func (p *ActualPlay) GetAdvances() []string {
+	return p.Advances
+}
+
+func (p *ActualPlay) GetComment() string {
+	return p.Comment
+}
+
+func (a *Alternative) GetPos() lexer.Position {
+	return a.Pos
+}
+
+func (a *Alternative) GetCode() string {
+	return a.Code
+}
+
+func (a *Alternative) GetAdvances() []string {
+	return a.Advances
+}
+
+func (a *Alternative) GetComment() string {
+	return a.Comment
 }
