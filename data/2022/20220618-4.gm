@@ -44,15 +44,15 @@ score 2
 
 21 6 BCX E6/G1 B-1
 22 00 CBX S9/F9 B-1 1-3
-  alt S9/F9 B-2 1-3
+  alt S9/F9 B-2 1-3 : no advance on throw
 pitching 11
 23 11 B SB2
-  alt SB2 3-H
+  alt SB2 3-H : no advance on throw
 ... BX D8/L89 B-2 2-H 3-H
 24 18 BCX 8/L8
 25 10 SCFFBX S5/G5 B-1
 26 2 CSBC K+PO2(24)
-  alt K
+  alt K : brain fog
 score 4
 
 27 7 FBCFBFBX 4/P4

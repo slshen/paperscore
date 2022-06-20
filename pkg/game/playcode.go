@@ -37,6 +37,14 @@ func (p *playCodeParser) getFielder(eventField int) int {
 	return fielderNumber[p.playMatches[eventField]]
 }
 
+func (p *playCodeParser) getAllFielders(startField int) []int {
+	var res []int
+	for i := range p.playMatches[startField:] {
+		res = append(res, p.getFielder(startField+i))
+	}
+	return res
+}
+
 func (p *playCodeParser) parsePlayCode(code string) {
 	parts := strings.Split(code, "/")
 	p.playCode = parts[0]

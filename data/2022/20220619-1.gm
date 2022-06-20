@@ -84,7 +84,7 @@ score 2
 11 9 BCX 13/G1
 12 3 BX D7/L7
 13 18 BX D7/F78 B-2 2-3
-   alt 7/F78 2-3
+   alt 7/F78 2-3 : both OF gave up
 14 5 X S7/G5 B-2 2-H(E7) 3-H
 15 29 CX 63/G6 2-3
 16 6 X 9/F9
