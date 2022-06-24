@@ -23,6 +23,8 @@ const (
 	Average
 )
 
+//go:generate stringer -type=Type,SummaryType
+
 var (
 	EmptyInts    = []int{}
 	EmptyFloats  = []float64{}

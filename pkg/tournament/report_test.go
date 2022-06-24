@@ -17,11 +17,7 @@ func TestReport(t *testing.T) {
 	assert.NoError(err)
 	grs := GroupByTournament(gs)
 	for _, gr := range grs {
-		r := &Report{
-			Us:    "pride",
-			Group: gr,
-		}
-		err := r.Run(re)
+		r, err := NewReport("pride", re, gr)
 		assert.NoError(err)
 		fmt.Println(r.GetBattingData())
 	}

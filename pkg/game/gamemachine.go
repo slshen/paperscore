@@ -60,8 +60,8 @@ func (m *gameMachine) handleAlternative(alt *gamefile.Alternative, lastState *St
 		realLastState.Batter = lastState.Batter
 	}
 	state := m.newState(realLastState)
-	state.Batter = realLastState.Batter
-	state.Pitches = realLastState.Pitches
+	state.Batter = lastState.Batter
+	state.Pitches = lastState.Pitches
 	state.AlternativeFor = lastState
 	err := m.handlePlay(alt, state)
 	return state, err

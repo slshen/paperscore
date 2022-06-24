@@ -6,8 +6,9 @@ import (
 )
 
 type AltData struct {
-	re                                                        RunExpectancy
-	game, bat, o, rnr, play, alt, ore24, are24, cost, comment *dataframe.Column
+	re RunExpectancy
+	game, bat, o, rnr, play, alt,
+	cost, comment *dataframe.Column
 }
 
 func NewAltData(re RunExpectancy) *AltData {
@@ -17,12 +18,10 @@ func NewAltData(re RunExpectancy) *AltData {
 		bat:     dataframe.NewColumn("Bat", "%4s", dataframe.EmptyStrings),
 		o:       dataframe.NewColumn("O", "%1d", dataframe.EmptyInts),
 		rnr:     dataframe.NewColumn("Rnr", "%3s", dataframe.EmptyStrings),
-		play:    dataframe.NewColumn("Play", "%30s", dataframe.EmptyStrings),
-		alt:     dataframe.NewColumn("Alt", "%30s", dataframe.EmptyStrings),
-		ore24:   dataframe.NewColumn("ORE24", "% 6.2f", dataframe.EmptyFloats),
-		are24:   dataframe.NewColumn("ARE24", "% 6.2f", dataframe.EmptyFloats),
-		cost:    dataframe.NewColumn("COST", "%6.2f", dataframe.EmptyFloats),
-		comment: dataframe.NewColumn("COM", "%-15s", dataframe.EmptyStrings),
+		play:    dataframe.NewColumn("Reality", "%30s", dataframe.EmptyStrings),
+		alt:     dataframe.NewColumn("Alternate", "%30s", dataframe.EmptyStrings),
+		cost:    dataframe.NewColumn("RCost", "%6.2f", dataframe.EmptyFloats),
+		comment: dataframe.NewColumn("Comment", "%-20s", dataframe.EmptyStrings),
 	}
 	alt.cost.Summary = dataframe.Sum
 	return alt
@@ -30,13 +29,12 @@ func NewAltData(re RunExpectancy) *AltData {
 
 func (alt *AltData) GetData() *dataframe.Data {
 	dat := &dataframe.Data{
-		Name: "ALTRE24",
 		Columns: []*dataframe.Column{
-			alt.game, alt.bat, alt.o, alt.rnr, alt.play, alt.ore24,
-			alt.alt, alt.are24, alt.cost, alt.comment,
+			alt.game, alt.bat, alt.o, alt.rnr, alt.play,
+			alt.alt, alt.cost, alt.comment,
 		},
 	}
-	return dat.RSort(dataframe.Less(dataframe.CompareFloat(alt.cost)))
+	return dat.RSort(dataframe.Less(dataframe.Descending(dataframe.CompareFloat(alt.cost))))
 }
 
 func (alt *AltData) Record(gameID string, state *game.State) float64 {
@@ -55,13 +53,11 @@ func (alt *AltData) Record(gameID string, state *game.State) float64 {
 	alt.rnr.AppendString(string(GetOccupiedBases(state.LastState)))
 	alt.play.AppendString(state.AlternativeFor.GetPlayAdvancesCode())
 	alt.alt.AppendString(state.GetPlayAdvancesCode())
-	alt.ore24.AppendFloats(originalChange)
-	alt.are24.AppendFloats(change)
-	cost := change - originalChange
+	price := originalChange - change
 	if state.Batter.IsUs() {
-		cost = -cost
+		price = -price
 	}
-	alt.cost.AppendFloats(cost)
+	alt.cost.AppendFloats(price)
 	alt.comment.AppendString(state.Comment)
 	return change
 }

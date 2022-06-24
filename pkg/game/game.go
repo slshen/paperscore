@@ -12,13 +12,16 @@ import (
 	"github.com/slshen/sb/pkg/gamefile"
 )
 
+type Score struct {
+	Home    int `json:"home"`
+	Visitor int `json:"visitor"`
+}
+
 type Game struct {
-	File          *gamefile.File `yaml:"-"`
-	ID            string
-	Home, Visitor string
-	Final         *struct {
-		Visitor, Home int
-	} `yaml:",omitempty"`
+	File                  *gamefile.File `yaml:"-"`
+	ID                    string
+	Home, Visitor         string
+	Final                 Score
 	HomeID                string `yaml:"homeid"`
 	VisitorID             string `yaml:"visitorid"`
 	HomeTeam, VisitorTeam *Team
@@ -36,7 +39,7 @@ type Game struct {
 
 type altStatesMap map[*State][]*State
 
-var gameFileRegexp = regexp.MustCompile(`\d\d\d\d\d\d\d\d-\d.yaml`)
+var gameFileRegexp = regexp.MustCompile(`\d\d\d\d\d\d\d\d-\d.(yaml|gm)`)
 
 func ReadGamesDir(dir string) ([]*Game, error) {
 	files, err := filepath.Glob(filepath.Join(dir, "*.yaml"))
@@ -172,10 +175,16 @@ func (g *Game) generateStates() (errs error) {
 	if err != nil {
 		errs = multierror.Append(errs, err)
 	}
+	if len(g.visitorStates) > 0 {
+		g.Final.Visitor = g.visitorStates[len(g.visitorStates)-1].Score
+	}
 	g.homeStates, err = g.runPlays(g.HomeTeam, g.VisitorTeam, Bottom,
 		g.File.GetHomeEvents())
 	if err != nil {
 		errs = multierror.Append(errs, err)
+	}
+	if len(g.homeStates) > 0 {
+		g.Final.Home = g.homeStates[len(g.homeStates)-1].Score
 	}
 	g.states = make([]*State, 0, len(g.visitorStates)+len(g.homeStates))
 	half := Top

@@ -8,6 +8,9 @@ import (
 )
 
 func GroupByTournament(games []*game.Game) (res []*Group) {
+	if len(games) == 0 {
+		return nil
+	}
 	// sort games by date
 	sort.Slice(games, func(i, j int) bool {
 		d1 := games[i].GetDate()
@@ -33,14 +36,12 @@ func isSameTournament(gr *Group, g *game.Game) bool {
 
 func createTournamentGroup(g *game.Game) *Group {
 	d := g.GetDate().Format("01/02/2006")
-	var name string
-	if g.Tournament != "" {
-		name = fmt.Sprintf("%s %s", d, g.Tournament)
-	} else {
+	name := g.Tournament
+	if name == "" {
 		name = fmt.Sprintf("%s %s", d, g.League)
 	}
 	return &Group{
-		Key:   g.Date,
+		Date:  g.GetDate(),
 		Name:  name,
 		Games: []*game.Game{g},
 	}
