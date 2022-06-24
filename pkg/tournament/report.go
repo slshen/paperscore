@@ -3,6 +3,7 @@ package tournament
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/slshen/sb/pkg/dataframe"
 	"github.com/slshen/sb/pkg/game"
@@ -10,7 +11,7 @@ import (
 )
 
 type Group struct {
-	Key   interface{}
+	Date  time.Time
 	Name  string
 	Games []*game.Game
 }
@@ -22,33 +23,39 @@ type Report struct {
 	gs *stats.GameStats
 }
 
-func (r *Report) Run(re stats.RunExpectancy) error {
+func NewReport(us string, re stats.RunExpectancy, group *Group) (*Report, error) {
+	r := &Report{
+		Us:    us,
+		Group: group,
+		gs:    stats.NewGameStats(re),
+	}
 	r.gs = stats.NewGameStats(re)
 	for _, g := range r.Group.Games {
 		if err := r.gs.Read(g); err != nil {
-			return err
+			return nil, err
 		}
 	}
-	return nil
+	return r, nil
 }
 
 func (r *Report) GetBestAndWorstRE24(n int) *dataframe.Data {
 	dat := r.gs.GetRE24Data()
 	dat = stats.GetBiggestRE24(dat, n)
-	dat.Name = fmt.Sprintf("%s Plays (%d games)", r.Group.Name, len(r.Group.Games))
+	dat.Name = r.noteGames(fmt.Sprintf("%s Plays", r.Group.Name))
 	return dat
 }
 
-func (r *Report) GetAltPlays() *dataframe.Data {
-	dat := r.gs.GetAltData()
-	dat.Name = fmt.Sprintf("%s Alternate Reality (%d games)", r.Group.Name, len(r.Group.Games))
-	return dat
+func (r *Report) noteGames(s string) string {
+	if len(r.Group.Games) > 1 {
+		return fmt.Sprintf("%s (%d games)", s, len(r.Group.Games))
+	}
+	return s
 }
 
 func (r *Report) GetBattingData() *dataframe.Data {
 	dat := r.gs.GetBattingData()
 	idx := dat.GetIndex()
-	dat.Name = fmt.Sprintf("%s (%d games)", r.Group.Name, len(r.Group.Games))
+	dat.Name = r.noteGames(r.Group.Name)
 	dat = dat.RFilter(func(row int) bool {
 		t := strings.ToLower(idx.GetString(row, "Team"))
 		return strings.HasPrefix(t, r.Us)
@@ -127,6 +134,18 @@ func (r *Report) GetBattingData() *dataframe.Data {
 		return idx.GetInt(r1, "OPS") > idx.GetInt(r2, "OPS")
 	})
 	return dat
+}
+
+func (r *Report) GetPitchingData() *dataframe.Data {
+	return r.gs.GetPitchingData()
+}
+
+func (r *Report) GetAltData() *dataframe.Data {
+	return r.gs.GetAltData()
+}
+
+func (r *Report) GetRE24Data() *dataframe.Data {
+	return r.gs.GetRE24Data()
 }
 
 func obp(idx *dataframe.Index, i int) int {

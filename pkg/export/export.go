@@ -44,11 +44,8 @@ func NewExport(sheets *SheetExport, re stats.RunExpectancy) (*Export, error) {
 func (export *Export) tournaments(games []*game.Game) ([]StatsGenerator, error) {
 	gens := []StatsGenerator{}
 	for _, gr := range tournament.GroupByTournament(games) {
-		rep := &tournament.Report{
-			Us:    export.Us,
-			Group: gr,
-		}
-		if err := rep.Run(export.re); err != nil {
+		rep, err := tournament.NewReport(export.Us, export.re, gr)
+		if err != nil {
 			return nil, err
 		}
 		gens = append(gens,
