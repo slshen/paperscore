@@ -10,6 +10,6 @@ func Root() *cobra.Command {
 	root.AddCommand(readCommand(), boxCommand(), playByPlayCommand(),
 		statsCommand("batting"), statsCommand("pitching"), reCommand(),
 		exportCommand(), tournamentCommand(), reAnalysisCommand(),
-		fmtCommand(), altCommand(), webdataCommand())
+		fmtCommand(), altCommand(), webdataCommand(), newGameCommand())
 	return root
 }

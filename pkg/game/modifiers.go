@@ -22,6 +22,8 @@ type Trajectory string
 func (mods Modifiers) Trajectory() Trajectory {
 	for _, m := range mods {
 		switch {
+		case m == "":
+			return GroundBall
 		case m == "B":
 			return Bunt
 		case m[0] == 'F':

@@ -7,7 +7,7 @@ league: PGF
 visitorid: pride-2022
 home: San Matteo Eagles
 ---
-plays pride-2022
+visitorplays
 pitching 17
 1 6 FBX 53/G5/B
 2 17 CBBBB W
@@ -54,7 +54,7 @@ score 9
 27 26 X 63/G6
 score 9
 
-plays home
+homeplays
 pitching 22
 1 4 X 53/G5
 2 13 BX 53/G5

@@ -71,6 +71,8 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 			if state.Pitches.Last() == "C" {
 				b.StrikeOutsLooking++
 			}
+		case game.WalkPickedOff:
+			fallthrough
 		case game.Walk:
 			fallthrough
 		case game.WalkWildPitch:
@@ -92,7 +94,7 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 		case game.StrikeOutWildPitch:
 			b.ReachedOnK++
 		}
-		if !(state.Play.Is(game.Walk, game.HitByPitch, game.WalkWildPitch, game.WalkPassedBall, game.CatcherInterference) ||
+		if !(state.Play.Is(game.Walk, game.WalkPickedOff, game.WalkPickedOff, game.HitByPitch, game.WalkWildPitch, game.WalkPassedBall, game.CatcherInterference) ||
 			(state.Play.Type == game.ReachedOnError && state.Modifiers.Contains(game.Obstruction)) ||
 			state.Modifiers.Contains(game.SacrificeFly, game.SacrificeHit)) {
 			b.AB++

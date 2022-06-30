@@ -7,7 +7,7 @@ league: PGF
 visitorid: pride-2022
 home: Grapettes Johnson
 ---
-plays pride-2022
+visitorplays
 pitching 34
 1 6 BSBX S9/G4
 2 17 BBCX 2/G2/B
@@ -62,7 +62,7 @@ pitching 34
 37 6 . PO1(23) : left early intentionally
 final 14
 
-plays home
+homeplays
 pitching 11
 1 23 CBBSX 6/P6
 2 8 FSX 53/G5

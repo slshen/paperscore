@@ -198,6 +198,18 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 			Type:     FlyOut,
 			Fielders: pp.getFielders(0),
 		}
+		if m.modifiers.Contains(SacrificeFly) {
+			// verify that we're only scoring a SacraficeFly if a runner scores
+			ok := false
+			for _, adv := range state.Advances {
+				if adv.To == "H" && !adv.Out {
+					ok = true
+				}
+			}
+			if !ok {
+				return fmt.Errorf("%s: cannot score SacrificeFly unless a runner scores", play.GetPos())
+			}
+		}
 		state.recordOut()
 		state.Complete = true
 	case pp.playIs("$$"):
@@ -259,6 +271,12 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 	case pp.playIs("W+PB"):
 		state.Play = &Play{
 			Type: WalkPassedBall,
+		}
+		m.impliedAdvance(play, state, "B-1")
+		state.Complete = true
+	case pp.playIs("W+PO%($$)"):
+		if err := m.handlePickedoff(play, state, pp, WalkPickedOff); err != nil {
+			return err
 		}
 		m.impliedAdvance(play, state, "B-1")
 		state.Complete = true
@@ -375,25 +393,8 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 		}
 		state.NotOutOnPlay = true
 	case pp.playIs("PO%($$)") || pp.playIs("PO%($$$)") || pp.playIs("PO%($$$$)"):
-		from := pp.playMatches[0]
-		if !(from == "1" || from == "2" || from == "3") {
-			return fmt.Errorf("%s: illegal picked off base in %s", play.GetPos(), pp.playCode)
-		}
-		runner, err := state.GetBaseRunner(from)
-		if err != nil {
-			return fmt.Errorf("%s: cannot pick off in %s - %w", play.GetPos(), pp.playCode, err)
-		}
-		state.Play = &Play{
-			Type:     PickedOff,
-			Runners:  []PlayerID{runner},
-			Fielders: pp.getAllFielders(1),
-		}
-		advance := state.Advances[from]
-		if advance == nil {
-			state.recordOut()
-			m.putOut(from)
-		} else {
-			state.NotOutOnPlay = advance.FieldingError != nil
+		if err := m.handlePickedoff(play, state, pp, PickedOff); err != nil {
+			return err
 		}
 	case pp.playIs("FC$"):
 		// outs are in the advance, if any
@@ -489,6 +490,30 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 	return nil
 }
 
+func (m *gameMachine) handlePickedoff(play gamefile.Play, state *State, pp playCodeParser, playType PlayType) error {
+	from := pp.playMatches[0]
+	if !(from == "1" || from == "2" || from == "3") {
+		return fmt.Errorf("%s: illegal picked off base %s", play.GetPos(), from)
+	}
+	runner, err := state.GetBaseRunner(from)
+	if err != nil {
+		return fmt.Errorf("%s: cannot pick off runner - %w", play.GetPos(), err)
+	}
+	state.Play = &Play{
+		Type:     playType,
+		Runners:  []PlayerID{runner},
+		Fielders: pp.getAllFielders(1),
+	}
+	advance := state.Advances[from]
+	if advance == nil {
+		state.recordOut()
+		m.putOut(from)
+	} else {
+		state.NotOutOnPlay = advance.FieldingError != nil
+	}
+	return nil
+}
+
 func (m *gameMachine) handleStolenBase(play gamefile.Play, state *State, eventMatches []string) error {
 	if state.LastState == nil {
 		return fmt.Errorf("%s: cannot steal bases at the start of a half-inning", play.GetPos())
@@ -559,13 +584,13 @@ func (m *gameMachine) moveRunners(play gamefile.Play, state *State) error {
 				m.scoreRun(state, state.LastState.Runners[from])
 			}
 		case advance.From == "B":
-			if state.Runners[to] != "" {
-				return fmt.Errorf("%s: cannot advance runner %s to %d because it's already occupied by %s",
+			if state.Runners[to] != "" && !isFieldersChoice3rdOut(state) {
+				return fmt.Errorf("%s: cannot advance batter-runner %s to %d because it's already occupied by %s",
 					play.GetPos(), state.Batter, to+1, state.Runners[to])
 			}
 			state.Runners[to] = state.Batter
 		default:
-			if state.Runners[to] != "" {
+			if state.Runners[to] != "" && !isFieldersChoice3rdOut(state) {
 				return fmt.Errorf("%s: cannot advance runner %s to %d because it's already occupied by %s",
 					play.GetPos(), state.LastState.Runners[from], to+1, state.Runners[to])
 			}
@@ -573,6 +598,10 @@ func (m *gameMachine) moveRunners(play gamefile.Play, state *State) error {
 		}
 	}
 	return nil
+}
+
+func isFieldersChoice3rdOut(state *State) bool {
+	return state.Play.Type == FieldersChoice && state.Outs == 3
 }
 
 func (m *gameMachine) scoreRun(state *State, runner PlayerID) {

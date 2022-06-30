@@ -32,18 +32,11 @@ func (p *YAMLParser) parse(path string, dat []byte) (*File, error) {
 	f := &File{Path: path}
 	pos := lexer.Position{Filename: path, Line: 1}
 	for key, value := range m {
-		var teamID string
 		switch key {
 		case "homeplays":
-			teamID = p.toString(m["homeid"])
-			if teamID == "" {
-				teamID = p.toTeamID(m["home"])
-			}
+			f.HomeEvents = p.parseYAMLEvents(pos, value)
 		case "visitorplays":
-			teamID = p.toString(m["visitorid"])
-			if teamID == "" {
-				teamID = p.toTeamID(m["visitor"])
-			}
+			f.VisitorEvents = p.parseYAMLEvents(pos, value)
 		default:
 			if val := p.toString(value); val != "" {
 				f.PropertyList = append(f.PropertyList, &Property{
@@ -54,22 +47,18 @@ func (p *YAMLParser) parse(path string, dat []byte) (*File, error) {
 			}
 			continue
 		}
-		if values, ok := value.([]interface{}); ok {
-			team := &TeamEvents{
-				Pos:    pos,
-				TeamID: teamID,
-			}
-			f.TeamEvents = append(f.TeamEvents, team)
-			team.Events = p.parseYAMLEvents(pos, values)
-		}
 	}
-	if err := f.validate(); err != nil {
+	if err := f.Validate(); err != nil {
 		p.err = multierror.Append(p.err, err)
 	}
 	return f, p.err
 }
 
-func (p *YAMLParser) parseYAMLEvents(pos lexer.Position, plays []interface{}) (events []*Event) {
+func (p *YAMLParser) parseYAMLEvents(pos lexer.Position, value interface{}) (events []*Event) {
+	plays, ok := value.([]interface{})
+	if !ok {
+		return
+	}
 	for _, s := range plays {
 		code := p.toString(s)
 		if code == "" {
@@ -138,16 +127,6 @@ func (p *YAMLParser) getPart(parts []string, i int) string {
 		return parts[i]
 	}
 	return ""
-}
-
-func (p *YAMLParser) toTeamID(s interface{}) string {
-	id := p.toString(s)
-	if id != "" {
-		id = strings.ToLower(id)
-		id = strings.ReplaceAll(id, " ", "-")
-		id = strings.ReplaceAll(id, "/", "-")
-	}
-	return id
 }
 
 func (p *YAMLParser) toString(s interface{}) string {

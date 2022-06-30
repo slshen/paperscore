@@ -1,0 +1,89 @@
+date: 6/25/22
+game: 2
+start: 1:48P
+timelimit: 90m
+tournament: Pre-Colorado Summer Slam
+league: PGF
+visitorid: pride-2022
+home: Extreme Rios
+---
+visitorplays
+pitching 3
+1 6 BBCBX S8/G6
+2 17 BBBB W B-1 1-2
+3 26 BX FC4/G4 B-1 1X2(4) 2-3
+4 00 CX S7/G6 B-1 1-2 3-H
+5 11 X 6/P6
+6 18 BBBCCX FC5/G5 2X3(5)
+score 1
+
+7 7 X E5/P5 B-1
+8 2 C SB2
+... B SB3
+... BCBB W
+9 13 BCX 9/F9/SF 3-H
+10 6 CBX E4/G4 B-1 1-2
+11 17 FX S8/L89 B-2 1-3 2-H
+12 26 X 8/L8/SF 3-H
+13 00 SB WP 2-3
+... BBB W
+14 11 CBX 8/F78
+score 4
+
+15 18 BCX 53/G5/B
+16 7 BBX 7/L7
+17 2 CFBBBX 8/L8
+score 4
+
+18 13 BCFX 63/G6
+19 6 BBX E4/G4 B-1
+20 17 X 7/F7
+21 26 BB WP 1-2
+... FFBX S1/L1 2-H BX2(1624)
+score 5
+
+22 00 BBBB W
+23 11 BX S9/P9S B-1 1-2
+24 18 CX D7/L7 B-2 1-3 2-H
+pitching 18
+25 7 SBCBBB W
+26 2 CBX S9/P9S B-1 1-2 2-3 3-H
+27 13 CBBBFB W B-1 1-2 2-3 3-H
+28 6 CCBS K23 1-2 2-3 3-H
+29 17 BCBBCX 4/P4
+30 26 BBBX 8/F78
+final 9
+
+homeplays
+pitching 11
+1 21 BCFX 7/F7
+2 1 X E3/G6 B-1
+  alt 63/G6
+3 13 X FC5/G5 B-1 1X2(54)
+4 41 BBX 53/G5
+score 0
+
+5 71 BX S8/G8
+6 18 X S1/G1/B B-1 1-2
+7 5 BFX FC5/G5/B B-1 1-2 2X3(56)
+8 9 CSBC K
+9 00 X 43/G4
+score 0
+
+10 21 CX 43/G4
+11 1 BSFS K
+12 13 CCBC K
+score 0
+
+13 41 CFX 3/P3
+14 71 SBBBB W
+15 18 BBCFFB CS2(24)
+... FX 63/G6
+score 0
+
+16 5 BSFFX 13/G1
+17 9 CS S7/G6 B-1
+18 00 CBFBX FC4/G4 B-1 1X2(46)
+19 21 CBFB WP 1-2
+... X 53/G5
+final 0

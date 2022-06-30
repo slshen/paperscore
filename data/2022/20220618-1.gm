@@ -7,7 +7,7 @@ league: PGF
 visitorid: pride-2022
 home: Valley Rage
 ---
-plays pride-2022
+visitorplays
 pitching 21
 1 6 FFBBBX S8/G6
 2 17 CFB SB2
@@ -50,7 +50,7 @@ score 13
 30 26 X FC4/G4 1X2(4)
 score 15
 
-plays home
+homeplays
 pitching 11
 1 00 BSSSFFX 63/G6
 2 33 CBBBB W

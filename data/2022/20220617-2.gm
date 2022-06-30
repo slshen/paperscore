@@ -7,7 +7,7 @@ league: PGF
 visitorid: pride-2022
 home: NorCal Choppers Cagiga
 ---
-plays pride-2022
+visitorplays
 pitching 22
 1 6 CBBBX 5/P5
 2 17 X 53/G5
@@ -43,7 +43,7 @@ pitching 91
 23 13 CX 8/F89
 final 5
 
-plays home
+homeplays
 pitching 11
 1 4 FCX 43/G4
 2 16 BBCBB W

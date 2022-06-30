@@ -1,0 +1,102 @@
+date: 6/24/22
+game: 1
+start: 7:55A
+timelimit: 90m
+tournament: Pre-Colorado Summer Slam
+league: PGF
+homeid: pride-2022
+visitor: Firecrackers Leles Enyart Lim
+---
+homeplays
+pitching 11
+1 6 BCX S4/G4
+2 17 H HP B-1 1-2
+3 26 X 23/G2 1-2 2-3
+4 00 FX DGR/L78 B-2 2-3 3-H
+5 11 BCFFC K
+6 18 BBX 4/P4
+score 1
+
+7 10 SSBX 4/P4
+8 7 BBFX 5/P5
+9 2 BCBBB W
+10 22 CBBCX 63/G6
+score 1
+
+11 13 CX S8/F8S
+12 6 CFX S7/F7S B-1 1-2
+13 17 X 13/G1 1-2 2-3
+14 26 SX FC1/G1 B-1 2-3 3XH(725)
+  alt 13/G1 : runner not forced
+15 00 BBFFX 63/G6
+score 1
+
+16 11 SBX E9/F9 B-2
+17 18 CBFFFBX S7/G7 2-H BX3(725)
+  alt S7/G7 B-2 2-H
+18 10 BBFBFS K
+19 7 BBBB W
+20 2 BBB SB2
+... SFS K
+score 2
+
+pitching 48
+21 22 FBFX 8/F8
+22 13 BBBFSFB W
+23 6 B. PO1(11) : left early
+... BX 43/G4
+final 2
+
+visitorplays
+pitching 11
+1 11 BBBB W
+2 10 FBX 54/G5/B 1-3
+  alt 54/G5/B 1X3(4565) : blown pickle
+3 33 X 8/F8/SF 3-H
+4 4 FX S9/G4
+5 28 BX E8/F8 B-2 1-3
+  alt 8/F8
+6 26 BBSFX DGR/L7 B-2 2-H 3-H
+7 22 SCFFX 13/G1
+score 3
+
+8 44 BCFFBS K23
+9 5 X E6/G6 B-1
+  alt 63/G6
+10 8 BFBBB W B-1 1-2
+  alt PO1(234) B-1 : blown pickle (check)
+11 21 CFS K
+12 23 CBBB SB3
+... S PO3(25)
+score 3
+
+12 23 CBSBFFX 4/P4
+13 71 BFX 53/G5
+14 11 X 53/G3
+score 3
+
+15 10 BBX 34/G4
+16 33 CBX S4/G4
+17 4 X E6/G6/TH B-2 1-3
+  alt 63/G5 1-2
+18 28 X S9/F9 B-3(E9) 2-H 3-H
+   alt S9/F9 B-1 2-H 3-H
+19 26 BX S7/F7 B-2(E7) 3-H
+  alt S7/F7 B-1 3-H
+20 22 CB WP 2-3
+... BX E5/G5 B-1 3-H
+  alt 53/G5
+21 44 FSS K
+22 5 C SB2
+... SX 53/G5
+score 7
+
+23 8 X 53/G5
+24 21 FFBC K
+25 23 SBBBCC K
+score 7
+
+26 71 BX 63/G6
+27 11 CFBFX S9/F9
+28 10 BFB SB2 : time expires
+final 7
