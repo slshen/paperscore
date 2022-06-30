@@ -81,6 +81,8 @@ func (p *Pitching) Record(state *game.State) {
 			if state.Pitches.Last() == "C" {
 				p.StrikeOutsLooking++
 			}
+		case game.WalkPickedOff:
+			fallthrough
 		case game.Walk:
 			fallthrough
 		case game.WalkPassedBall:

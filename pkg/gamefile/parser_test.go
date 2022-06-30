@@ -13,10 +13,9 @@ func TestParser(t *testing.T) {
 	assert.NoError(err)
 	assert.NotNil(f)
 	assert.Equal("pride-2022", f.Properties["visitorid"])
-	if !assert.Len(f.TeamEvents, 2) {
-		return
-	}
-	events := f.TeamEvents[0].Events
+	assert.NotNil(f.VisitorEvents)
+	assert.NotNil(f.HomeEvents)
+	events := f.VisitorEvents
 	assert.Equal("2", events[0].Pitcher)
 	if assert.Greater(len(events), 30) {
 		play := events[1].Play
@@ -28,6 +27,4 @@ func TestParser(t *testing.T) {
 			assert.Equal("K", play.Code)
 		}
 	}
-	assert.NotNil(f.GetVisitorEvents())
-	assert.NotNil(f.GetHomeEvents())
 }

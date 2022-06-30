@@ -36,8 +36,10 @@ func isSameTournament(gr *Group, g *game.Game) bool {
 
 func createTournamentGroup(g *game.Game) *Group {
 	d := g.GetDate().Format("01/02/2006")
-	name := g.Tournament
-	if name == "" {
+	var name string
+	if g.Tournament != "" {
+		name = fmt.Sprintf("%s %s", d, g.Tournament)
+	} else {
 		name = fmt.Sprintf("%s %s", d, g.League)
 	}
 	return &Group{

@@ -6,6 +6,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/alecthomas/participle/v2/lexer"
 )
@@ -13,23 +14,26 @@ import (
 type Numbers string
 
 type File struct {
-	Path         string
+	Path          string
+	Properties    map[string]string
+	PropertyPos   map[string]lexer.Position
+	VisitorEvents []*Event
+	HomeEvents    []*Event
+
 	PropertyList []*Property   `parser:"@@*"`
 	TeamEvents   []*TeamEvents `parser:"@@*"`
+}
 
-	Properties map[string]string
+type TeamEvents struct {
+	Pos           lexer.Position
+	HomeOrVisitor string   `parser:"@('visitorplays' | 'homeplays') (NL|EOF)"`
+	Events        []*Event `parser:"@@*"`
 }
 
 type Property struct {
 	Pos   lexer.Position
 	Key   string `parser:"@Ident"`
 	Value string `parser:"@Text (NL|EOF)"`
-}
-
-type TeamEvents struct {
-	Pos    lexer.Position
-	TeamID string   `parser:"'plays' (@Code | @Keyword) (NL|EOF)"`
-	Events []*Event `parser:"@@*"`
 }
 
 type Event struct {
@@ -87,44 +91,26 @@ func (n Numbers) Int() int {
 	return i
 }
 
-func (f *File) GetVisitorEvents() *TeamEvents {
-	if events := f.findTeamEvents("visitorid"); events != nil {
-		return events
-	}
-	if len(f.TeamEvents) > 0 {
-		return f.TeamEvents[0]
-	}
-	return nil
-}
-
-func (f *File) GetHomeEvents() *TeamEvents {
-	if events := f.findTeamEvents("homeid"); events != nil {
-		return events
-	}
-	if len(f.TeamEvents) > 1 {
-		return f.TeamEvents[1]
-	}
-	return nil
-}
-
-func (f *File) findTeamEvents(key string) *TeamEvents {
-	if id := f.Properties[key]; id != "" {
-		for _, events := range f.TeamEvents {
-			if events.TeamID == id {
-				return events
-			}
-		}
-	}
-	return nil
-}
-
-func (f *File) validate() error {
-	if len(f.TeamEvents) > 2 {
-		return fmt.Errorf("%s has more than 2 play sections", f.Path)
-	}
+func (f *File) Validate() error {
 	f.Properties = make(map[string]string)
+	f.PropertyPos = make(map[string]lexer.Position)
 	for _, prop := range f.PropertyList {
 		f.Properties[prop.Key] = prop.Value
+		f.PropertyPos[prop.Key] = prop.Pos
+	}
+	for _, te := range f.TeamEvents {
+		switch te.HomeOrVisitor {
+		case "homeplays":
+			if f.HomeEvents != nil {
+				return fmt.Errorf("%s: duplicate homeplays section", te.Pos)
+			}
+			f.HomeEvents = te.Events
+		case "visitorplays":
+			if f.VisitorEvents != nil {
+				return fmt.Errorf("%s: duplicate vistiroplays section", te.Pos)
+			}
+			f.VisitorEvents = te.Events
+		}
 	}
 	return nil
 }
@@ -151,17 +137,17 @@ func (f *File) Write(w io.Writer) {
 		fmt.Fprintf(w, "%s: %s\n", name, val)
 	}
 	fmt.Fprintln(w, "---")
-	f.writeEvents(w, f.GetVisitorEvents())
-	f.writeEvents(w, f.GetHomeEvents())
+	f.writeEvents(w, "visitorplays", f.VisitorEvents)
+	f.writeEvents(w, "homeplays", f.HomeEvents)
 }
 
-func (f *File) writeEvents(w io.Writer, events *TeamEvents) {
+func (f *File) writeEvents(w io.Writer, name string, events []*Event) {
 	if events == nil {
 		return
 	}
-	fmt.Fprintf(w, "plays %s\n", events.TeamID)
+	fmt.Fprintf(w, "%s\n", name)
 	var pa int
-	for _, event := range events.Events {
+	for _, event := range events {
 		switch {
 		case event.Play != nil:
 			play := event.Play
@@ -203,6 +189,20 @@ func (f *File) writeCodeAdvancesComment(w io.Writer, code string, advances []str
 		fmt.Fprintf(w, " : %s", comment)
 	}
 	fmt.Fprintln(w)
+}
+
+const GameDateFormat = "1/2/2006"
+
+func (f *File) GetGameDate() (time.Time, error) {
+	d := f.Properties["date"]
+	t, err := time.Parse("1/2/06", d)
+	if err != nil {
+		t, err = time.Parse(GameDateFormat, d)
+	}
+	if err != nil {
+		return t, fmt.Errorf("%s: can't parse date: %w", f.PropertyPos["date"], err)
+	}
+	return t, nil
 }
 
 func (p *ActualPlay) GetPos() lexer.Position {

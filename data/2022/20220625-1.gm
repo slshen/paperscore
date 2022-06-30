@@ -1,0 +1,101 @@
+date: 6/25/22
+game: 1
+start: 9:35A
+timelimit: 90m
+tournament: Pre-Colorado Summer Slam
+league: PGF
+visitorid: pride-2022
+home: Sanger Warriors
+---
+visitorplays
+pitching 27
+1 6 BBCX S7/F7/M
+2 17 C SB2
+... BBCFX E4/G4 B-1 2-H
+3 26 X E6/P6 B-1 1-2
+4 00 FX FC5/G5 B-1 1-2 2X3(5)
+5 11 FX D7/L7 B-2 1-3 2-H
+6 18 BFBX E5/G5 B-1 2-3 3-H
+7 7 B SB2
+... CX S5/G5/B B-2 2-3 3-H
+8 2 CCS K
+9 88 BBBB W
+pitching 28
+10 6 CBBX S1/G1/B B-1 1-2 2-3 3-H
+11 17 CSFBBB WP 1-2 2-3 3-H
+... B W
+12 26 BX FC6/G6 1X2(64)
+score 6
+
+13 00 X E7/F7 B-2
+14 11 X 1/P1
+15 18 CBFB WP 2-3
+... FX 8/F78/SF 3-H
+16 7 BBBB W
+17 2 CFS K
+score 7
+
+18 88 BBBFX E3/G6 B-1
+19 6 CX S6/P5 B-1 1-2
+20 17 X FC1/G1/B B-1 1-2 2X3(15)
+21 26 FB WP 1-2 2-3
+... X 6/P6
+22 00 BFBBFFFB W
+23 11 BX 6/P6
+score 7
+
+24 18 CBCFFX 2/P2
+25 7 CX 2/G2/B
+  alt S7/G2/B  : batter ran into ball
+26 2 CX 8/F78
+score 7
+
+27 88 CCX 13/G1
+28 6 BX S6/G6/M
+29 17 BB SB2
+... CBB W
+30 26 BF FLE5
+... BB WP 1-2 2-H
+... B W
+31 00 BBX E9/F9 B-1 1-3 2-H
+32 11 C SB2
+... FBX D7/L7 B-2 2-H 3-H
+33 18 BBX S7/L5 B-1 2-3
+34 7 C SB2
+... CBX 5/L5
+35 2 BX 8/F78
+final 11
+
+homeplays
+pitching 11
+1 8 SBX E3/G3/B/TH B-1
+  alt 34/G3/B
+2 14 C CS2(26)
+... FX 9/F9
+3 7 BSBBCX 43/G4
+score 0
+
+4 28 SBBCX 63/G6
+5 47 CX 63/G6
+6 24 CFFX 13/G1
+score 0
+
+7 19 CSC K
+8 6 SX 63/G6
+9 25 BFBX S5/G5 B-1
+10 8 BX FC6/G6 B-1 1X2(64)
+score 0
+
+11 14 BBSX 54/G5/B
+12 7 SBBBFB W
+13 28 CSX D7/L7 B-2 1-3
+14 47 FCS K
+15 24 FBCBBFB W
+16 19 X S7/G7 B-1 1-2 2-3 3-H
+17 6 X 53/G5
+score 1
+
+18 25 BFFS K
+19 8 FSBX 3/P3
+20 14 BBCBFS K23
+final 1

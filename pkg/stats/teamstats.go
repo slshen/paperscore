@@ -119,7 +119,7 @@ func (stats *TeamStats) RecordBatting(g *game.Game, state *game.State, reChange 
 	}
 	if reChange != 0 {
 		var runners []game.PlayerID
-		if state.Play.Is(game.StolenBase, game.CaughtStealing, game.PickedOff) {
+		if state.Play.Is(game.StolenBase, game.CaughtStealing, game.PickedOff, game.WalkPickedOff) {
 			runners = state.Play.Runners
 		} else if state.Play.Is(game.WildPitch, game.PassedBall) {
 			// this will give apportioned credit to all runnners, even
@@ -172,6 +172,8 @@ func (stats *TeamStats) RecordFielding(g *game.Game, state *game.State) {
 	switch state.Play.Type {
 	case game.ReachedOnError:
 		stats.recordError(state.Play.FieldingError)
+	case game.WalkPickedOff:
+		fallthrough
 	case game.PickedOff:
 		fallthrough
 	case game.CaughtStealing:

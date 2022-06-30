@@ -64,7 +64,7 @@ func (state *State) GetBaseRunner(base string) (runner PlayerID, err error) {
 		err = fmt.Errorf("a runner cannot be at H")
 		return
 	}
-	if state.LastState.InningNumber != state.InningNumber {
+	if state.LastState == nil || (state.LastState.InningNumber != state.InningNumber) {
 		err = fmt.Errorf("no runners are on base at the start of a half-inning")
 		return
 	}

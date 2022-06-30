@@ -95,14 +95,6 @@ func ReadGameFile(path string) (*Game, error) {
 	return newGame(gf)
 }
 
-func parseGameDate(d string) (time.Time, error) {
-	t, err := time.Parse("1/2/06", d)
-	if err != nil {
-		t, err = time.Parse("1/2/2006", d)
-	}
-	return t, err
-}
-
 func newGame(gf *gamefile.File) (*Game, error) {
 	g := &Game{
 		File:       gf,
@@ -154,7 +146,7 @@ func newGame(gf *gamefile.File) (*Game, error) {
 		g.ID = id
 	}
 	var err error
-	g.date, err = parseGameDate(g.File.Properties["date"])
+	g.date, err = g.File.GetGameDate()
 	if err != nil {
 		errs = multierror.Append(errs, err)
 	}
@@ -171,7 +163,7 @@ func (g *Game) GetStates() []*State {
 func (g *Game) generateStates() (errs error) {
 	var err error
 	g.visitorStates, err = g.runPlays(g.VisitorTeam, g.HomeTeam, Top,
-		g.File.GetVisitorEvents())
+		g.File.VisitorEvents)
 	if err != nil {
 		errs = multierror.Append(errs, err)
 	}
@@ -179,7 +171,7 @@ func (g *Game) generateStates() (errs error) {
 		g.Final.Visitor = g.visitorStates[len(g.visitorStates)-1].Score
 	}
 	g.homeStates, err = g.runPlays(g.HomeTeam, g.VisitorTeam, Bottom,
-		g.File.GetHomeEvents())
+		g.File.HomeEvents)
 	if err != nil {
 		errs = multierror.Append(errs, err)
 	}
@@ -215,7 +207,7 @@ func (g *Game) generateStates() (errs error) {
 	return
 }
 
-func (g *Game) runPlays(battingTeam, fieldingTeam *Team, half Half, events *gamefile.TeamEvents) (states []*State, errs error) {
+func (g *Game) runPlays(battingTeam, fieldingTeam *Team, half Half, events []*gamefile.Event) (states []*State, errs error) {
 	if events == nil {
 		return
 	}
@@ -225,7 +217,7 @@ func (g *Game) runPlays(battingTeam, fieldingTeam *Team, half Half, events *game
 		Half:         half,
 		Runners:      make([]PlayerID, 3),
 	}
-	for _, event := range events.Events {
+	for _, event := range events {
 		if event.Empty {
 			continue
 		}

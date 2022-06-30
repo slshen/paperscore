@@ -19,5 +19,5 @@ func ParseFile(path string) (*File, error) {
 		return nil, err
 	}
 	file.Path = path
-	return file, file.validate()
+	return file, file.Validate()
 }
