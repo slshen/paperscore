@@ -24,7 +24,7 @@ func reCommand() *cobra.Command {
 		Use:   "re",
 		Short: "Determine the run expectancy matrix",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			games, err := game.ReadGameFiles(args)
+			games, err := game.ReadGames(args)
 			if err != nil {
 				return err
 			}

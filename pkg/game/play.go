@@ -56,10 +56,10 @@ func (p *Play) Is(ts ...PlayType) bool {
 	return false
 }
 
-func (p *Play) Hit() bool {
-	return p.Type == Single || p.Type == Double || p.Type == HomeRun
+func (p *Play) IsHit() bool {
+	return p.Type == Single || p.Type == Double || p.Type == Triple || p.Type == HomeRun
 }
 
-func (p *Play) BallInPlay() bool {
-	return p.Hit() || p.Is(ReachedOnError, FieldersChoice, GroundOut, FlyOut, DoublePlay, TriplePlay)
+func (p *Play) IsBallInPlay() bool {
+	return p.IsHit() || p.Is(ReachedOnError, FieldersChoice, GroundOut, FlyOut, DoublePlay, TriplePlay)
 }

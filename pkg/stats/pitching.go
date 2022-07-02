@@ -66,7 +66,7 @@ func (p *Pitching) Record(state *game.State) {
 				p.Swings++
 			}
 		}
-		if state.Play.Hit() {
+		if state.Play.IsHit() {
 			p.Hits++
 		}
 		switch state.Play.Type {

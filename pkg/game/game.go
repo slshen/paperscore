@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"regexp"
 	"sort"
@@ -41,6 +42,64 @@ type altStatesMap map[*State][]*State
 
 var gameFileRegexp = regexp.MustCompile(`\d\d\d\d\d\d\d\d-\d.(yaml|gm)`)
 
+func globExpand(paths []string) ([]string, error) {
+	var res []string
+	for _, path := range paths {
+		if strings.Contains(path, "*") {
+			g, err := filepath.Glob(paths[0])
+			if err != nil {
+				return nil, err
+			}
+			res = append(res, g...)
+		} else {
+			res = append(res, path)
+		}
+	}
+	return res, nil
+}
+
+func ReadGames(fileOrDirs []string) ([]*Game, error) {
+	var games []*Game
+	fileOrDirs, err := globExpand(fileOrDirs)
+	if err != nil {
+		return nil, err
+	}
+	sort.Strings(fileOrDirs)
+	for _, fileOrDir := range fileOrDirs {
+		stat, err := os.Stat(fileOrDir)
+		if err != nil {
+			return nil, err
+		}
+		if stat.IsDir() {
+			dirGames, err := ReadGamesDir(fileOrDir)
+			if err != nil {
+				return nil, err
+			}
+			games = append(games, dirGames...)
+			ents, err := os.ReadDir(fileOrDir)
+			if err != nil {
+				return nil, err
+			}
+			for _, ent := range ents {
+				if ent.IsDir() {
+					moreGames, err := ReadGamesDir(filepath.Join(fileOrDir, ent.Name()))
+					if err != nil {
+						return nil, err
+					}
+					games = append(games, moreGames...)
+				}
+			}
+			continue
+		}
+		fileGames, err := ReadGameFiles([]string{fileOrDir})
+		if err != nil {
+			return nil, err
+		}
+		games = append(games, fileGames...)
+	}
+	return games, nil
+}
+
 func ReadGamesDir(dir string) ([]*Game, error) {
 	files, err := filepath.Glob(filepath.Join(dir, "*.yaml"))
 	if err != nil {
@@ -61,12 +120,9 @@ func ReadGamesDir(dir string) ([]*Game, error) {
 }
 
 func ReadGameFiles(paths []string) (games []*Game, errs error) {
-	if len(paths) == 1 && strings.Contains(paths[0], "*") {
-		g, err := filepath.Glob(paths[0])
-		if err != nil {
-			return nil, err
-		}
-		paths = g
+	paths, err := globExpand(paths)
+	if err != nil {
+		return nil, err
 	}
 	sort.Strings(paths)
 	for _, path := range paths {
@@ -158,6 +214,14 @@ func newGame(gf *gamefile.File) (*Game, error) {
 
 func (g *Game) GetStates() []*State {
 	return g.states
+}
+
+func (g *Game) GetHomeStates() []*State {
+	return g.homeStates
+}
+
+func (g *Game) GetVisitorStates() []*State {
+	return g.visitorStates
 }
 
 func (g *Game) generateStates() (errs error) {

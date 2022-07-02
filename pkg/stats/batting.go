@@ -52,7 +52,7 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 	}
 	if state.Complete {
 		b.PA++
-		if state.Play.Hit() {
+		if state.Play.IsHit() {
 			b.Hits++
 		}
 		switch state.Play.Type {
@@ -94,18 +94,16 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 		case game.StrikeOutWildPitch:
 			b.ReachedOnK++
 		}
-		if !(state.Play.Is(game.Walk, game.WalkPickedOff, game.WalkPickedOff, game.HitByPitch, game.WalkWildPitch, game.WalkPassedBall, game.CatcherInterference) ||
-			(state.Play.Type == game.ReachedOnError && state.Modifiers.Contains(game.Obstruction)) ||
-			state.Modifiers.Contains(game.SacrificeFly, game.SacrificeHit)) {
+		if state.IsAB() {
 			b.AB++
 		}
 		if state.Modifiers.Trajectory() == game.LineDrive {
 			b.LineDrives++
-			if !state.Play.Hit() {
+			if !state.Play.IsHit() {
 				b.LineDriveOuts++
 			}
 		}
-		if state.Play.Hit() || state.Play.Is(game.Walk, game.WalkWildPitch, game.WalkPassedBall, game.HitByPitch) {
+		if state.Play.IsHit() || state.Play.Is(game.Walk, game.WalkPickedOff, game.WalkWildPitch, game.WalkPassedBall, game.HitByPitch) {
 			b.OnBase++
 		}
 		if state.Modifiers.Contains(game.SacrificeHit) {
