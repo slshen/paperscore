@@ -109,7 +109,7 @@ func (m *gameMachine) handlePlay(play gamefile.Play, state *State) error {
 	}
 	if state.Complete {
 		if !strings.HasSuffix(string(state.Pitches), "X") &&
-			state.Play.BallInPlay() {
+			state.Play.IsBallInPlay() {
 			// fix up pitches
 			state.Pitches += "X"
 		}

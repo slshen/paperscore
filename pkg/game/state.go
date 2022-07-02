@@ -75,6 +75,13 @@ func (state *State) GetBaseRunner(base string) (runner PlayerID, err error) {
 	return
 }
 
+func (state *State) IsAB() bool {
+	return state.Complete &&
+		!(state.Play.Is(Walk, WalkPickedOff, HitByPitch, WalkWildPitch, WalkPassedBall, CatcherInterference) ||
+			(state.Play.Type == ReachedOnError && state.Modifiers.Contains(Obstruction)) ||
+			state.Modifiers.Contains(SacrificeFly, SacrificeHit))
+}
+
 func (pa *PlateAppearance) GetPlayAdvancesCode() string {
 	s := &strings.Builder{}
 	fmt.Fprintf(s, "%s", pa.PlayCode)

@@ -41,6 +41,15 @@ func FromStructs(name string, values interface{}) (*Data, error) {
 	return dat, nil
 }
 
+func (dat *Data) MustAppendStruct(idx *Index, s interface{}) *Index {
+	var err error
+	idx, err = dat.AppendStruct(idx, s)
+	if err != nil {
+		panic(err)
+	}
+	return idx
+}
+
 func (dat *Data) AppendStruct(idx *Index, s interface{}) (*Index, error) {
 	var m map[string]interface{}
 	if u, ok := s.(Update); ok {

@@ -18,7 +18,7 @@ func (re *reArgs) registerFlags(flags *pflag.FlagSet) {
 
 func (re *reArgs) getRunExpectancy() (stats.RunExpectancy, error) {
 	if re.gamesDir != "" {
-		games, err := game.ReadGamesDir(re.gamesDir)
+		games, err := game.ReadGames([]string{re.gamesDir})
 		if err != nil {
 			return nil, err
 		}

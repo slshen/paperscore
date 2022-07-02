@@ -1,5 +1,7 @@
 package dataframe
 
+import "fmt"
+
 type Selection func(idx *Index) *Column
 
 func (dat *Data) Select(sels ...Selection) *Data {
@@ -26,7 +28,7 @@ func (dat *Data) Add(sels ...Selection) {
 			panic("cannot add nil column")
 		}
 		if idx.GetColumn(col.Name) != nil {
-			panic("cannot add duplicate column")
+			panic(fmt.Sprintf("cannot add duplicate column %s", col.Name))
 		}
 		dat.Columns = append(dat.Columns, col)
 	}

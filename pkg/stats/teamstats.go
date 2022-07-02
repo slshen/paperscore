@@ -51,6 +51,11 @@ func (stats *TeamStats) GetBattingData() *dataframe.Data {
 			panic(err)
 		}
 	}
+	dat.Add(
+		dataframe.DeriveFloats("Slugging", Slugging),
+		dataframe.DeriveFloats("OnBasePct", OnBase),
+		dataframe.DeriveFloats("OPS", OPS),
+	)
 	return dat
 }
 

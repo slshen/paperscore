@@ -29,7 +29,7 @@ func tournamentCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			games, err := game.ReadGameFiles(args)
+			games, err := game.ReadGames(args)
 			if err != nil {
 				return err
 			}
