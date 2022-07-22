@@ -6,7 +6,7 @@ import (
 	"github.com/alecthomas/participle/v2"
 )
 
-var parser = participle.MustBuild(&File{}, participle.Lexer(gameFileDef))
+var parser = participle.MustBuild[File](participle.Lexer(gameFileDef))
 
 func ParseFile(path string) (*File, error) {
 	f, err := os.Open(path)
@@ -14,8 +14,8 @@ func ParseFile(path string) (*File, error) {
 		return nil, err
 	}
 	defer f.Close()
-	file := &File{}
-	if err := parser.Parse(path, f, file); err != nil {
+	file, err := parser.Parse(path, f)
+	if err != nil {
 		return nil, err
 	}
 	file.Path = path
