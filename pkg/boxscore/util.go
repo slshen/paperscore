@@ -15,6 +15,9 @@ func firstWord(s string, w int) string {
 		space := strings.IndexRune(s, ' ')
 		if space > 0 {
 			if out.Len()+space < w {
+				if out.Len() > 0 {
+					out.WriteRune(' ')
+				}
 				out.WriteString(s[0:space])
 				s = s[space+1:]
 				continue

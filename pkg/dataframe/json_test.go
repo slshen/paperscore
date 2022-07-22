@@ -27,5 +27,6 @@ func TestMarshalJSON(t *testing.T) {
 	err = json.Unmarshal(jdat, &m)
 	assert.NoError(err)
 	assert.Len(m["columnDefs"], 2)
-	assert.Len(m["rowData"], 4)
+	assert.Len(m["rowData"], 3)
+	assert.NotNil(m["summaryRow"])
 }

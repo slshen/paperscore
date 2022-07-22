@@ -18,7 +18,7 @@ type Batting struct {
 	LOB                            int
 	PitchesSeen, Swings, Misses    int
 	Strikes, CalledStrikes         int
-	GroundOuts, FlyOuts            int
+	GroundOuts, FlyOuts, PopOuts   int
 	HitByPitch                     int
 	OnBase                         int
 	SacrificeBunts                 int
@@ -82,7 +82,11 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 		case game.GroundOut:
 			b.GroundOuts++
 		case game.FlyOut:
-			b.FlyOuts++
+			if state.Trajectory() == game.PopUp {
+				b.PopOuts++
+			} else {
+				b.FlyOuts++
+			}
 		case game.HitByPitch:
 			b.HitByPitch++
 		case game.ReachedOnError:

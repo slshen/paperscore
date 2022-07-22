@@ -1,0 +1,105 @@
+date: 7/12/2022
+game: 2
+visitorid: pride-2022
+home: South Bay Sabotage
+start: 11:57a
+timelimit: 90m
+tournament: San Diego World Series
+league: Triple Crown
+---
+visitorplays
+pitching 6
+1 6 FX 1/L1
+2 17 CBBBB W B-1
+3 26 CX S6/G6 1-2
+4 00 X 4/P4/IF
+5 11 FX S7/L7 B-1 1-2 2-H
+6 18 CCX 63/G6
+score 1
+
+7 7 BCFBBFX 63/G6
+8 10 BCX 6/P5D
+9 2 CCBBS K
+score 1
+
+10 13 CCC K
+11 6 BCBX S6/P6
+12 17 BBCX S3/G3/B B-1 1-2
+13 26 CFBX FC6/G6 B-1 1X2(64) 2-3
+14 00 FCBX FC4/G4 B-1 1-2 3-H
+15 11 X FC6/G6 2X3(RINT)
+score 2
+
+16 18 BFFC K
+17 7 BBBSX D7/F7
+18 10 BCBCBS K
+19 2 S SB3
+... CFC K
+score 2
+
+20 13 X S4/P4
+21 6 FFX D9/L9 B-2 1-3
+22 17 FCBBX S9/G9 B-1 2-H 3-H
+23 26 CSBX E6/P6 B-1 1-2
+24 00 H HP B-1 1-2 2-3
+25 11 X 6/P6/IF
+26 18 BX 8/P8S/SF 3-H
+27 7 X S7/G7 B-1 1-2 2-3
+28 10 FCC K
+score 5
+
+29 2 BSCC K
+30 13 X 7/F7
+31 6 BCBX 8/F8
+score 5
+
+32 17 BBBCCX 7/P7
+33 26 BBBX 6/P6
+34 00 X D9/L9
+35 11 BCSBS K
+score 5
+
+homeplays
+pitching 11
+1 21 BX 63/G6
+2 12 CCBBBFC K
+3 28 CX 53/G5
+score 0
+
+4 11 BCBFBX 4/P4
+5 24 FBFFC K
+6 25 FBFX 9/F9
+score 0
+
+7 50 BSSS K
+8 6 FX 43/G4
+9 7 CBSC K
+score 0
+
+10 21 CX E5/G5 B-1
+  alt 53/G5
+11 12 BBCX 9(B)93(1)/LDP
+12 28 FX 8/F8
+score 0
+
+13 11 FFX S7/G7
+14 24 BX FC5/G5 B-1 1-2(E4)
+  alt 54(1)43/G5/GDP
+15 25 BBX FC6/G6 B-1 1-2 2X3(RINT)
+16 50 BX S8/L8 B-1 1-2 2-3
+17 6 FFX 13/G1 1-2 2-3 3-H
+18 41 CFS K23
+score 1
+
+19 21 CFX 7/L7
+20 12 BBBB W B-1
+21 28 BCX S7/G7 B-1 1-2
+22 11 BX S8/P8S B-1 1-2 2-3
+23 24 BX D7/L7 B-1 1-3 2-H 3-H
+24 25 BCX E3/G5 B-1 1-2
+  alt 53/G5
+25 50 B WP 3-H 2-H(E2) 1-3
+  alt WP 3-H 2-3 1-2
+... X 7/F7/SF 3-H
+26 6 X 43/G4
+score 6

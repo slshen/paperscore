@@ -3,9 +3,17 @@ package tournament
 import (
 	"fmt"
 	"sort"
+	"time"
 
 	"github.com/slshen/sb/pkg/game"
 )
+
+type Group struct {
+	Date       time.Time
+	Name       string
+	Tournament string
+	Games      []*game.Game
+}
 
 func GroupByTournament(games []*game.Game) (res []*Group) {
 	if len(games) == 0 {
@@ -36,15 +44,21 @@ func isSameTournament(gr *Group, g *game.Game) bool {
 
 func createTournamentGroup(g *game.Game) *Group {
 	d := g.GetDate().Format("01/02/2006")
-	var name string
+	var (
+		name       string
+		tournament string
+	)
 	if g.Tournament != "" {
+		tournament = g.Tournament
 		name = fmt.Sprintf("%s %s", d, g.Tournament)
 	} else {
 		name = fmt.Sprintf("%s %s", d, g.League)
+		tournament = name
 	}
 	return &Group{
-		Date:  g.GetDate(),
-		Name:  name,
-		Games: []*game.Game{g},
+		Date:       g.GetDate(),
+		Name:       name,
+		Tournament: tournament,
+		Games:      []*game.Game{g},
 	}
 }

@@ -353,6 +353,9 @@ func (dat *Data) RenderCSV(w io.Writer) error {
 }
 
 func (dat *Data) RenderMarkdown(w io.Writer) error {
+	if dat.Name != "" {
+		fmt.Fprintf(w, "# %s\n", dat.Name)
+	}
 	var hasSummary bool
 	for _, col := range dat.Columns {
 		hasSummary = hasSummary || col.Summary != None
@@ -360,7 +363,11 @@ func (dat *Data) RenderMarkdown(w io.Writer) error {
 	}
 	fmt.Fprintln(w, "|")
 	for _, col := range dat.Columns {
-		fmt.Fprintf(w, "| %s ", strings.Repeat("-", col.GetWidth()))
+		wd := col.GetWidth()
+		if wd < 3 {
+			wd = 3
+		}
+		fmt.Fprintf(w, "| %s ", strings.Repeat("-", wd))
 	}
 	fmt.Fprintln(w, "|")
 	dat.RApply(func(row int) {
@@ -384,4 +391,10 @@ func (dat *Data) RenderMarkdown(w io.Writer) error {
 		fmt.Fprintln(w, "|")
 	}
 	return nil
+}
+
+func (dat *Data) RenderMarkdownString() string {
+	s := &strings.Builder{}
+	_ = dat.RenderMarkdown(s)
+	return s.String()
 }

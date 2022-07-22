@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+
+	"github.com/alecthomas/participle/v2/lexer"
 )
 
 type Pitches string
@@ -17,6 +19,7 @@ const (
 )
 
 type State struct {
+	Pos          lexer.Position
 	InningNumber int
 	Half
 	Outs       int

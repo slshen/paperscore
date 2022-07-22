@@ -3,18 +3,10 @@ package tournament
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/slshen/sb/pkg/dataframe"
-	"github.com/slshen/sb/pkg/game"
 	"github.com/slshen/sb/pkg/stats"
 )
-
-type Group struct {
-	Date  time.Time
-	Name  string
-	Games []*game.Game
-}
 
 type Report struct {
 	Us    string

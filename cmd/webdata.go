@@ -31,13 +31,9 @@ func webdataCommand() *cobra.Command {
 			if re == nil {
 				return fmt.Errorf("run expectancy required")
 			}
-			var games []*game.Game
-			for _, dir := range gameDirs {
-				gs, err := game.ReadGamesDir(dir)
-				if err != nil {
-					return err
-				}
-				games = append(games, gs...)
+			games, err := game.ReadGames(gameDirs)
+			if err != nil {
+				return err
 			}
 			wdat, err := webdata.NewWebData(us, re, games)
 			if err != nil {

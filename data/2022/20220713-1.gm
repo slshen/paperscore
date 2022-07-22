@@ -1,0 +1,104 @@
+date: 7/13/2022
+game: 1
+visitorid: pride-2022
+home: Athletics Mercado RTN
+start: 9:44a
+timelimit: 90m
+tournament: San Diego World Series
+league: Triple Crown
+---
+visitorplays
+pitching 4
+1 17 CBBX 8/L8
+2 7 X 53/G5
+3 26 CX 7/F7
+score 0
+
+4 00 BX 5/P5
+5 11 BX 8/P8
+6 18 CCBX 53/G5
+score 0
+
+7 10 BBCX S8/L8
+8 88 BCBBB W B-1 1-2
+9 2 CBCX 8/F8
+10 22 CFX 3(B)36(1)/FDP/IF
+  alt 3/P3 : run on IF
+score 0
+
+11 17 BBBCX S2/G2/B
+12 7 FX FC6/G6 B-1 1-2(E4)
+13 26 BX 6/P6
+14 00 X 9/L9/SF 2-H
+15 11 BX 43/P4
+score 1
+
+16 18 X 53/G5
+17 10 SCBBS K
+18 88 X S8/L8
+19 2 BFFBX S7/P75 B-1 1-2
+20 22 BFBFFFS K
+score 1
+
+homeplays
+pitching 11
+1 25 BBBCB W B-1
+2 24 B WP 1-2
+  alt NP
+... X 13/G1 2-3
+3 22 BFBSS K
+4 11 SFFC K
+score 0
+
+5 17 BX E6/G6 B-1
+  alt 63/G6
+6 23 FX FC4/G4 B-1 1X2(46)
+  alt 46(1)63/GDP/G4 : bobbled
+7 16 B WP 1-2
+  alt NP
+... X S5/G5/B B-2 2-3
+  alt S5/G5/B B-1 2-3 : asleep
+8 12 B PO3(25)
+... FBB WP 2-3
+  alt NP
+... X 23/G2
+score 0
+
+9 33 SBSS K23
+10 5 BSX D9/L89
+11 25 BX D7/F78 B-3 2-H
+  alt 7/F78
+12 24 FBCX 5/L5
+13 22 X D7/L7 B-2 3-H
+14 11 BX S7/L7 B-1 2-H
+15 17 SX FC4/64 1X2(RINT)
+score 3
+
+16 23 BBFBX 13/G1
+17 16 BFX S9/G89
+18 12 CCFB WP 1-2
+  alt NP
+... X E5/G5 B-1
+  alt 53/G5
+19 33 B WP 1-2 2-3
+  alt NP
+... B CSH(252) 2-3
+... X 13/G1
+score 3
+
+20 55 CBX S8/L8
+21 25 BX E6/G6 B-1 1-2
+  alt FC6/G6 B-1 1X2(64)
+22 24 X 53/G5/B 1-2 2-3
+pitching 00
+23 22 BCBSFFX DGR/F7 B-2 2-H 3-H
+  alt 7/F7/SF 3-H : bad first step
+24 11 X 53/G5 2-3
+25 17 CB PB 3-H
+  alt NP
+... BBSFB W B-1
+26 23 CS PO1(23) 1-2(E3)
+  alt NP
+... FB PO2(24) 2-H(E4)
+  alt NP : can't catch
+final 7

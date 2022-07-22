@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 type Type int
@@ -264,4 +265,10 @@ func (col *Column) GetString(row int) string {
 		return val.(string)
 	}
 	return ""
+}
+
+func RoundToFormat(f string, v float64) float64 {
+	s := strings.Trim(fmt.Sprintf(f, v), " ")
+	n, _ := strconv.ParseFloat(s, 64)
+	return n
 }

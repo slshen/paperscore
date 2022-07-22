@@ -4,7 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"regexp"
+	"strings"
 	"unicode"
 
 	"gopkg.in/yaml.v3"
@@ -26,25 +28,38 @@ type Player struct {
 
 var playerNumberRegexp = regexp.MustCompile(`\d+`)
 
-func NewTeam(name string) *Team {
-	return &Team{
+func GetTeam(dir, name, id string) (*Team, error) {
+	team := &Team{
 		Name:      name,
 		Players:   make(map[PlayerID]*Player),
 		playerIDs: make(map[string]PlayerID),
 	}
+	if id != "" {
+		if dir == "" {
+			return nil, fmt.Errorf("team %s cannot be loaded without a directory", id)
+		}
+		if err := team.readFile(dir, id); err != nil {
+			return nil, err
+		}
+	}
+	return team, nil
 }
 
-func ReadTeamFile(name, path string) (*Team, error) {
+func (team *Team) IsUs(us string) bool {
+	return strings.HasPrefix(strings.ToLower((team.Name)), us)
+}
+
+func (team *Team) readFile(dir, id string) error {
+	path := filepath.Join(dir, fmt.Sprintf("%s.yaml", id))
 	dat, err := os.ReadFile(path)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
-			return nil, nil
+			return nil
 		}
-		return nil, err
+		return err
 	}
-	team := NewTeam(name)
 	if err := yaml.Unmarshal(dat, team); err != nil {
-		return nil, err
+		return err
 	}
 	for playerID, player := range team.Players {
 		player.PlayerID = playerID
@@ -52,7 +67,7 @@ func ReadTeamFile(name, path string) (*Team, error) {
 			player.Number = getDefaultPlayerNumber(playerID)
 		}
 	}
-	return team, nil
+	return nil
 }
 
 func (team *Team) GetPlayer(id PlayerID) *Player {

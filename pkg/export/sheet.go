@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/slshen/sb/pkg/dataframe"
 	"golang.org/x/oauth2/google"
@@ -47,11 +48,27 @@ func (ex *SheetExport) reload() error {
 }
 
 func (ex *SheetExport) ExportData(data *dataframe.Data) error {
-	_, err := ex.findOrCreateSheet(data.Name)
+	sheet, err := ex.findOrCreateSheet(data.Name)
 	if err != nil {
 		return err
 	}
-	crange := fmt.Sprintf("%s!A2:%s1000", data.Name, columnLetters(len(data.Columns)-1))
+	/*
+		_, err = ex.service.Spreadsheets.BatchUpdate(ex.SpreadsheetID, &sheets.BatchUpdateSpreadsheetRequest{
+			Requests: []*sheets.Request{
+				{
+					UpdateSpreadsheetProperties: &sheets.UpdateSpreadsheetPropertiesRequest{
+						Fields: "*",
+						Properties: &sheets.SpreadsheetProperties{
+							Title: data.Name,
+						},
+					},
+				},
+			},
+		}).Do()
+		if err != nil {
+			return err
+		}*/
+	crange := fmt.Sprintf("%s!A2:%s1000", sheet.Properties.Title, columnLetters(len(data.Columns)-1))
 	log.Default().Printf("Clearing %s of sheet %s", crange, data.Name)
 	_, err = ex.service.Spreadsheets.Values.Clear(ex.SpreadsheetID,
 		crange,
@@ -74,7 +91,7 @@ func (ex *SheetExport) ExportData(data *dataframe.Data) error {
 		}
 		values = append(values, row)
 	}
-	vrange := fmt.Sprintf("%s!A1:%s%d", data.Name, columnLetters(len(data.Columns)-1),
+	vrange := fmt.Sprintf("%s!A1:%s%d", sheet.Properties.Title, columnLetters(len(data.Columns)-1),
 		len(values)+1)
 	log.Default().Printf("Updated values of %s in range %s", data.Name, vrange)
 	_, err = ex.service.Spreadsheets.Values.Update(ex.SpreadsheetID, vrange, &sheets.ValueRange{
@@ -114,6 +131,17 @@ func (ex *SheetExport) findOrCreateSheet(sheetName string) (*sheets.Sheet, error
 		}
 		if once {
 			return nil, fmt.Errorf("cannot find sheet after adding")
+		}
+		paren := strings.IndexRune(sheetName, '(')
+		if paren > 0 {
+			shortName := sheetName[0:paren]
+			for i := range ex.spreadsheet.Sheets {
+				sheet := ex.spreadsheet.Sheets[i]
+				if strings.HasPrefix(sheet.Properties.Title, shortName) {
+					log.Default().Printf("Found sheet %s index %d", sheetName, sheet.Properties.Index)
+					return sheet, nil
+				}
+			}
 		}
 		once = true
 		_, err := ex.service.Spreadsheets.BatchUpdate(ex.SpreadsheetID, &sheets.BatchUpdateSpreadsheetRequest{

@@ -10,6 +10,7 @@ var gameFileDef = lexer.MustStateful(
 			rule("textStart", `:[ \t]*`, lexer.Push("Text")),
 			rule("dashes", `---[\n\r]`, lexer.Push("Plays")),
 			rule("NL", `[\n\r]`, nil),
+			rule("comment", `//.*[\n\r]`, nil),
 		},
 		"Plays": {
 			rule("Numbers", `[0-9]+[ \t]`, nil),
@@ -19,10 +20,12 @@ var gameFileDef = lexer.MustStateful(
 			rule("NL", `[\n\r]`, nil),
 			rule("whitespace", `[ \t]+`, nil),
 			rule("textStart", `:[ \t]*`, lexer.Push("Text")),
+			rule("comment", `//.*[\n\r]`, nil),
 		},
 		"Text": {
 			rule("Text", "[^\n\r]+", nil),
 			rule("NL", `[\n\r]`, lexer.Pop()),
+			rule("comment", `//.*[\n\r]`, nil),
 		},
 	},
 )

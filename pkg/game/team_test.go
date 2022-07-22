@@ -8,7 +8,7 @@ import (
 
 func TestParsePlayerID(t *testing.T) {
 	assert := assert.New(t)
-	team, err := ReadTeamFile("pride", "../../data/2022/pride-2022.yaml")
+	team, err := GetTeam("../../data/2022", "", "pride-2022")
 	assert.NoError(err)
 	if !assert.NotNil(team) {
 		return

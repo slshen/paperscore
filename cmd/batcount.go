@@ -10,8 +10,9 @@ import (
 
 func battingCountCommand() *cobra.Command {
 	var (
-		us    string
-		notus string
+		us     string
+		notus  string
+		direct bool
 	)
 	c := &cobra.Command{
 		Use:   "batting-count",
@@ -20,6 +21,7 @@ func battingCountCommand() *cobra.Command {
 			bc := stats.NewBattingByCount()
 			bc.Us = us
 			bc.NotUs = notus
+			bc.Direct = direct
 			gs, err := game.ReadGames(args)
 			if err != nil {
 				return err
@@ -33,5 +35,6 @@ func battingCountCommand() *cobra.Command {
 	}
 	c.Flags().StringVar(&us, "us", "", "Limit at bats to team ID's that contain `us`")
 	c.Flags().StringVar(&notus, "not-us", "", "Limit at bats to team ID's that do not contain `us`")
+	c.Flags().BoolVar(&direct, "direct", false, "Display stats for the play directly after the last count, instead of for plays passing through the counts")
 	return c
 }

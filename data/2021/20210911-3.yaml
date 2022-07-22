@@ -46,7 +46,7 @@ visitorplays:
   - inn,4,11
   - le13,CSS,K
   - sk12,BX,4/L4
-  - kn21,BCFX,K23
+  - kn21,BCFS,K23
 homeplays:
   - pitcher,ss16
   - 88,X,S8/L8.B-1
@@ -67,6 +67,6 @@ homeplays:
   - 34,FBBX,43/G
   - inn,4,0
   - 26,FBX,63/G
-  - 19,FSC,S9/P34D.B-1
+  - 19,FSX,S9/P34D.B-1
   - 20,X,FC6.B-1;1X2(64)
   - 14,X,4/P

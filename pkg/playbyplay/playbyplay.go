@@ -32,11 +32,11 @@ func (gen *Generator) Generate(w io.Writer) error {
 		}
 		var battingTeam, fieldingTeam *game.Team
 		if state.Half == game.Top {
-			battingTeam = gen.Game.VisitorTeam
-			fieldingTeam = gen.Game.HomeTeam
+			battingTeam = gen.Game.Visitor
+			fieldingTeam = gen.Game.Home
 		} else {
-			battingTeam = gen.Game.HomeTeam
-			fieldingTeam = gen.Game.VisitorTeam
+			battingTeam = gen.Game.Home
+			fieldingTeam = gen.Game.Visitor
 		}
 		pitchingChange := false
 		if state.Half == game.Top && gen.homePitcher != state.Pitcher {
@@ -99,8 +99,8 @@ func (gen *Generator) Generate(w io.Writer) error {
 				} else {
 					gen.score.home += len(state.ScoringRunners)
 				}
-				fmt.Fprintf(line, ". %d %s, %d %s", gen.score.visitor, gen.Game.Visitor,
-					gen.score.home, gen.Game.Home)
+				fmt.Fprintf(line, ". %d %s, %d %s", gen.score.visitor, gen.Game.Visitor.Name,
+					gen.score.home, gen.Game.Home.Name)
 			}
 		}
 		if state.Comment != "" {
