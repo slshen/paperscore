@@ -1,0 +1,89 @@
+date: 7/16/2022
+game: 1
+visitorid: pride-2022
+home: Firecrackers Keene Olson
+start: 8:02a
+timelimit: 90m
+tournament: San Diego World Series
+league: Triple Crown
+---
+visitorplays
+pitching 9
+1 6 BBX 53/G5
+2 17 CCBBFBFFFB W B-1
+3 26 X FC1/G1 B-1 1-2
+4 00 X E4/G4 B-1 1-2 2-H
+5 88 CCC K
+6 11 CX FC6/G6 2X3(6)
+score 1
+
+7 7 CBX E5/G5/B B-1
+8 10 CX D7/F7D B-2 1-H
+9 18 CX 63/G6 2-3
+10 2 CFBX S7/L7 B-1 3-H
+11 6 SX FC5/G5 B-1 1X2(54)
+12 17 CBC SB2
+... BFFBFFB W B-1
+13 26 FB WP 1-2 2-3
+... FBX S7/G78 B-1 2-H 3-H
+pitching 77
+14 00 X S9/F9S B-1 1-3
+15 88 BX 43/G4
+score 5
+
+16 11 FFX 8/F8
+17 7 BBBCH HP
+18 10 C SB2 1-3(E2)
+... FX 7/F7/SF 3-H
+19 18 BFFBBFF FLE5
+... X S7/G7
+20 2 BX 13/G1
+score 6
+
+21 6 X S6/G6
+22 17 FBFX S7/G7 B-1 1-2
+23 26 X S7/F7S B-2 1-3 2-H
+24 00 BCX 8/L8/SF 3-H
+25 88 CH HP
+26 11 H HP B-1 1-2 2-3
+27 7 X 3/G3 1-2 2-3 3-H
+28 10 BFX 5/P5
+score 9
+final 9
+
+homeplays
+pitching 11
+1 43 CBX S1/G4
+2 7 C SB2
+  alt CS2(26) : no catch
+... FS K
+3 44 B PB 2-3
+  alt NP
+... CX 13/G1 3-H
+  alt FC1/G1 B-1 3XH(152)
+4 42 FBBFX S7/F7S B-1
+5 4 CS SB2
+... BFC K
+score 1
+
+6 9 CCC K
+7 77 CX 13/G1
+8 24 CX S7/G56 B-1
+9 14 B WP 1-2
+  alt NP : not blocked
+... X E4/G4 B-1 2-3
+  alt 43/G4
+10 43 B PO3(25)
+score 1
+
+10 43 SBFBBS K
+11 7 CX S8/G64
+12 44 CFX FC6/G6 B-1 1X2(64)
+13 42 CX 53/G5
+score 1
+
+14 4 SFFX 43/G4
+15 79 BCSBBS K23
+16 37 SX 53/G5
+score 1
+final 1

@@ -28,17 +28,17 @@ func NewGameStats(re RunExpectancy) *GameStats {
 }
 
 func (gs *GameStats) Read(g *game.Game) error {
-	gs.teams[g.Home] = g.HomeTeam
-	gs.teams[g.Visitor] = g.VisitorTeam
+	gs.teams[g.Home.Name] = g.Home
+	gs.teams[g.Visitor.Name] = g.Visitor
 	states := g.GetStates()
 	for _, state := range states {
 		var battingTeam, fieldingTeam *game.Team
 		if state.Top() {
-			battingTeam = g.VisitorTeam
-			fieldingTeam = g.HomeTeam
+			battingTeam = g.Visitor
+			fieldingTeam = g.Home
 		} else {
-			battingTeam = g.HomeTeam
-			fieldingTeam = g.VisitorTeam
+			battingTeam = g.Home
+			fieldingTeam = g.Visitor
 		}
 		battingTeamStats := gs.GetStats(battingTeam)
 		fieldingTeamStats := gs.GetStats(fieldingTeam)

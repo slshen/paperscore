@@ -46,8 +46,8 @@ func NewBoxScore(g *game.Game, re stats.RunExpectancy) (*BoxScore, error) {
 	}
 	boxscore := &BoxScore{
 		Game:          g,
-		HomeLineup:    &Lineup{gs.TeamStats[g.Home]},
-		VisitorLineup: &Lineup{gs.TeamStats[g.Visitor]},
+		HomeLineup:    &Lineup{gs.TeamStats[g.Home.Name]},
+		VisitorLineup: &Lineup{gs.TeamStats[g.Visitor.Name]},
 	}
 	if err := boxscore.run(); err != nil {
 		return nil, err
@@ -88,15 +88,15 @@ func (box *BoxScore) run() error {
 	return nil
 }
 
-func (box *BoxScore) InningScoreTable() string {
+func (box *BoxScore) InningScoreTable() *dataframe.Data {
 	tab := &dataframe.Data{
 		Columns: []*dataframe.Column{
 			{
-				Name:   "",
+				Name:   fmt.Sprintf("%s #%s", box.Game.Date, box.Game.Number),
 				Format: "%-20s",
 				Values: []string{
-					firstWord(box.Game.Visitor, 20),
-					firstWord(box.Game.Home, 20),
+					firstWord(box.Game.Visitor.Name, 20),
+					firstWord(box.Game.Home.Name, 20),
 				},
 			},
 		},
@@ -110,9 +110,9 @@ func (box *BoxScore) InningScoreTable() string {
 	}
 	tab.Columns = append(tab.Columns,
 		&dataframe.Column{
-			Name:   " |",
+			Name:   " -",
 			Format: "%2s",
-			Values: []string{" |", " |"},
+			Values: []string{"", ""},
 		},
 		&dataframe.Column{
 			Name: " R", Format: "%2d",
@@ -127,7 +127,7 @@ func (box *BoxScore) InningScoreTable() string {
 			Values: []int{box.VisitorLineup.Errors, box.HomeLineup.Errors},
 		},
 	)
-	return tab.String()
+	return tab
 }
 
 func (box *BoxScore) ScoringPlays() (string, error) {

@@ -38,7 +38,7 @@ visitorplays:
   - kg2,BBCCBB,W
   - ss16,SBX,6/P6
   - cm22,FC,SB2
-  - cm22,FFCSS,K
+  - cm22,FCS,K
   - sk12,CBCS,K
 homeplays:
   - pitcher,bj00
@@ -59,7 +59,7 @@ homeplays:
   - inn,4,0
   - 27,BX,S6/P5D.B-1
   - 1,BS,SB2
-  - 1,BSCF,K
+  - 1,BSCFS,K
   - 11,CX,9/F9S
   - 16,BBFX,S8/L8S.B-2;2-H
   - 77,BSFBX,8/F8

@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/alecthomas/participle/v2/lexer"
 	"github.com/slshen/sb/pkg/gamefile"
 )
 
@@ -26,8 +27,9 @@ func newGameMachine(half Half, battingTeam, fieldingTeam *Team) *gameMachine {
 	return m
 }
 
-func (m *gameMachine) newState(lastState *State) *State {
+func (m *gameMachine) newState(pos lexer.Position, lastState *State) *State {
 	state := &State{
+		Pos:          pos,
 		InningNumber: lastState.InningNumber,
 		Outs:         lastState.Outs,
 		Half:         lastState.Half,
@@ -59,7 +61,7 @@ func (m *gameMachine) handleAlternative(alt *gamefile.Alternative, lastState *St
 		}
 		realLastState.Batter = lastState.Batter
 	}
-	state := m.newState(realLastState)
+	state := m.newState(alt.Pos, realLastState)
 	state.Batter = lastState.Batter
 	state.Pitches = lastState.Pitches
 	state.AlternativeFor = lastState
@@ -68,7 +70,7 @@ func (m *gameMachine) handleAlternative(alt *gamefile.Alternative, lastState *St
 }
 
 func (m *gameMachine) handleActualPlay(play *gamefile.ActualPlay, lastState *State) (*State, error) {
-	state := m.newState(lastState)
+	state := m.newState(play.Pos, lastState)
 	if play.ContinuedPlateAppearance {
 		if state.LastState == nil {
 			return nil, fmt.Errorf("%s: ... can only be used to continue a plate appearance", play.GetPos())
@@ -108,6 +110,39 @@ func (m *gameMachine) handlePlay(play gamefile.Play, state *State) error {
 		state.Incomplete = true
 	}
 	if state.Complete {
+		// verify that we've struck out with 3 strikes, or walked with 4 balls
+		// or that we put the ball in play without walking or striking out
+		_, balls, strikes := state.Pitches.Count()
+		if state.Play.IsBallInPlay() {
+			if strikes > 2 {
+				return fmt.Errorf("%s: cannot put ball in play with %d strikes (%s)", state.Pos, strikes, play.GetCode())
+			}
+			if balls > 3 {
+				return fmt.Errorf("%s: cannot put ball in play with %d balls (%s)", state.Pos, balls, play.GetCode())
+			}
+		}
+		if state.Play.Is(StrikeOut, StrikeOutPassedBall, StrikeOutPickedOff, StrikeOutWildPitch) {
+			if state.Pitches[len(state.Pitches)-1] == 'X' {
+				return fmt.Errorf("%s: strike out pitch sequence should not end in X", state.Pos)
+			}
+			if strikes != 3 {
+				return fmt.Errorf("%s: must strike out with 3 strikes", state.Pos)
+			}
+			if balls > 3 {
+				return fmt.Errorf("%s: cannot strike out with more than 3 balls", state.Pos)
+			}
+		}
+		if state.Play.Is(Walk, WalkPassedBall, WalkPickedOff, WalkPickedOff) {
+			if state.Pitches[len(state.Pitches)-1] == 'X' {
+				return fmt.Errorf("%s: walk pitch sequence should not end in X", state.Pos)
+			}
+			if strikes > 2 {
+				return fmt.Errorf("%s: cannot walk with more than 2 strikes", state.Pos)
+			}
+			if balls != 4 {
+				return fmt.Errorf("%s: must walk with 4 balls", state.Pos)
+			}
+		}
 		if !strings.HasSuffix(string(state.Pitches), "X") &&
 			state.Play.IsBallInPlay() {
 			// fix up pitches
@@ -339,9 +374,10 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 		}
 		m.impliedAdvance(play, state, "B-3")
 		state.Complete = true
-	case pp.playIs("H"):
+	case pp.playIs("H$") || pp.playIs("H"):
 		state.Play = &Play{
-			Type: HomeRun,
+			Type:     HomeRun,
+			Fielders: pp.getAllFielders(0),
 		}
 		m.impliedAdvance(play, state, "B-H")
 		state.Complete = true
@@ -444,11 +480,7 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 		state.recordOut()
 		m.putOut(base)
 		state.Complete = true
-	case pp.playIs("CS%($$)"):
-		fallthrough
-	case pp.playIs("CS%($$$)"):
-		fallthrough
-	case pp.playIs("CS%($$$$)"):
+	case pp.playIs("CS%($$)") || pp.playIs("CS%($$$)") || pp.playIs("CS%($$$$)"):
 		to := pp.playMatches[0]
 		if !(to == "2" || to == "3" || to == "H") {
 			return fmt.Errorf("illegal caught stealing base code %s", pp.playCode)

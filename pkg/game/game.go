@@ -19,17 +19,15 @@ type Score struct {
 }
 
 type Game struct {
-	File                  *gamefile.File `yaml:"-"`
-	ID                    string
-	Home, Visitor         string
-	Final                 Score
-	HomeID                string `yaml:"homeid"`
-	VisitorID             string `yaml:"visitorid"`
-	HomeTeam, VisitorTeam *Team
-	League                string
-	Tournament            string
-	Date                  string
-	Number                string
+	File          *gamefile.File `yaml:"-"`
+	ID            string
+	Home, Visitor *Team
+	Final         Score
+	League        string
+	Tournament    string
+	Season        string
+	Date          string
+	Number        string
 
 	visitorStates []*State
 	homeStates    []*State
@@ -154,44 +152,23 @@ func ReadGameFile(path string) (*Game, error) {
 func newGame(gf *gamefile.File) (*Game, error) {
 	g := &Game{
 		File:       gf,
-		Home:       gf.Properties["home"],
-		HomeID:     gf.Properties["homeid"],
-		Visitor:    gf.Properties["visitor"],
-		VisitorID:  gf.Properties["visitorid"],
 		Tournament: gf.Properties["tournament"],
+		Season:     gf.Properties["season"],
 		League:     gf.Properties["league"],
 		Number:     gf.Properties["game"],
 		Date:       gf.Properties["date"],
 		altStates:  make(altStatesMap),
 	}
 	var errs error
-	if gf.Path != "" {
-		var err error
-		dir := filepath.Dir(gf.Path)
-		if g.HomeID != "" {
-			g.HomeTeam, err = ReadTeamFile(g.Home, filepath.Join(dir, fmt.Sprintf("%s.yaml", g.HomeID)))
-			if err != nil {
-				errs = multierror.Append(errs, err)
-			}
-		}
-		if g.VisitorID != "" {
-			g.VisitorTeam, err = ReadTeamFile(g.Visitor, filepath.Join(dir, fmt.Sprintf("%s.yaml", g.VisitorID)))
-			if err != nil {
-				errs = multierror.Append(errs, err)
-			}
-		}
+	var err error
+	dir := filepath.Dir(gf.Path)
+	g.Home, err = GetTeam(dir, gf.Properties["home"], gf.Properties["homeid"])
+	if err != nil {
+		return nil, err
 	}
-	if g.HomeTeam == nil {
-		g.HomeTeam = NewTeam(g.Home)
-	}
-	if g.VisitorTeam == nil {
-		g.VisitorTeam = NewTeam(g.Visitor)
-	}
-	if g.Home == "" {
-		g.Home = g.HomeTeam.Name
-	}
-	if g.Visitor == "" {
-		g.Visitor = g.VisitorTeam.Name
+	g.Visitor, err = GetTeam(dir, gf.Properties["visitor"], gf.Properties["visitorid"])
+	if err != nil {
+		return nil, err
 	}
 	if g.ID == "" {
 		id := filepath.Base(gf.Path)
@@ -201,7 +178,6 @@ func newGame(gf *gamefile.File) (*Game, error) {
 		}
 		g.ID = id
 	}
-	var err error
 	g.date, err = g.File.GetGameDate()
 	if err != nil {
 		errs = multierror.Append(errs, err)
@@ -226,7 +202,7 @@ func (g *Game) GetVisitorStates() []*State {
 
 func (g *Game) generateStates() (errs error) {
 	var err error
-	g.visitorStates, err = g.runPlays(g.VisitorTeam, g.HomeTeam, Top,
+	g.visitorStates, err = g.runPlays(g.Visitor, g.Home, Top,
 		g.File.VisitorEvents)
 	if err != nil {
 		errs = multierror.Append(errs, err)
@@ -234,7 +210,7 @@ func (g *Game) generateStates() (errs error) {
 	if len(g.visitorStates) > 0 {
 		g.Final.Visitor = g.visitorStates[len(g.visitorStates)-1].Score
 	}
-	g.homeStates, err = g.runPlays(g.HomeTeam, g.VisitorTeam, Bottom,
+	g.homeStates, err = g.runPlays(g.Home, g.Visitor, Bottom,
 		g.File.HomeEvents)
 	if err != nil {
 		errs = multierror.Append(errs, err)
@@ -327,4 +303,28 @@ func (g *Game) GetAlternativeStates(state *State) []*State {
 
 func (g *Game) GetDate() time.Time {
 	return g.date
+}
+
+func (g *Game) GetUsAndThem(us string) (*Team, *Team) {
+	if g.Home.IsUs(us) {
+		return g.Visitor, g.Home
+	}
+	return g.Visitor, g.Home
+}
+
+func (g *Game) GetTournament() string {
+	if g.Tournament != "" {
+		return g.Tournament
+	}
+	if g.League != "" {
+		return g.League
+	}
+	return "Other"
+}
+
+func (g *Game) GetSeason(us string) string {
+	if g.Season != "" {
+		return g.Season
+	}
+	return ""
 }

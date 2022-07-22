@@ -2,16 +2,17 @@ package stats
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/slshen/sb/pkg/dataframe"
 	"github.com/slshen/sb/pkg/game"
 )
 
 type BattingCountSituations struct {
-	Us    string
-	NotUs string
-	sits  []*CountSituation
+	Us     string
+	NotUs  string
+	Direct bool
+
+	sits []*CountSituation
 }
 
 type CountSituation struct {
@@ -36,25 +37,37 @@ func NewBattingByCount() *BattingCountSituations {
 func (bc *BattingCountSituations) Read(g *game.Game) {
 	states := g.GetStates()
 	if bc.Us != "" {
-		if g.HomeID != "" && strings.Contains(g.HomeID, bc.Us) {
+		if g.Home.IsUs(bc.Us) {
 			states = g.GetHomeStates()
-		} else if g.VisitorID != "" && strings.Contains(g.VisitorID, bc.Us) {
+		} else {
 			states = g.GetVisitorStates()
 		}
 	}
 	if bc.NotUs != "" {
-		if g.HomeID == "" || !strings.Contains(g.HomeID, bc.NotUs) {
+		if !g.Home.IsUs(bc.NotUs) {
 			states = g.GetHomeStates()
-		} else if g.VisitorID == "" || !strings.Contains(g.VisitorID, bc.NotUs) {
+		} else {
 			states = g.GetVisitorStates()
 		}
 	}
 	for _, state := range states {
-		bc.record(state)
+		if bc.Direct {
+			bc.recordDirect(state)
+		} else {
+			bc.recordPassingThrough(state)
+		}
 	}
 }
 
-func (bc *BattingCountSituations) record(state *game.State) {
+func (bc *BattingCountSituations) recordDirect(state *game.State) {
+	if state.Complete {
+		_, balls, strikes := state.Pitches[0 : len(state.Pitches)-1].Count()
+		sit := bc.sits[strikes*4+balls]
+		sit.Record(state)
+	}
+}
+
+func (bc *BattingCountSituations) recordPassingThrough(state *game.State) {
 	if state.Complete {
 		sits := map[string]*CountSituation{}
 		for i := 0; i < len(state.Pitches); i++ {
@@ -85,22 +98,10 @@ func (bc *BattingCountSituations) GetData() *dataframe.Data {
 		dataframe.DeriveFloats("OBS", OnBase).WithFormat("%6.3f"),
 		dataframe.DeriveFloats("SLUG", Slugging).WithFormat("%6.3f"),
 		dataframe.DeriveFloats("OPS", OPS).WithFormat("%6.3f"),
-		dataframe.DeriveFloats("K%", func(idx *dataframe.Index, i int) float64 {
-			ab := idx.GetInt(i, "AB")
-			k := idx.GetInt(i, "StrikeOuts")
-			if ab > 0 {
-				return float64(k) / float64(ab)
-			}
-			return 0
-		}).WithFormat("%6.3f"),
-		dataframe.DeriveFloats("BB%", func(idx *dataframe.Index, i int) float64 {
-			ab := idx.GetInt(i, "PA")
-			bb := idx.GetInt(i, "Walks")
-			if ab > 0 {
-				return float64(bb) / float64(ab)
-			}
-			return 0
-		}).WithFormat("%6.3f"),
+		dataframe.DeriveFloats("K%", KPCT).WithFormat("%6.3f"),
+		dataframe.DeriveFloats("BB%", BBPCT).WithFormat("%6.3f"),
+		dataframe.DeriveFloats("PGO%", PGO).WithFormat("%6.3f"),
 		dataframe.Col("PA").WithFormat("%4d"),
+		dataframe.Col("AB").WithFormat("%4d"),
 	)
 }

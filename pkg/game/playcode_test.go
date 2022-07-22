@@ -13,4 +13,6 @@ func TestParseEventCode(t *testing.T) {
 	assert.Equal("W", p.playCode)
 	p.parsePlayCode("SB2;SB3")
 	assert.Equal("SB2;SB3", p.playCode)
+	p.parsePlayCode("CSH(252)")
+	assert.True(p.playIs("CS%($$$)"))
 }

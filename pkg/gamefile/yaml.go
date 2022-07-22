@@ -1,6 +1,8 @@
 package gamefile
 
 import (
+	"bufio"
+	"bytes"
 	"fmt"
 	"os"
 	"regexp"
@@ -34,9 +36,9 @@ func (p *YAMLParser) parse(path string, dat []byte) (*File, error) {
 	for key, value := range m {
 		switch key {
 		case "homeplays":
-			f.HomeEvents = p.parseYAMLEvents(pos, value)
+			f.HomeEvents = p.parseYAMLEvents(p.guessPosition(path, "homeplays:", dat), value)
 		case "visitorplays":
-			f.VisitorEvents = p.parseYAMLEvents(pos, value)
+			f.VisitorEvents = p.parseYAMLEvents(p.guessPosition(path, "visitorplays:", dat), value)
 		default:
 			if val := p.toString(value); val != "" {
 				f.PropertyList = append(f.PropertyList, &Property{
@@ -54,12 +56,28 @@ func (p *YAMLParser) parse(path string, dat []byte) (*File, error) {
 	return f, p.err
 }
 
+func (p *YAMLParser) guessPosition(path, key string, dat []byte) lexer.Position {
+	s := bufio.NewScanner(bytes.NewReader(dat))
+	i := 1
+	for s.Scan() {
+		if s.Text() == key {
+			break
+		}
+		i++
+	}
+	return lexer.Position{
+		Filename: path,
+		Line:     i,
+	}
+}
+
 func (p *YAMLParser) parseYAMLEvents(pos lexer.Position, value interface{}) (events []*Event) {
 	plays, ok := value.([]interface{})
 	if !ok {
 		return
 	}
 	for _, s := range plays {
+		pos.Line++
 		code := p.toString(s)
 		if code == "" {
 			return
@@ -67,13 +85,22 @@ func (p *YAMLParser) parseYAMLEvents(pos lexer.Position, value interface{}) (eve
 		parts := strings.Split(code, ",")
 		switch parts[0] {
 		case "pitcher":
-			events = append(events, &Event{Pitcher: p.getPart(parts, 1)})
+			events = append(events, &Event{
+				Pos:     pos,
+				Pitcher: p.getPart(parts, 1),
+			})
 		case "inn":
 			if len(parts) > 2 {
-				events = append(events, &Event{Score: p.getPart(parts, 2)})
+				events = append(events, &Event{
+					Pos:   pos,
+					Score: p.getPart(parts, 2),
+				})
 			}
 		case "final":
-			events = append(events, &Event{Final: p.getPart(parts, 1)})
+			events = append(events, &Event{
+				Pos:   pos,
+				Final: p.getPart(parts, 1),
+			})
 		case "radj":
 			events = append(events, &Event{
 				Pos:        pos,
@@ -99,13 +126,10 @@ func (p *YAMLParser) parseYAMLEvents(pos lexer.Position, value interface{}) (eve
 			} else {
 				play.Code = code
 			}
-			events = append(events, &Event{Play: play})
-		}
-	}
-	for _, ev := range events {
-		ev.Pos = pos
-		if ev.Play != nil {
-			ev.Play.Pos = pos
+			events = append(events, &Event{
+				Pos:  pos,
+				Play: play,
+			})
 		}
 	}
 	return

@@ -2,9 +2,6 @@ package dataframe
 
 import (
 	"encoding/json"
-	"fmt"
-	"strconv"
-	"strings"
 )
 
 func (dat *Data) MarshalJSON() ([]byte, error) {
@@ -17,12 +14,7 @@ func (dat *Data) MarshalJSON() ([]byte, error) {
 		})
 	}
 	m["columnDefs"] = cols
-	rc := dat.RowCount()
-	n := rc
-	if dat.HasSummary() {
-		n++
-	}
-	rows := make([]interface{}, n)
+	rows := make([]interface{}, dat.RowCount())
 	m["rowData"] = rows
 	dat.RApply(func(row int) {
 		r := map[string]interface{}{}
@@ -30,9 +22,7 @@ func (dat *Data) MarshalJSON() ([]byte, error) {
 			switch col.GetType() {
 			case Float:
 				// round float to format
-				s := strings.Trim(fmt.Sprintf(col.GetFormat(), col.GetFloat(row)), " ")
-				n, _ := strconv.ParseFloat(s, 64)
-				r[col.Name] = n
+				r[col.Name] = RoundToFormat(col.GetFormat(), col.GetFloat(row))
 			case Int:
 				r[col.Name] = col.GetInt(row)
 			case String:
@@ -45,10 +35,16 @@ func (dat *Data) MarshalJSON() ([]byte, error) {
 		r := map[string]interface{}{}
 		for _, col := range dat.Columns {
 			if col.Summary != None {
-				r[col.Name] = col.GetSummary()
+				sum := col.GetSummary()
+				switch val := sum.(type) {
+				case float64:
+					r[col.Name] = RoundToFormat(col.GetSummaryFormat(), val)
+				default:
+					r[col.Name] = val
+				}
 			}
 		}
-		rows[rc] = r
+		m["summaryRow"] = r
 	}
 	return json.Marshal(m)
 }

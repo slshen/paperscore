@@ -33,7 +33,7 @@ func altCommand() *cobra.Command {
 					return err
 				}
 				alt := gs.GetAltData()
-				alt.Name = fmt.Sprintf("%s game %s %s at %s Alt Plays", g.Date, g.Number, g.Visitor, g.Home)
+				alt.Name = fmt.Sprintf("%s game %s %s at %s Alt Plays", g.Date, g.Number, g.Visitor.Name, g.Home.Name)
 				alt.RemoveColumn("Game")
 				fmt.Println(alt)
 			}

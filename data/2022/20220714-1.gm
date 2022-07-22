@@ -1,0 +1,80 @@
+date: 7/14/2022
+game: 1
+visitorid: pride-2022
+home: Empire Joaqin
+start: 1:25p
+timelimit: 90m
+tournament: San Diego World Series
+league: Triple Crown
+---
+visitorplays
+pitching 11
+1 6 BCBCBS K
+2 26 BX 53/G6
+3 7 SBBCX 4/P4
+score 0
+
+4 88 CCBBBFFX S9/F9S
+5 00 BFBX S8/G8 B-1 1-2
+6 11 CX D8/F8D B-2 1-3 2-H
+7 18 BX 4/P4
+8 10 BBBCCX S7/L7 B-1 2-3 3-H
+9 2 BFC SB2 3-H(E2)
+... BBC K
+10 6 BX 63/G6
+score 3
+
+11 26 BCX D8/L89
+12 7 X 63/G6 2-3
+13 88 CCS K
+14 00 X S8/G8 B-1 3-H
+15 11 BBBFX 3/P3
+score 4
+
+16 18 BX E2/G5 B-1
+17 10 BBCBX E5/G5 B-1 1-2
+18 2 BCB WP 1-2 2-3
+... BB W B-1
+19 6 BFX FC1/G1 B-1 1-2 2-3 3XH(12)
+20 26 BB PO3(25)
+... BX D7/F7 B-2 1-3 2-H 
+21 7 CX S2/G2/B B-1 2-3 3-H
+22 88 BX T9/F89D B-3 1-H 3-H
+pitching 13
+23 00 BBBFB W B-1
+24 11 FX D8/L78 B-2 1-H 3-H
+25 18 X 43/G4
+final 10
+
+homeplays
+pitching 11
+1 14 BBBCCFB W B-1
+2 11 CB WP 1-2
+  alt NP
+... BCX 6/L6
+3 21 CX 4/P4
+4 5 CCBFS K
+score 0
+
+5 00 BBBSFS K+WP B-1
+  alt K23
+6 2 X 9/F9
+7 4 BFBX 5/P5
+8 24 FSB WP 1-2
+  alt NP
+... C K
+score 0
+
+9 7 BSSBFS K
+10 25 BFFFS K
+11 14 CX S9/F9S
+12 11 X 53/G6
+score 0
+
+13 21 X 4/L4
+14 5 BBFFX 43/G4
+15 00 SCX S8/L8
+16 2 BBX S8/L8 B-1 1-2
+17 4 X 54/G5/B
+final 0
+

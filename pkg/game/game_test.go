@@ -41,7 +41,9 @@ func TestAlternativeStates(t *testing.T) {
 	assert := assert.New(t)
 	g, err := ReadGameFile("../gamefile/testdata/test.gm")
 	assert.NoError(err)
-	assert.NotNil(g)
+	if !assert.NotNil(g) {
+		return
+	}
 	states := g.visitorStates
 	assert.Len(states, 27)
 	pa6 := states[5]

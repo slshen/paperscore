@@ -1,0 +1,98 @@
+date: 7/12/2022
+game: 1
+visitorid: pride-2022
+home: Utah Avalanche
+start: 7:56a
+timelimit: 90m
+tournament: San Diego World Series
+league: Triple Crown
+---
+visitorplays
+pitching 44
+1 6 BBFSBX S7/L7
+2 17 C SB2
+... X 5/L5
+3 26 CSS K
+4 00 BBCX D8/L8 B-2 2-H
+5 11 BX D9/F9D B-2 2-H
+6 10 BCFBX 53/G5
+score 2
+
+7 7 FBBFX 13/G1
+8 13 BCBFBX 63/G6
+9 88 CSX S7/G56 B-1
+10 22 BBBB W B-1 1-2
+11 6 FBBX FC6/G6 2X3(65)
+score 2
+
+12 17 BFFFBBX S6/G6
+13 26 B CS2(26)
+... FBCFX 9/F9
+14 00 X 7/F7
+score 2
+
+15 11 BBFX 53/G5
+16 10 FBBCX S8/L8
+17 7 BX S3/G1/B B-1 1-2
+18 13 BX 8/L8
+19 88 BCFFBBX E4/G4 B-1 1-2 2-3
+20 22 BBCB WP 1-2 2-3 3-H
+... FB W B-1
+21 6 BBX S8/G6 B-1 1-2 2-3 3-H
+22 17 CBBBCB W B-1 1-2 2-3 3-H
+23 26 CBFX 7/F7
+score 5
+
+24 00 SCX 7/L7
+25 11 X 8/F8
+26 10 CSBX 8/F8
+final 5
+
+homeplays
+pitching 11
+1 6 FBBX E6/G6 B-1
+  alt 63/G6
+2 42 X E2/G2/B B-1 1-3
+  alt 23/G2/B 1-2
+3 77 C SB2
+... X 3/L3
+4 25 FCBFC K
+5 5 BBBB W B-1
+6 44 S WP 1-2 2-3 3-H
+  alt NP : should have been blocked
+... BX 13/G1
+score 1
+
+7 15 BX E5/G5 B-1
+  alt 53/G5
+8 11 CFX 8/P8
+9 17 CBFFBX E6/G6 B-1 1-2
+  alt 63/G6 1-2
+10 37 SB SB2;SB3
+... BFBB W B-1
+11 6 C PO3(25)
+... FBBX 13/G1
+score 1
+
+12 42 BFBBX 43/G4
+13 77 CBCS K
+14 25 CBCBX D8/L8
+15 5 CBFX 4/P4
+score 1
+
+16 44 FFX 43/G4
+17 15 X 5/L5
+18 13 FBFX 6/P6
+score 1
+
+19 16 FBFBFX E3/G3 B-1
+  alt 3/G3
+20 3 BSCX S7/L7 B-1 1-2
+21 6 X S1/G1 B-1 1-2 2-3
+22 42 SFX S4/P3 B-1 1-2 2-3 3-H
+  alt 3/P3
+23 77 SBBX 43/G4 1-2 2-3 3-H
+24 25 X S9/P9 B-3(E4/TH) 2-H 3-H
+  alt 9/F9
+25 5 X 63/G6 3-H : time expired
+final 6

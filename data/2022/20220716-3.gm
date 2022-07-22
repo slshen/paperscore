@@ -1,0 +1,111 @@
+date: 7/16/2022
+game: 3
+visitorid: pride-2022
+home: So Cal Athletics Guillenavila
+start: 2:10p
+timelimit: 90m
+tournament: San Diego World Series
+league: Triple Crown
+---
+visitorplays
+pitching 13
+1 6 CFBFX S1/G1
+2 17 CFS K+SB2
+3 26 CBFFFBX S8/G8 B-1 2-3
+4 00 FB SB2
+... BBSFB W B-1
+5 88 BBFFBFB W B-1 1-2 2-3 3-H
+pitching 34
+6 11 SBX 8/F8/SF 2-3 3-H
+7 7 CCX 13/G1
+score 2
+
+8 10 SFX 5/P5
+9 18 BX 7/F7
+10 2 CCFS K
+score 2
+
+11 6 BX 5/L5
+12 17 X S9/P4S
+13 26 X 4/P4
+14 00 C SB2
+... SS K
+score 2
+
+15 88 BBCSC K
+16 11 BFFX 43/G4
+17 7 BCF FLE3
+... X S7/L7 B-2(E3)
+18 10 BSX D7/F7D B-2 2-H
+19 18 BBB PB 2-3
+... CCFX 5/P5
+score 3
+
+20 2 X 6/P6
+21 6 X E6/G6/TH B-1
+22 17 FFB SB2
+... BX S9/G9 B-1 2-3
+23 26 BBCX 9/L9 1-3 3-H
+24 00 X 9/P9
+score 4
+
+25 88 BFCX 13/G1
+26 11 SX 63/G6
+27 7 CFFBX 9/F9
+score 4
+
+28 10 CBX 7/F7
+29 00 BX E2/P2 B-1
+30 13 X 1/L1
+31 6 CX S6/G6 B-1 1-2
+32 17 CFBX T9/L9 1-H 2-H BXH(942)
+  alt T9/L9 B-3 1-H 2-H
+  // alt H9/L9/IPHR B-H 1-H 2-H
+score 6
+final 6
+
+homeplays
+pitching 11
+1 21 X S8/G6
+2 20 BC PB 1-2
+  alt NP
+... SX 34/G3/B 2-3
+3 19 CX S8/L8 B-1 3-H
+4 13 C CS2(26)
+... BBBX 53/G5
+score 1
+
+5 31 CBFFS K
+6 07 BBBCX 53/G5
+7 34 BX 63/L6
+8 91 X S9/P4D
+9 12 CX 64(1)43/GDP
+10 29 BCBFBC K
+score 1
+
+11 21 X 7/F7
+12 20 BFFC K
+13 19 CX 63/G6
+14 13 FBX S7/G56
+15 31 FX S8/L1 B-1 1-2
+16 07 BBSX FC6/G6 B-1 1-2 2X3(65)
+17 34 BBBSB W B-1 1-2 2-3
+18 91 FX D7/L7 B-2 1-3 2-H 3-H
+pitching 00
+19 12 BX S7/L7 B-1 2-3 3-H
+20 29 B SB2
+... BBB W B-1
+21 21 CBBBB W B-1 1-2 2-3 3-H
+22 20 CFC K
+23 19 S PO3(E2) 3-H 2-3 1-2
+  alt NP
+... SS K
+score 6
+
+24 13 BBSCFS K
+25 31 SSX D7/L7 B-H(E7)
+  alt D7/L7
+26 07 CBSBBC K
+27 34 SCBBC K
+score 7
+final 7

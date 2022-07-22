@@ -24,8 +24,8 @@ visitorplays:
   - u1,X,13/G1,scoring error - missing batter
   - inn,2
   - 6,CX,53/G5
-  - 10,CCB,K23
-  - 9,FBCX,K+WP
+  - 10,CCBS,K23
+  - 9,FBCS,K+WP
   - 00,X,D7/F7.B-2;1XH(762)
   - inn,2
   - 12,X,S4/L4
@@ -35,7 +35,7 @@ visitorplays:
   - 74,BFBBS,PB.2-3
   - 74,BFBBSB,W+WP.B-1;3-H,wild pitch ball 4
   - 44,BBCX,S9/L9.B-1;1-3
-  - 11,CFB,K
+  - 11,CFBC,K
   - inn,3
   - 13,FBX,43/G45
   - 55,FSBFS,K

@@ -37,3 +37,4 @@ SB2Opp %3d
 LOPH %4d
 LineDriveOuts
 Inactive
+PopOuts
