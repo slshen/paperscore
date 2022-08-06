@@ -83,9 +83,10 @@ func (col *Column) EmptyCopy() *Column {
 		values = EmptyStrings
 	}
 	return &Column{
-		Name:   col.Name,
-		Format: col.Format,
-		Values: values,
+		Name:    col.Name,
+		Format:  col.Format,
+		Summary: col.Summary,
+		Values:  values,
 	}
 }
 
