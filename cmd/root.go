@@ -11,7 +11,8 @@ func Root() *cobra.Command {
 		statsCommand("batting"), statsCommand("pitching"), reCommand(),
 		exportCommand(), tournamentCommand(), reAnalysisCommand(),
 		fmtCommand(), altCommand(), webdataCommand(), newGameCommand(),
-		battingCountCommand(),
+		battingCountCommand(), battingTimesSeenPitcherCommand(),
+		pitchingTimesSeenLineupCommand(),
 	)
 	return root
 }

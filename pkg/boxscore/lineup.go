@@ -13,10 +13,7 @@ type Lineup struct {
 	*stats.TeamStats
 }
 
-func (lineup *Lineup) BattingTable() string {
-	if len(lineup.Batters) == 0 {
-		return ""
-	}
+func (lineup *Lineup) BattingTable() *dataframe.Data {
 	dat := lineup.GetBattingData().Select(
 		dataframe.Rename("Name", "#").WithFormat("%-14s"),
 		dataframe.Col("AB"),
@@ -31,13 +28,10 @@ func (lineup *Lineup) BattingTable() string {
 	idx.GetColumn("K").Summary = dataframe.Sum
 	idx.GetColumn("BB").Summary = dataframe.Sum
 	idx.GetColumn("LOPH").Summary = dataframe.Sum
-	return dat.String()
+	return dat
 }
 
-func (lineup *Lineup) PitchingTable() string {
-	if len(lineup.Pitchers) == 0 {
-		return ""
-	}
+func (lineup *Lineup) PitchingTable() *dataframe.Data {
 	dat := lineup.GetPitchingData().Select(
 		dataframe.Rename("Name", "Pitcher"),
 		dataframe.Col("IP"),
@@ -49,7 +43,7 @@ func (lineup *Lineup) PitchingTable() string {
 		dataframe.Col("WP"),
 		dataframe.Rename("SwStr", "SWS"),
 	)
-	return dat.String()
+	return dat
 }
 
 func (lineup *Lineup) ErrorsList() string {

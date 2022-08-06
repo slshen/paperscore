@@ -26,6 +26,7 @@ players:
     name: Ashley C
   kn21:
     name: Kelilah N
+    inactive: true
   mc25:
     name: Myra C
     inactive: true
