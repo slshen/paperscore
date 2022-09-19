@@ -88,7 +88,7 @@ func (gen *Generator) Generate(w io.Writer) error {
 					} else {
 						fmt.Fprintf(line, "%s advances to %s", runner.NameOrNumber(), advance.To)
 					}
-					if advance.FieldingError != nil {
+					if advance.IsFieldingError() {
 						fmt.Fprintf(line, " on an E%d", advance.FieldingError.Fielder)
 					}
 				}
@@ -237,10 +237,6 @@ func batterPlayDescription(state *game.State) string {
 		return "reaches on a strikeout wild pitch"
 	case game.StrikeOutPassedBall:
 		return "reaches on a striekout passed ball"
-	case game.StrikeOut:
-		return "strikes out"
-	case game.StrikeOutPickedOff:
-		return "strikes out"
 	case game.GroundOut:
 		verb := "is out"
 		if state.Modifiers.Trajectory() == game.Bunt {
@@ -256,6 +252,9 @@ func batterPlayDescription(state *game.State) string {
 		}
 		return fmt.Sprintf("%s into a double play", verb)
 	default:
+		if state.IsStrikeOut() {
+			return "strikes out"
+		}
 		return ""
 	}
 }
@@ -283,7 +282,7 @@ func runningPlayDescription(team *game.Team, state, lastState *game.State) strin
 		}
 		return strings.Join(sb, ", ")
 	case state.Play.Type == game.CaughtStealing:
-		return fmt.Sprintf("%s is caught stealing %s", team.GetPlayer(play.Runners[0]).NameOrNumber(), play.Base)
+		return fmt.Sprintf("%s is caught stealing %s", team.GetPlayer(state.Runners[0]).NameOrNumber(), play.CaughtStealingBase)
 	case state.Play.Type == game.WildPitch:
 		return "On a wild pitch"
 	case state.Play.Type == game.PassedBall:

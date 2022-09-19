@@ -1,4 +1,4 @@
-package export
+package sheetexport
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/slshen/sb/pkg/config"
 	"github.com/slshen/sb/pkg/dataframe"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
@@ -19,11 +20,15 @@ type SheetExport struct {
 	service     *sheets.Service
 }
 
-func NewSheetExport(config *Config) (*SheetExport, error) {
+func NewSheetExport(config *config.Config) (*SheetExport, error) {
 	ex := &SheetExport{
 		SpreadsheetID: config.SpreadsheetID,
 	}
-	conf, err := google.JWTConfigFromJSON(config.jsonKey, sheets.SpreadsheetsScope)
+	key, err := config.GetGoogleKey()
+	if err != nil {
+		return nil, err
+	}
+	conf, err := google.JWTConfigFromJSON(key, sheets.SpreadsheetsScope)
 	if err != nil {
 		return nil, err
 	}

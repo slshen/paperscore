@@ -52,13 +52,13 @@ func (re *ObservedRunExpectancy) Read(g *game.Game) error {
 				if p != nil {
 					re.totals[i].count += p.count
 					re.totals[i].runs += p.runs
-					re.runData.Columns[0].AppendInts(i)
+					re.runData.Columns[0].AppendInt(i)
 					// cap # of runs to 9
 					runs := p.runs
 					if runs > 9 {
 						runs = 9
 					}
-					re.runData.Columns[1].AppendInts(runs)
+					re.runData.Columns[1].AppendInt(runs)
 					if i == 0 {
 						re.inProgress[i].count = 1
 						re.inProgress[i].runs = 0
@@ -172,22 +172,22 @@ func (re *ObservedRunExpectancy) GetRunExpectancyFrequency() *RunFrequency {
 		irow := sort.SearchInts(dat.Columns[0].GetInts(), i)
 		ip1row := sort.SearchInts(dat.Columns[0].GetInts(), i+1)
 		for runs := 0; runs < 10; runs++ {
-			result.Columns[0].AppendInts(i)
-			result.Columns[1].AppendInts(runs)
+			result.Columns[0].AppendInt(i)
+			result.Columns[1].AppendInt(runs)
 			runValues := dat.Columns[1].GetInts()[irow:ip1row]
 			runRow := sort.SearchInts(runValues, runs)
 			var obs int
 			if runRow < len(runValues) && runValues[runRow] == runs {
 				obs = dat.Columns[2].GetInt(irow + runRow)
 			}
-			result.Columns[2].AppendInts(obs)
+			result.Columns[2].AppendInt(obs)
 			tot := sumObsPerIndex[i]
-			result.Columns[3].AppendInts(tot)
+			result.Columns[3].AppendInt(tot)
 			var freq float64
 			if tot > 0 {
 				freq = float64(obs) / float64(tot)
 			}
-			result.Columns[4].AppendFloats(freq)
+			result.Columns[4].AppendFloat(freq)
 		}
 	}
 	result = result.Select(
@@ -224,21 +224,21 @@ func (dat *RunFrequency) Pivot() *dataframe.Data {
 				for _, row := range group.Rows {
 					if runsCol.GetInt(row) == runs {
 						freq := float64(obsCol.GetInt(row)) / float64(totCol.GetInt(row))
-						acol.AppendFloats(100 * freq)
+						acol.AppendFloat(100 * freq)
 						return
 					}
 				}
-				acol.AppendFloats(0)
+				acol.AppendFloat(0)
 			}).WithFormat("%5.1f")
 		aggs[10+i] = dataframe.AFunc(fmt.Sprintf("CnRn%d", i), dataframe.Int,
 			func(acol *dataframe.Column, group *dataframe.Group) {
 				for _, row := range group.Rows {
 					if runsCol.GetInt(row) == runs {
-						acol.AppendInts(obsCol.GetInt(row))
+						acol.AppendInt(obsCol.GetInt(row))
 						return
 					}
 				}
-				acol.AppendInts(0)
+				acol.AppendInt(0)
 			}).WithFormat("%5d")
 	}
 	pivot := dat.GroupBy("St24").Aggregate(aggs...)

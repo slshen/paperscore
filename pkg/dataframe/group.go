@@ -124,7 +124,7 @@ func ACount(name string) Aggregation {
 			return NewEmptyColumn(name, Int)
 		},
 		aggregateFunc: func(acol *Column, group *Group) {
-			acol.AppendInts(len(group.Rows))
+			acol.AppendInt(len(group.Rows))
 		},
 	}
 }
@@ -144,13 +144,13 @@ func ASum(name string, col *Column) Aggregation {
 				for _, row := range group.Rows {
 					sum += col.GetInt(row)
 				}
-				acol.AppendInts(sum)
+				acol.AppendInt(sum)
 			case Float:
 				sum := 0.
 				for _, row := range group.Rows {
 					sum += col.GetFloat(row)
 				}
-				acol.AppendFloats(sum)
+				acol.AppendFloat(sum)
 			}
 		},
 	}

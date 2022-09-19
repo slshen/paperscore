@@ -13,7 +13,7 @@ const (
 	WalkWildPitch
 	WalkPassedBall
 	WalkPickedOff
-	StolenBase // Note - stolen base can also occur with K+
+	StolenBase
 	PickedOff
 	CatcherInterference
 	ReachedOnError
@@ -28,6 +28,7 @@ const (
 	StrikeOutPassedBall
 	StrikeOutWildPitch
 	StrikeOutPickedOff
+	StrikeOutStolenBase
 	FoulFlyError
 	NoPlay
 )
@@ -39,12 +40,16 @@ func (p PlayType) MarshalYAML() (interface{}, error) {
 }
 
 type Play struct {
-	Type          PlayType
-	Runners       []PlayerID     `yaml:",omitempty,flow"`
-	Base          string         `yaml:",omitempty"`
-	FieldingError *FieldingError `yaml:",omitempty"`
-	Fielders      []int          `yaml:",omitempty,flow"`
-	StolenBases   []string       `yaml:",omitempty,flow"`
+	Type                 PlayType
+	FieldingError        FieldingError `yaml:",omitempty"`
+	Fielders             []int         `yaml:",omitempty,flow"`
+	StolenBases          []string      `yaml:",omitempty,flow"`
+	ScoringRunners       []PlayerID    `yaml:",flow,omitempty"`
+	OutsOnPlay           int           `yaml:",omitempty"`
+	PickedOffRunner      PlayerID      `yaml:",omitempty"`
+	CaughtStealingRunner PlayerID      `yaml:",omitempty"`
+	CaughtStealingBase   string        `yaml:",omitempty"`
+	NotOutOnPlay         bool          `yaml:",omitempty"` // not out on CS, POCS due to error
 }
 
 func (p *Play) Is(ts ...PlayType) bool {
@@ -60,6 +65,22 @@ func (p *Play) IsHit() bool {
 	return p.Type == Single || p.Type == Double || p.Type == Triple || p.Type == HomeRun
 }
 
+func (p *Play) IsStrikeOut() bool {
+	return p.Is(StrikeOut, StrikeOutPassedBall, StrikeOutPickedOff, StrikeOutWildPitch,
+		StrikeOutStolenBase)
+}
+
+func (p *Play) IsWalk() bool {
+	return p.Is(Walk, WalkPassedBall, WalkPickedOff, WalkPickedOff)
+}
+
 func (p *Play) IsBallInPlay() bool {
 	return p.IsHit() || p.Is(ReachedOnError, FieldersChoice, GroundOut, FlyOut, DoublePlay, TriplePlay)
 }
+
+/*func (p *Play) GetRunner(n int) PlayerID {
+	if n < len(p.Runners) {
+		return p.Runners[n]
+	}
+	return ""
+}*/

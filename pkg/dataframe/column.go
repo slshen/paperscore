@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Type int
@@ -90,7 +91,7 @@ func (col *Column) EmptyCopy() *Column {
 	}
 }
 
-func (col *Column) AppendInts(values ...int) {
+func (col *Column) AppendInt(values ...int) {
 	col.Values = append(col.GetInts(), values...)
 }
 
@@ -138,7 +139,7 @@ func (col *Column) GetInts() []int {
 	return EmptyInts
 }
 
-func (col *Column) AppendFloats(values ...float64) {
+func (col *Column) AppendFloat(values ...float64) {
 	col.Values = append(col.GetFloats(), values...)
 }
 
@@ -156,13 +157,26 @@ func (col *Column) AppendString(values ...string) {
 func (col *Column) AppendValue(value interface{}) {
 	switch v := value.(type) {
 	case int:
-		col.AppendInts(v)
+		col.AppendInt(v)
 	case float64:
-		col.AppendFloats(v)
+		col.AppendFloat(v)
 	case string:
 		col.AppendString(v)
 	default:
-		panic("illegal value to append")
+		panic(fmt.Sprintf("illegal value to append %v (%T)", value, value))
+	}
+}
+
+func (col *Column) AppendZero() {
+	switch col.GetType() {
+	case Int:
+		col.AppendInt(0)
+	case Float:
+		col.AppendFloat(0)
+	case String:
+		col.AppendString("")
+	default:
+		panic("illegal column type")
 	}
 }
 
@@ -266,6 +280,14 @@ func (col *Column) GetString(row int) string {
 		return val.(string)
 	}
 	return ""
+}
+
+func (col *Column) GetTime(row int) time.Time {
+	val := col.GetValue(row)
+	if val != nil {
+		return val.(time.Time)
+	}
+	return time.Time{}
 }
 
 func RoundToFormat(f string, v float64) float64 {

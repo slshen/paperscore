@@ -1,8 +1,9 @@
-package export
+package sheetexport
 
 import (
 	"testing"
 
+	"github.com/slshen/sb/pkg/config"
 	"github.com/slshen/sb/pkg/game"
 	"github.com/stretchr/testify/assert"
 )
@@ -11,7 +12,7 @@ const testSpreadsheet = "1-2TCHib_hZ41GkAuJFtXF7Ejec5v2qBwVr-PwRKI5u0"
 
 func TestExport(t *testing.T) {
 	assert := assert.New(t)
-	config, err := NewConfig()
+	config, err := config.NewConfig()
 	if err != nil {
 		t.Skip(err)
 	}

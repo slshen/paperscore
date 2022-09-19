@@ -255,7 +255,6 @@ func (g *Game) runPlays(battingTeam, fieldingTeam *Team, half Half, events []*ga
 	lastState := &State{
 		InningNumber: 1,
 		Half:         half,
-		Runners:      make([]PlayerID, 3),
 	}
 	for _, event := range events {
 		if event.Empty {

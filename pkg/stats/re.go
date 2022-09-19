@@ -73,13 +73,13 @@ func GetRunExpectancyData(re RunExpectancy) *dataframe.Data {
 	}
 	for _, runrs := range OccupedBasesValues {
 		runners.AppendString(string(runrs))
-		_0out.AppendFloats(re.GetExpectedRuns(0, runrs))
-		_1out.AppendFloats(re.GetExpectedRuns(1, runrs))
-		_2out.AppendFloats(re.GetExpectedRuns(2, runrs))
+		_0out.AppendFloat(re.GetExpectedRuns(0, runrs))
+		_1out.AppendFloat(re.GetExpectedRuns(1, runrs))
+		_2out.AppendFloat(re.GetExpectedRuns(2, runrs))
 		if count != nil {
-			_0outCount.AppendInts(count.GetExpectedRunsCount(0, runrs))
-			_1outCount.AppendInts(count.GetExpectedRunsCount(1, runrs))
-			_2outCount.AppendInts(count.GetExpectedRunsCount(2, runrs))
+			_0outCount.AppendInt(count.GetExpectedRunsCount(0, runrs))
+			_1outCount.AppendInt(count.GetExpectedRunsCount(1, runrs))
+			_2outCount.AppendInt(count.GetExpectedRunsCount(2, runrs))
 		}
 	}
 	return dat

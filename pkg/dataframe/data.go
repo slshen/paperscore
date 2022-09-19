@@ -16,6 +16,8 @@ type Update interface {
 	Update()
 }
 
+type StructDecoder func(val interface{}) map[string]interface{}
+
 type Data struct {
 	Name    string
 	Columns []*Column
@@ -33,7 +35,7 @@ func FromStructs(name string, values interface{}) (*Data, error) {
 	for i := 0; i < v.Len(); i++ {
 		val := v.Index(i).Interface()
 		var err error
-		idx, err = dat.AppendStruct(idx, val)
+		idx = dat.AppendStruct(idx, val)
 		if err != nil {
 			return nil, err
 		}
@@ -41,70 +43,60 @@ func FromStructs(name string, values interface{}) (*Data, error) {
 	return dat, nil
 }
 
-func (dat *Data) MustAppendStruct(idx *Index, s interface{}) *Index {
-	var err error
-	idx, err = dat.AppendStruct(idx, s)
-	if err != nil {
-		panic(err)
-	}
-	return idx
-}
-
-func (dat *Data) AppendStruct(idx *Index, s interface{}) (*Index, error) {
-	var m map[string]interface{}
+func (dat *Data) AppendStruct(idx *Index, s interface{}) *Index {
 	if u, ok := s.(Update); ok {
 		u.Update()
 	}
-	if err := mapstructure.Decode(s, &m); err != nil {
-		return nil, err
+	var m map[string]interface{}
+	err := mapstructure.Decode(s, &m)
+	if err != nil {
+		panic(err)
 	}
+	return dat.AppendMap(idx, m)
+}
+
+// Add values from a struct to the data.  Does not support time columns.
+func (dat *Data) AppendMap(idx *Index, m map[string]interface{}) *Index {
 	if idx == nil {
 		idx = dat.GetIndex()
 		for k, v := range m {
 			if idx.GetColumn(k) == nil {
-				_, ok := v.(int)
-				if !ok {
-					_, ok = v.(float64)
-					if !ok {
-						_, ok = v.(string)
-						if !ok {
-							_, ok = v.(bool)
-						}
-					}
+				switch v.(type) {
+				case int:
+				case float64:
+				case string:
+				case bool:
+				default:
+					continue
 				}
-				if ok {
-					dat.Columns = append(dat.Columns, &Column{
-						Name: k,
-					})
-				}
+				dat.Columns = append(dat.Columns, &Column{
+					Name: k,
+				})
 			}
 		}
 		idx = dat.GetIndex()
 	}
 	for k, v := range m {
 		col := idx.GetColumn(k)
-		if i, ok := v.(int); ok {
-			col.AppendInts(i)
-			continue
-		}
-		if f, ok := v.(float64); ok {
-			col.AppendFloats(f)
-			continue
-		}
-		if s, ok := v.(string); ok {
-			col.AppendString(s)
-			continue
-		}
-		if b, ok := v.(bool); ok {
-			if b {
-				col.AppendInts(1)
-			} else {
-				col.AppendInts(0)
+		if col != nil {
+			switch x := v.(type) {
+			case bool:
+				if x {
+					col.AppendInt(1)
+				} else {
+					col.AppendInt(0)
+				}
+			case string:
+				col.AppendString(x)
+			case float64:
+				col.AppendFloat(x)
+			case int:
+				col.AppendInt(x)
+			default:
 			}
-			continue
 		}
 	}
-	return idx, nil
+	return idx
 }
 
 func (dat *Data) Arrange(names ...string) {
@@ -179,9 +171,9 @@ func (dat *Data) RFilter(f func(row int) bool) *Data {
 				rcol := res.Columns[i]
 				switch col.GetType() {
 				case Int:
-					rcol.AppendInts(col.GetInt(row))
+					rcol.AppendInt(col.GetInt(row))
 				case Float:
-					rcol.AppendFloats(col.GetFloat(row))
+					rcol.AppendFloat(col.GetFloat(row))
 				case String:
 					rcol.AppendString(col.GetString(row))
 				}

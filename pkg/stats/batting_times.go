@@ -34,7 +34,7 @@ func (bp *BatterPitcherData) GetBatterData() *dataframe.Data {
 	}
 	var idx *dataframe.Index
 	for bts, batting := range bp.batters {
-		idx = dat.MustAppendStruct(idx, batting)
+		idx = dat.AppendStruct(idx, batting)
 		dat.Columns[0].AppendString(bts.TimesSeenPitcher)
 	}
 	dat = dat.Select(
@@ -73,7 +73,7 @@ func (bp *BatterPitcherData) GetTeamData() *dataframe.Data {
 	}
 	var idx *dataframe.Index
 	for bts, batting := range bp.team {
-		idx = dat.MustAppendStruct(idx, batting)
+		idx = dat.AppendStruct(idx, batting)
 		dat.Columns[0].AppendString(bts.TimesSeenPitcher)
 	}
 	dat = dat.Select(

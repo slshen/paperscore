@@ -49,7 +49,7 @@ func (alt *AltData) Record(gameID string, state *game.State) float64 {
 	_, _, _, originalChange := alt.getREChange(state.AlternativeFor)
 	alt.game.AppendString(gameID)
 	alt.bat.AppendString(string(state.Batter))
-	alt.o.AppendInts(outs)
+	alt.o.AppendInt(outs)
 	alt.rnr.AppendString(string(GetOccupiedBases(state.LastState)))
 	alt.play.AppendString(state.AlternativeFor.GetPlayAdvancesCode())
 	alt.alt.AppendString(state.GetPlayAdvancesCode())
@@ -57,7 +57,7 @@ func (alt *AltData) Record(gameID string, state *game.State) float64 {
 	if state.Batter.IsUs() {
 		price = -price
 	}
-	alt.cost.AppendFloats(price)
+	alt.cost.AppendFloat(price)
 	alt.comment.AppendString(state.Comment)
 	return change
 }

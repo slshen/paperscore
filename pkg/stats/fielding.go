@@ -26,7 +26,7 @@ func newFieldingStats() *FieldingStats {
 	}
 }
 
-func (stats *FieldingStats) recordError(e *game.FieldingError) {
+func (stats *FieldingStats) recordError(e game.FieldingError) {
 	f := stats.FieldingByPosition[e.Fielder-1]
 	f.Errors++
 	stats.Errors++

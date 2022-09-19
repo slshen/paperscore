@@ -12,7 +12,10 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type TeamID string
+
 type Team struct {
+	ID      TeamID
 	Name    string `yaml:"name"`
 	Players map[PlayerID]*Player
 
@@ -31,10 +34,13 @@ var playerNumberRegexp = regexp.MustCompile(`\d+`)
 func GetTeam(dir, name, id string) (*Team, error) {
 	team := &Team{
 		Name:      name,
+		ID:        TeamID(id),
 		Players:   make(map[PlayerID]*Player),
 		playerIDs: make(map[string]PlayerID),
 	}
-	if id != "" {
+	if id == "" {
+		team.ID = TeamID(strings.ReplaceAll(team.Name, " ", "-"))
+	} else {
 		if dir == "" {
 			return nil, fmt.Errorf("team %s cannot be loaded without a directory", id)
 		}

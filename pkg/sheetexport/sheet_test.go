@@ -1,15 +1,16 @@
-package export
+package sheetexport
 
 import (
 	"testing"
 
+	"github.com/slshen/sb/pkg/config"
 	"github.com/slshen/sb/pkg/dataframe"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestSheets(t *testing.T) {
 	assert := assert.New(t)
-	config, err := NewConfig()
+	config, err := config.NewConfig()
 	if err != nil {
 		t.Skip(err)
 	}
