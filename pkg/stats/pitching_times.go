@@ -63,7 +63,7 @@ func (ptl *PitcherTimesLineup) GetData() *dataframe.Data {
 	}
 	var idx *dataframe.Index
 	for ptt, pitching := range ptl.pitchers {
-		idx = dat.MustAppendStruct(idx, pitching)
+		idx = dat.AppendStruct(idx, pitching)
 		var s string
 		if ptt.TimesSeen < 3 {
 			s = fmt.Sprintf("%d", ptt.TimesSeen)

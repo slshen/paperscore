@@ -12,11 +12,12 @@ import (
 )
 
 type Numbers string
+type Position = lexer.Position
 
 type File struct {
 	Path          string
 	Properties    map[string]string
-	PropertyPos   map[string]lexer.Position
+	PropertyPos   map[string]Position
 	VisitorEvents []*Event
 	HomeEvents    []*Event
 
@@ -25,19 +26,19 @@ type File struct {
 }
 
 type TeamEvents struct {
-	Pos           lexer.Position
+	Pos           Position
 	HomeOrVisitor string   `parser:"@('visitorplays' | 'homeplays') (NL|EOF)"`
 	Events        []*Event `parser:"@@*"`
 }
 
 type Property struct {
-	Pos   lexer.Position
+	Pos   Position
 	Key   string `parser:"@Ident"`
 	Value string `parser:"@Text (NL|EOF)"`
 }
 
 type Event struct {
-	Pos         lexer.Position
+	Pos         Position
 	Play        *ActualPlay  `parser:"@@ (NL|EOF)"`
 	Alternative *Alternative `parser:"| 'alt' @@ (NL|EOF)"`
 	Pitcher     string       `parser:"| ('pitcher'|'pitching') @Code (NL|EOF)"`
@@ -49,14 +50,14 @@ type Event struct {
 }
 
 type Play interface {
-	GetPos() lexer.Position
+	GetPos() Position
 	GetCode() string
 	GetAdvances() []string
 	GetComment() string
 }
 
 type ActualPlay struct {
-	Pos                      lexer.Position
+	Pos                      Position
 	PlateAppearance          Numbers  `parser:"((@Numbers"`
 	Batter                   Numbers  `parser:"  @Numbers)"`
 	ContinuedPlateAppearance bool     `parser:" | @Dots)"`
@@ -69,7 +70,7 @@ type ActualPlay struct {
 var _ Play = (*ActualPlay)(nil)
 
 type Alternative struct {
-	Pos      lexer.Position
+	Pos      Position
 	Code     string   `parser:"@Code"`
 	Advances []string `parser:"@Code*"`
 	Comment  string   `parser:" @Text?"`
@@ -93,7 +94,7 @@ func (n Numbers) Int() int {
 
 func (f *File) Validate() error {
 	f.Properties = make(map[string]string)
-	f.PropertyPos = make(map[string]lexer.Position)
+	f.PropertyPos = make(map[string]Position)
 	for _, prop := range f.PropertyList {
 		f.Properties[prop.Key] = prop.Value
 		f.PropertyPos[prop.Key] = prop.Pos
@@ -205,7 +206,7 @@ func (f *File) GetGameDate() (time.Time, error) {
 	return t, nil
 }
 
-func (p *ActualPlay) GetPos() lexer.Position {
+func (p *ActualPlay) GetPos() Position {
 	return p.Pos
 }
 
@@ -221,7 +222,7 @@ func (p *ActualPlay) GetComment() string {
 	return p.Comment
 }
 
-func (a *Alternative) GetPos() lexer.Position {
+func (a *Alternative) GetPos() Position {
 	return a.Pos
 }
 

@@ -1,4 +1,4 @@
-package export
+package config
 
 import (
 	"fmt"
@@ -50,4 +50,8 @@ func NewConfig() (*Config, error) {
 		config.SpreadsheetID = id
 	}
 	return config, nil
+}
+
+func (c *Config) GetGoogleKey() ([]byte, error) {
+	return c.jsonKey, nil
 }

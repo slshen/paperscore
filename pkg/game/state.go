@@ -10,6 +10,7 @@ import (
 
 type Pitches string
 type PlayerID string
+type FileLocation = lexer.Position
 
 type Half string
 
@@ -19,34 +20,33 @@ const (
 )
 
 type State struct {
-	Pos          lexer.Position
+	Pos          FileLocation
 	InningNumber int
 	Half
-	Outs       int
-	Score      int
-	OutsOnPlay int `yaml:",omitempty"`
-	Pitcher    PlayerID
+	Outs    int
+	Score   int
+	Pitcher PlayerID
 	PlateAppearance
-	Fielders       []int      `yaml:",flow,omitempty"`
-	Advances       Advances   `yaml:",omitempty"`
-	ScoringRunners []PlayerID `yaml:",flow,omitempty"`
-	Runners        []PlayerID `yaml:",flow"`
-	Comment        string     `yaml:",omitempty"`
-	LastState      *State     `yaml:"-"`
-	AlternativeFor *State     `yaml:"-"`
+	// Fielders       []int      `yaml:",flow,omitempty"`
+
+	Runners [3]PlayerID `yaml:",omitempty,flow"`
+	// Runners        []PlayerID `yaml:",flow"`
+	Comment        string `yaml:",omitempty"`
+	LastState      *State `yaml:"-"`
+	AlternativeFor *State `yaml:"-"`
 }
 
 type PlateAppearance struct {
 	Number        int
 	PlayCode      string
 	AdvancesCodes []string
-	*Play
+	Advances      Advances `yaml:",omitempty"`
+	Play
 	Batter PlayerID
 	Pitches
-	NotOutOnPlay bool `yaml:",omitempty"` // not out on CS, POCS due to error
-	Complete     bool `yaml:",omitempty"` // PA completed
-	Incomplete   bool `yaml:",omitempty"` // inning ended w/batter still up
-	Modifiers    `yaml:",omitempty,flow"`
+	Complete   bool `yaml:",omitempty"` // PA completed
+	Incomplete bool `yaml:",omitempty"` // inning ended w/batter still up
+	Modifiers  `yaml:",omitempty,flow"`
 }
 
 func (state *State) Top() bool {

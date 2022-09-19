@@ -49,16 +49,16 @@ func (red *REData) Record(gameID string, state *game.State) float64 {
 	}
 	red.game.AppendString(gameID)
 	red.bat.AppendString(string(state.Batter))
-	red.o.AppendInts(outs)
+	red.o.AppendInt(outs)
 	red.rnr.AppendString(string(GetOccupiedBases(state.LastState)))
 	red.play.AppendString(state.GetPlayAdvancesCode())
-	red.after.AppendFloats(runsAfter)
-	red.before.AppendFloats(runsBefore)
-	red.r.AppendInts(runsScored)
-	red.re24.AppendFloats(change)
+	red.after.AppendFloat(runsAfter)
+	red.before.AppendFloat(runsBefore)
+	red.r.AppendInt(runsScored)
+	red.re24.AppendFloat(change)
 	var runnersStrings []string
 	for _, from := range []string{"1", "2", "3"} {
-		adv := state.Advances[from]
+		adv := state.Advances.From(from)
 		if adv != nil {
 			runnersStrings = append(runnersStrings, string(adv.Runner))
 		}

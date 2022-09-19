@@ -82,13 +82,13 @@ func (rea *REAnalysis) Run() *dataframe.Data {
 func (rea *REAnalysis) add(br string, bo int, ar string, ao int, n string) {
 	before := rea.RE.GetExpectedRuns(bo, OccupiedBases(br))
 	rea.beforeRunrs.AppendString(br)
-	rea.beforeOuts.AppendInts(bo)
+	rea.beforeOuts.AppendInt(bo)
 	var after float64
 	if ao != 3 {
 		after = rea.RE.GetExpectedRuns(ao, OccupiedBases(ar))
 	}
 	rea.afterRunrs.AppendString(ar)
-	rea.afterOuts.AppendInts(ao)
-	rea.change.AppendFloats(after - before)
+	rea.afterOuts.AppendInt(ao)
+	rea.change.AppendFloat(after - before)
 	rea.narrative.AppendString(n)
 }

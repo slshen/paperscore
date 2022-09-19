@@ -3,8 +3,9 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/slshen/sb/pkg/dataexport"
+	"github.com/slshen/sb/pkg/dataframe/pkg"
 	"github.com/slshen/sb/pkg/game"
-	"github.com/slshen/sb/pkg/webdata"
 	"github.com/spf13/cobra"
 )
 
@@ -12,11 +13,12 @@ func webdataCommand() *cobra.Command {
 	var (
 		re       reArgs
 		us       string
+		id       string
 		dir      string
 		gameDirs []string
 	)
 	c := &cobra.Command{
-		Use: "webdata",
+		Use: "data-export",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if us == "" {
 				return fmt.Errorf("--us is required")
@@ -35,15 +37,20 @@ func webdataCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			wdat, err := webdata.NewWebData(us, re, games)
+			exp := dataexport.NewDataExport(us, re)
+			dp, err := exp.Read(games)
 			if err != nil {
 				return err
 			}
-			return wdat.Write(dir)
+			dp.ID = id
+			dp.Title = "Softball data"
+			dp.Licenses = []pkg.License{pkg.CopyrightAuthors}
+			return dp.Write(dir)
 		},
 	}
 	flags := c.Flags()
 	re.registerFlags(flags)
+	flags.StringVar(&id, "id", "", "The export ID")
 	flags.StringVar(&us, "us", "", "The us team")
 	flags.StringVarP(&dir, "dir", "d", "", "Write web data to `dir`")
 	flags.StringSliceVar(&gameDirs, "games", nil, "Read games from dir")

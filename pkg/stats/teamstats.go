@@ -31,11 +31,7 @@ func (stats *TeamStats) GetPitchingData() *dataframe.Data {
 	var idx *dataframe.Index
 	for _, player := range stats.Pitchers {
 		pitching := stats.Pitching[player]
-		var err error
-		idx, err = dat.AppendStruct(idx, pitching)
-		if err != nil {
-			panic(err)
-		}
+		idx = dat.AppendStruct(idx, pitching)
 	}
 	return dat
 }
@@ -45,11 +41,7 @@ func (stats *TeamStats) GetBattingData() *dataframe.Data {
 	var idx *dataframe.Index
 	for _, player := range stats.Batters {
 		batting := stats.Batting[player]
-		var err error
-		idx, err = dat.AppendStruct(idx, batting)
-		if err != nil {
-			panic(err)
-		}
+		idx = dat.AppendStruct(idx, batting)
 	}
 	dat.Add(
 		dataframe.DeriveFloats("Slugging", Slugging),
@@ -60,7 +52,7 @@ func (stats *TeamStats) GetBattingData() *dataframe.Data {
 }
 
 func (stats *TeamStats) RecordBatting(g *game.Game, state *game.State, reChange float64) {
-	batting := stats.GetBatting(state.Batter)
+	batting := stats.GetBatting(state.Pos, state.Batter)
 	stats.LOB += batting.Record(state)
 	if state.Complete {
 		batting.RE24 += reChange
@@ -69,14 +61,15 @@ func (stats *TeamStats) RecordBatting(g *game.Game, state *game.State, reChange 
 	switch state.Play.Type {
 	case game.CaughtStealing:
 		if !state.NotOutOnPlay {
-			runner := stats.GetBatting(state.Play.Runners[0])
+			runner := stats.GetBatting(state.Pos, state.Play.CaughtStealingRunner)
 			runner.CaughtStealing++
 		}
 	case game.StolenBase:
-		// TODO account for K+SB
-		for _, runnerID := range state.Play.Runners {
-			runner := stats.GetBatting(runnerID)
-			runner.StolenBases++
+		for _, adv := range state.Advances {
+			if adv.Steal {
+				runner := stats.GetBatting(state.Pos, adv.Runner)
+				runner.StolenBases++
+			}
 		}
 	}
 	if state.LastState != nil {
@@ -87,7 +80,7 @@ func (stats *TeamStats) RecordBatting(g *game.Game, state *game.State, reChange 
 		}
 		if runnerID != "" {
 			// count SB2 and stolen base opportunties
-			runner := stats.GetBatting(runnerID)
+			runner := stats.GetBatting(state.Pos, runnerID)
 			if state.Play.Type == game.StolenBase {
 				runner.SB2++
 			}
@@ -103,8 +96,7 @@ func (stats *TeamStats) RecordBatting(g *game.Game, state *game.State, reChange 
 						if pitch == 'B' && state.Play.Type == game.Walk {
 							continue
 						}
-						if (pitch == 'S' || pitch == 'C') &&
-							(state.Play.Type == game.StrikeOut || state.Play.Type == game.StrikeOutPickedOff) &&
+						if (pitch == 'S' || pitch == 'C') && state.IsStrikeOut() &&
 							state.Outs == 3 {
 							continue
 						}
@@ -119,31 +111,42 @@ func (stats *TeamStats) RecordBatting(g *game.Game, state *game.State, reChange 
 		}
 	}
 	for _, runnerID := range state.ScoringRunners {
-		runner := stats.GetBatting(runnerID)
+		runner := stats.GetBatting(state.Pos, runnerID)
 		runner.RunsScored++
 	}
 	if reChange != 0 {
 		var runners []game.PlayerID
-		if state.Play.Is(game.StolenBase, game.CaughtStealing, game.PickedOff, game.WalkPickedOff) {
-			runners = state.Play.Runners
-		} else if state.Play.Is(game.WildPitch, game.PassedBall) {
+		switch {
+		case state.Play.Type == game.CaughtStealing:
+			runners = []game.PlayerID{state.CaughtStealingRunner}
+		case state.Play.Is(game.PickedOff, game.WalkPickedOff):
+			runners = []game.PlayerID{state.PickedOffRunner}
+		case state.Play.Type == game.StolenBase:
+			for _, adv := range state.Advances {
+				if adv.Steal {
+					runners = append(runners, adv.Runner)
+				}
+			}
+		case state.Play.Is(game.WildPitch, game.PassedBall):
 			// this will give apportioned credit to all runnners, even
 			// if some of them were out
-			for _, advance := range state.Advances {
-				runners = append(runners, advance.Runner)
+			for _, adv := range state.Advances {
+				if adv.Steal {
+					runners = append(runners, adv.Runner)
+				}
 			}
 		}
 		if len(runners) > 0 {
 			perRunner := reChange / float64(len(runners))
 			for _, runnerID := range runners {
-				runner := stats.GetBatting(runnerID)
+				runner := stats.GetBatting(state.Pos, runnerID)
 				runner.RE24 += perRunner
 			}
 		}
 	}
 }
 
-func (stats *TeamStats) GetBatting(batter game.PlayerID) *Batting {
+func (stats *TeamStats) GetBatting(loc interface{}, batter game.PlayerID) *Batting {
 	b := stats.Batting[batter]
 	if b == nil {
 		b = &Batting{
@@ -152,7 +155,7 @@ func (stats *TeamStats) GetBatting(batter game.PlayerID) *Batting {
 		stats.Batting[batter] = b
 		stats.Batters = append(stats.Batters, batter)
 		if len(stats.Team.Players) > 0 && stats.Team.Players[batter] == nil {
-			fmt.Printf("batter %s does not have a team entry\n", batter)
+			fmt.Printf("%s: batter %s does not have a team entry\n", loc, batter)
 		}
 	}
 	return b
@@ -182,14 +185,14 @@ func (stats *TeamStats) RecordFielding(g *game.Game, state *game.State) {
 	case game.PickedOff:
 		fallthrough
 	case game.CaughtStealing:
-		if state.NotOutOnPlay && state.Play.FieldingError != nil {
+		if state.NotOutOnPlay && state.Play.FieldingError.IsFieldingError() {
 			stats.recordError(state.Play.FieldingError)
 		}
 	case game.FoulFlyError:
 		stats.recordError(state.Play.FieldingError)
 	}
 	for _, adv := range state.Advances {
-		if adv.FieldingError != nil {
+		if adv.IsFieldingError() {
 			stats.recordError(adv.FieldingError)
 		}
 	}

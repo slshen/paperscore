@@ -87,7 +87,7 @@ func (bc *BattingCountSituations) GetData() *dataframe.Data {
 	dat := &dataframe.Data{}
 	var idx *dataframe.Index
 	for _, sit := range bc.sits {
-		idx = dat.MustAppendStruct(idx, sit.Batting)
+		idx = dat.AppendStruct(idx, sit.Batting)
 	}
 	return dat.Select(
 		dataframe.DeriveStrings("Count", func(idx *dataframe.Index, i int) string {

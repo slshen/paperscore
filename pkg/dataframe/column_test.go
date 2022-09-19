@@ -20,6 +20,6 @@ func TestGetWidth(t *testing.T) {
 func TestAppend(t *testing.T) {
 	assert := assert.New(t)
 	col := &Column{}
-	col.AppendInts(1, 2, 3, 4, 5)
+	col.AppendInt(1, 2, 3, 4, 5)
 	assert.Equal([]int{1, 2, 3, 4, 5}, col.GetInts())
 }

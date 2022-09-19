@@ -48,9 +48,7 @@ func (p *Pitching) Record(state *game.State) {
 	case game.WildPitch:
 		p.WP++
 	case game.StolenBase:
-		p.StolenBases += len(state.Play.Runners)
-	case game.StrikeOut:
-		p.StolenBases += len(state.StolenBases)
+		p.StolenBases++
 	}
 	if state.Complete || state.Outs == 3 {
 		p.Pitches += len(state.Pitches)
@@ -70,17 +68,6 @@ func (p *Pitching) Record(state *game.State) {
 			p.Hits++
 		}
 		switch state.Play.Type {
-		case game.StrikeOut:
-			fallthrough
-		case game.StrikeOutPassedBall:
-			fallthrough
-		case game.StrikeOutWildPitch:
-			fallthrough
-		case game.StrikeOutPickedOff:
-			p.StrikeOuts++
-			if state.Pitches.Last() == "C" {
-				p.StrikeOutsLooking++
-			}
 		case game.WalkPickedOff:
 			fallthrough
 		case game.Walk:
@@ -102,6 +89,12 @@ func (p *Pitching) Record(state *game.State) {
 			p.GroundOuts++
 		case game.FlyOut:
 			p.FlyOuts++
+		}
+		if state.IsStrikeOut() {
+			p.StrikeOuts++
+			if state.Pitches.Last() == "C" {
+				p.StrikeOutsLooking++
+			}
 		}
 	}
 }

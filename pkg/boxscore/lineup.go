@@ -59,7 +59,7 @@ func (lineup *Lineup) ErrorsList() string {
 func (lineup *Lineup) battingCounts(get func(*stats.Batting) int) string {
 	var counts []string
 	for _, player := range lineup.Batters {
-		data := lineup.GetBatting(player)
+		data := lineup.GetBatting(nil, player)
 		n := get(data)
 		if n > 0 {
 			if n == 1 {

@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/slshen/sb/pkg/export"
+	"github.com/slshen/sb/pkg/config"
 	"github.com/slshen/sb/pkg/game"
+	"github.com/slshen/sb/pkg/sheetexport"
 	"github.com/spf13/cobra"
 )
 
@@ -24,14 +25,14 @@ func exportCommand() *cobra.Command {
 			if us == "" {
 				return fmt.Errorf("--us is required")
 			}
-			config, err := export.NewConfig()
+			config, err := config.NewConfig()
 			if err != nil {
 				return err
 			}
 			if spreadsheetID != "" {
 				config.SpreadsheetID = spreadsheetID
 			}
-			sheets, err := export.NewSheetExport(config)
+			sheets, err := sheetexport.NewSheetExport(config)
 			if err != nil {
 				return err
 			}
@@ -39,7 +40,7 @@ func exportCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			export, err := export.NewExport(sheets, re)
+			export, err := sheetexport.NewExport(sheets, re)
 			export.DryRun = dryRun
 			if err != nil {
 				return err

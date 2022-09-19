@@ -17,10 +17,11 @@ type Advance struct {
 	Runner             PlayerID
 	WildPitch          bool `yaml:",omitempty"`
 	PassedBall         bool `yaml:",omitempty"`
-	*FieldingError     `yaml:",omitempty"`
+	Steal              bool `yaml:",omitempty"`
+	FieldingError      `yaml:",omitempty"`
 }
 
-type Advances map[string]*Advance
+type Advances []*Advance
 
 var advanceRegexp = regexp.MustCompile(`^([B123])([X-])([123H])(?:\(([^)]+)\))?$`)
 var BaseNumber = map[string]int{
@@ -87,26 +88,34 @@ func parseAdvance(play gamefile.Play, s string) (*Advance, error) {
 	return a, nil
 }
 
-func parseAdvances(play gamefile.Play, batter PlayerID, runners []PlayerID) (advances Advances, err error) {
-	advances = make(Advances)
+func (advs Advances) From(base string) *Advance {
+	for _, adv := range advs {
+		if adv.From == base {
+			return adv
+		}
+	}
+	return nil
+}
+
+func parseAdvances(play gamefile.Play, batter PlayerID, runners [3]PlayerID) (advances Advances, err error) {
 	for _, as := range play.GetAdvances() {
 		var advance *Advance
 		advance, err = parseAdvance(play, as)
 		if err != nil {
 			return
 		}
-		if advances[advance.From] != nil {
+		if advances.From(advance.From) != nil {
 			err = fmt.Errorf("%s: cannot advance %s twice in %s", play.GetPos(), advance.From, as)
 			return
 		}
 		if advance.From == "B" {
 			advance.Runner = batter
 		} else {
-			if runners == nil {
+			/*if runners == nil {
 				err = fmt.Errorf("%s: no runner to advance from %s at the start of a half-inning",
 					play.GetPos(), advance.From)
 				return
-			}
+			}*/
 			advance.Runner = runners[runnerNumber[advance.From]]
 			if advance.Runner == "" {
 				err = fmt.Errorf("%s: no runner to advance from %s in %s", play.GetPos(),
@@ -114,7 +123,7 @@ func parseAdvances(play gamefile.Play, batter PlayerID, runners []PlayerID) (adv
 				return
 			}
 		}
-		advances[advance.From] = advance
+		advances = append(advances, advance)
 	}
 	return
 }

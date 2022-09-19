@@ -64,13 +64,6 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 			b.Triples++
 		case game.HomeRun:
 			b.HRs++
-		case game.StrikeOut:
-			fallthrough
-		case game.StrikeOutPickedOff:
-			b.StrikeOuts++
-			if state.Pitches.Last() == "C" {
-				b.StrikeOutsLooking++
-			}
 		case game.WalkPickedOff:
 			fallthrough
 		case game.Walk:
@@ -97,6 +90,12 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 			fallthrough
 		case game.StrikeOutWildPitch:
 			b.ReachedOnK++
+		}
+		if state.IsStrikeOut() {
+			b.StrikeOuts++
+			if state.Pitches.Last() == "C" {
+				b.StrikeOutsLooking++
+			}
 		}
 		if state.IsAB() {
 			b.AB++
