@@ -291,7 +291,7 @@ func (dat *Data) String() string {
 		r := dat.GetRow(row)
 		fmt.Fprintf(s, f.String(), r...)
 	})
-	if hasSummaryRow {
+	if hasSummaryRow && dat.RowCount() > 0 {
 		for i, col := range dat.Columns {
 			if i > 0 {
 				s.WriteRune(' ')

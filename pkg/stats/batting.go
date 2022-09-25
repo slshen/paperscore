@@ -19,6 +19,7 @@ type Batting struct {
 	PitchesSeen, Swings, Misses    int
 	Strikes, CalledStrikes         int
 	GroundOuts, FlyOuts, PopOuts   int
+	GIDP                           int
 	HitByPitch                     int
 	OnBase                         int
 	SacrificeBunts                 int
@@ -114,6 +115,9 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 		}
 		if state.Modifiers.Contains(game.SacrificeFly) {
 			b.SacrificeFlys++
+		}
+		if state.Modifiers.Contains(game.GroundedIntoDoublePlay) {
+			b.GIDP++
 		}
 	}
 	if state.Complete || state.Incomplete {

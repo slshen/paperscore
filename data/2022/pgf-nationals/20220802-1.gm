@@ -1,0 +1,90 @@
+date: 8/2/2022
+game: 1
+visitorid: pride-2022
+home: So Cal Athletics Kim/Adame
+timelimit: 90m
+tournament: PGF Nationals
+league: PGF
+---
+visitorplays
+1 6 BFCX S7/L7
+2 17 BBFBCB W 1-2
+3 26 BCFX 8/F8
+4 11 BFB PO1(23)
+  alt NP
+  ... BCS K
+score 0
+5 2 CBX 8/F8
+6 10 SBCX E4/G4 B-1
+7 88 BX S8/G8 1-2
+8 7 SBFX S8/G8 B-1 1-2 2-3
+9 00 BCBCFX 9/F9/SF 2-3 3-H
+10 13 B CS2(24)
+  alt NP
+score 1
+
+pitching 10
+10 13 CSFBBBX 13/G1
+11 22 BSBCBX 63/G6
+12 18 BBBB W
+13 6 CSBFX 43/G4
+score 1
+
+14 17 BCBCFBB W
+15 26 CB CS2(25)
+  alt NP
+  ... X 6/F6
+16 11 BBBCCB W
+17 2 BBBCX 43/G4
+score 1
+
+18 10 CCFFX E5/G5 B-1
+19 88 B PB 1-2
+  ... FBH HP
+20 7 CX 43/G4 1-2 2-3
+21 00 CBSBX 9/F9/SF 2-3 3-H
+22 13 CX 13/G1
+score 2
+
+homeplays
+pitching 11
+1 1 X E3/G3/B B-1
+  alt 43/G3/B
+2 2 CBFFX S6/G6 1-2
+3 3 BCSX E5/G5 B-1 1-2 2-3
+4 4 BX 43/G4 1-2 2-3 3-H
+5 5 BBSFX 9/F9/SF 2-3(E6) 3-H
+  alt 9/F9/SF 3-H
+6 6 SSX S4/G4 B-2(E8) 3-H
+7 7 FCB SB3
+  ... BBX 8/F8
+score 3
+
+8 8 BCSFBBX 4/F4
+9 9 CX 4/L4
+10 10 BSBX S7/L7
+11 11 BX 1/P1
+score 3
+
+12 1 BFX 2/BINT : batter interference
+13 2 X S8/F8
+14 3 BBFX 8/F8
+15 4 X 8/F8
+score 3
+
+16 5 BBBB W
+17 6 CB SB2
+  ... X S7/L7 2-3
+18 7 CB SB2
+  ... X FC6/G6 B-1 2-3 3XH(62)
+19 8 B SB2
+  ... BCFS K
+20 9 BX 8/F8
+score 3
+
+21 10 BX 13/G1
+22 11 X E9/F9 B-1
+  alt 9/F9
+23 12 BB SB2
+  ... X E4/G4 B-2 2-H : time expired
+  alt 43/G4 2-3

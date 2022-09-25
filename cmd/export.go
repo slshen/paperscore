@@ -25,14 +25,12 @@ func exportCommand() *cobra.Command {
 			if us == "" {
 				return fmt.Errorf("--us is required")
 			}
-			config, err := config.NewConfig()
-			if err != nil {
-				return err
-			}
+			config := config.GetConfig()
+			exportConfig := sheetexport.NewExportConfig(config)
 			if spreadsheetID != "" {
-				config.SpreadsheetID = spreadsheetID
+				exportConfig.SpreadsheetID = spreadsheetID
 			}
-			sheets, err := sheetexport.NewSheetExport(config)
+			sheets, err := sheetexport.NewSheetExport(exportConfig)
 			if err != nil {
 				return err
 			}

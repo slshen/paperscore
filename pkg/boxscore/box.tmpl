@@ -5,6 +5,7 @@
 {{paste (execute "batting.tmpl" .VisitorLineup) (execute "batting.tmpl" .HomeLineup) 1 44}}
 {{- paste .VisitorLineup.PitchingTable.String .HomeLineup.PitchingTable.String 1 -44}}
 {{paste (execute "pitching.tmpl" .VisitorLineup) (execute "pitching.tmpl" .HomeLineup) 1 44}}
+{{.AltPlays}}
 {{if (not (or .IncludePlays .IncludeScoringPlays))}}
 {{- range .Comments}}{{.Half}} {{ordinal .Inning}}, {{.Outs}} Outs - {{.Text}}
 {{end}}{{end}}

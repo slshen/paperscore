@@ -43,7 +43,7 @@ func (gs *GameStats) Read(g *game.Game) error {
 		battingTeamStats := gs.GetStats(battingTeam)
 		fieldingTeamStats := gs.GetStats(fieldingTeam)
 		reChange := gs.red.Record(g.ID, state)
-		for _, alt := range g.GetAlternativeStates(state) {
+		if alt := g.GetAlternativeState(state); alt != nil {
 			gs.alt.Record(g.ID, alt)
 		}
 		battingTeamStats.RecordBatting(g, state, reChange)

@@ -1,0 +1,103 @@
+date: 8/1/2022
+game: 1
+visitorid: pride-2022
+home: BATS Acamdemy 14u National
+start: 10:30a
+timelimit: 90m
+tournament: PGF Nationals
+league: PGF
+---
+visitorplays
+1 6 CFFBX 53/G5
+2 17 BCBBSB W
+3 26 BCFX D7/L7 1-3
+4 18 FCFS K
+5 11 BBCFFBX FC6/G6 B-1 2X3(65) 3-H
+score 1
+6 7 SBX 8/F8
+7 88 CX 43/G4
+8 10 X 13/G1
+score 1
+9 13 CBBFBX 9/F9
+10 2 X S8/L8
+11 22 BBCSFFX 3/P3
+12 18 CSBX 13/G1
+score 1
+
+13 6 X S1/G1/B
+14 17 CCBBFBB W 1-2
+15 26 X E4/G4 B-1 1-2 2-3
+16 00 CBX 4/P3/IF
+17 11 CX 63/G6 1-2 2-3 3-H
+18 7 X 13/G1
+score 2
+
+19 88 CBBFC K
+20 10 BX S9/F9
+21 13 CFX 63/G6 1-2
+22 2 CSBBX S7/L7 B-2 2-H
+23 22 BCX E6/G6 B-1 2-3
+24 18 BBBB W B-1 1-2
+25 6 X S8/L8 B-1 1-2 2-3 3-H
+26 17 BCSS K
+score 4
+
+homeplays
+pitching 11
+1 1 X S5/G5/B
+2 2 BB SB2
+ ... BB W
+3 3 BFBBB W B-1 1-2 2-3
+4 4 FCFFX H/L9 B-H 1-H 2-H 3-H
+5 5 CBFBBFB W
+6 6 BB PO1(E2) 1-3
+  alt NP
+  ... BX S8/G8 3-H
+7 7 S SB2
+  ... X S8/L8 2-H
+8 8 BX 6/P6
+9 9 CFS K
+10 10 C SB2
+  ... X S6/P6 2-H
+11 1 FX 53/G5
+score 7
+
+12 2 BBBCCFB W
+13 3 X 8/F8
+14 4 X S6/G1 1-2
+15 5 BX S8/L8 B-1 1-2 2-H
+16 6 SSX S8/L8 B-1 1-3 2-H
+17 7 BX 2/G2 : batter interference
+18 8 CC SB2
+  ... S K
+score 9
+
+19 9 BBX 63/G6
+20 10 CCFFC K
+21 1 BBX 43/G4
+score 9
+
+22 2 BBBB W
+23 3 B SB2
+  ... X S1/P1
+24 4 FX S7/G7 B-1 1-2 2-H
+25 5 BB SB3;SB2
+  ... FX E6/G6 B-1 2-3 3-H
+  alt 63/G6
+26 6 C PO3(E2) 3-H 1-2
+  alt NP
+  ... X S9/L9 B-1 2-H
+27 7 X 3/G3 1-2
+28 8 SBSX 63/G6 2-3
+29 9 CSX S3/G3 3-H : no error?
+30 10 X S7/F7 B-2 1-3
+  alt S7/F7 1-2 : throw to wrong base?
+31 1 FFX S7/G7 2-3 3-H
+32 2 X 13/G1
+score 15
+
+pitching 00
+33 3 BCCFBBFB W
+34 4 FX E1/G1 B-1 1-2
+  alt 13/G3 1-2
+35 5 X S8/L8 B-2 1-3 2-H : time expired

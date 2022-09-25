@@ -29,7 +29,7 @@ func newGameMachine(half Half, battingTeam, fieldingTeam *Team) *gameMachine {
 
 func (m *gameMachine) newState(pos lexer.Position, lastState *State) *State {
 	state := &State{
-		Pos:          pos,
+		Pos:          FileLocation{Filename: pos.Filename, Line: pos.Line},
 		InningNumber: lastState.InningNumber,
 		Outs:         lastState.Outs,
 		Half:         lastState.Half,
@@ -459,11 +459,8 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 		state.recordOut()
 		m.putOut(base)
 		state.Complete = true
-	case pp.playIs("$(B)$(%)"):
-		fallthrough
-	case pp.playIs("$(B)$$(%)"):
-		fallthrough
-	case pp.playIs("$(B)$$$(%)"):
+	case pp.playIs("$(B)$(%)") || pp.playIs("$(B)$$(%)") ||
+		pp.playIs("$(B)$$$(%)"):
 		if !m.modifiers.Contains("LDP", "FDP") {
 			return fmt.Errorf("%s: play should contain LDP or FDP modifier in %s (%v)",
 				play.GetPos(), pp.playCode, state.Modifiers)
@@ -481,28 +478,13 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 		state.recordOut()
 		m.putOut(base)
 		state.Complete = true
+	case pp.playIs("CS%(E$)"):
+		fieldingError := FieldingError{
+			Fielder: pp.getFielder(1),
+		}
+		return m.handleCaughtStealing(play, state, pp, PickedOff, fieldingError)
 	case pp.playIs("CS%($$)") || pp.playIs("CS%($$$)") || pp.playIs("CS%($$$$)"):
-		to := pp.playMatches[0]
-		if !(to == "2" || to == "3" || to == "H") {
-			return fmt.Errorf("illegal caught stealing base code %s", pp.playCode)
-		}
-		from := PreviousBase[to]
-		advance := state.Advances.From(from)
-		runner, err := state.GetBaseRunner(from)
-		if err != nil {
-			return fmt.Errorf("%s: cannot catch stealing runner in %s - %w", play.GetPos(), pp.playCode, err)
-		}
-		state.Play = Play{
-			Type:                 CaughtStealing,
-			CaughtStealingRunner: runner,
-			CaughtStealingBase:   to,
-		}
-		if advance == nil {
-			state.recordOut()
-			m.putOut(from)
-		} else {
-			state.NotOutOnPlay = advance.IsFieldingError()
-		}
+		return m.handleCaughtStealing(play, state, pp, CaughtStealing, NoError)
 	case pp.playIs("FLE$"):
 		state.Play = Play{
 			Type:     FoulFlyError,
@@ -518,6 +500,32 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 		// no play
 	default:
 		return fmt.Errorf("%s: unknown play %s", play.GetPos(), play.GetCode())
+	}
+	return nil
+}
+
+func (m *gameMachine) handleCaughtStealing(play gamefile.Play, state *State, pp playCodeParser, playType PlayType, fieldingError FieldingError) error {
+	to := pp.playMatches[0]
+	if !(to == "2" || to == "3" || to == "H") {
+		return fmt.Errorf("illegal caught stealing base code %s", pp.playCode)
+	}
+	from := PreviousBase[to]
+	advance := state.Advances.From(from)
+	runner, err := state.GetBaseRunner(from)
+	if err != nil {
+		return fmt.Errorf("%s: cannot catch stealing runner in %s - %w", play.GetPos(), pp.playCode, err)
+	}
+	state.Play = Play{
+		Type:                 CaughtStealing,
+		CaughtStealingRunner: runner,
+		CaughtStealingBase:   to,
+		FieldingError:        fieldingError,
+	}
+	if advance == nil {
+		state.recordOut()
+		m.putOut(from)
+	} else {
+		state.NotOutOnPlay = advance.IsFieldingError() || fieldingError.IsFieldingError()
 	}
 	return nil
 }
@@ -542,7 +550,7 @@ func (m *gameMachine) handlePickedoff(play gamefile.Play, state *State, pp playC
 		state.recordOut()
 		m.putOut(from)
 	} else {
-		state.NotOutOnPlay = advance.IsFieldingError()
+		state.NotOutOnPlay = advance.IsFieldingError() || fieldingError.IsFieldingError()
 	}
 	return nil
 }

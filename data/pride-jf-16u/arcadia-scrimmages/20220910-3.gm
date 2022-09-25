@@ -1,0 +1,92 @@
+date: 9/10/2022
+game: 3
+visitorid: pride-jf-16u
+home: Extreme Orta 18u
+timelimit: 80m
+tournament: Arcadia Field Scrimmages
+---
+visitorplays
+pitcher 1
+1 17 BBBB W
+2 26 BBB WP 1-2
+ ... B W
+3 00 BBFBB W B-1 1-2 2-3
+4 11 FBX 63/G6 1-2 2-3 3-H
+5 7 BFX 43/G4 2-3 3-H
+6 2 BCFS K23
+score 2
+
+7 10 X 53/G5
+8 18 CFFBBS K+WP
+9 13 CFBX FC5/G5 B-1 1X2(54)
+10 3 B WP 1-2
+ ... X 43/G4
+score 2
+
+11 22 CCBX 3/G3
+12 6 SSX S6/G6
+13 17 BBBCB W B-1 1-2
+14 26 BBCBSB W B-1 1-2 2-3
+15 00 X 64(1)43/GDP
+score 2
+
+16 11 BFX 13/G1
+17 7 H HP
+18 2 FCBX FC6/G6 B-1 1X2(64)
+19 10 SFC K
+score 2
+
+20 18 CBBFFFFBX 6/L6
+21 13 FBBFBX 6/P6
+22 3 BX 63/G6
+score 2
+
+23 22 FBBCBFC K
+24 6 CSX 63/G6
+25 17 BBBSFFB W
+26 26 CFB WP 1-2
+ ... S K : time expired
+score 2
+
+homeplays
+pitching 00
+1 6 X 34/G3/B
+2 5 BBFSBS K+PB
+  alt K23
+3 130 X T9/L8 B-3 1-H
+4 131 CBCS K
+5 25 CX E4/G4 B-1 3-H
+  alt 43/G4
+6 14 CFFBS K
+score 2
+
+7 2 CX S9/P9S B-2(E9)
+  alt S9/P9S B-1
+8 66 SFS K
+9 21 BBCSX 43/G4 2-3
+10 74 CX 43/G4
+score 2
+
+11 10 CCX S7/G6
+12 6 BB WP 1-2
+  alt NP
+  ... CBSX H/F8 B-H 2-H
+13 5 SFS K
+14 130 FBBBB W
+15 131 S SB2
+  ... FX FC1/G1 B-1 2-3
+16 25 BC SB2
+  ... BSFS K
+17 14 X 8/F8
+score 4
+
+18 2 SBX 9/F9
+19 66 CFFX 43/G4
+20 21 BSSS K
+score 4
+
+21 74 FBSS K
+22 10 CSS K
+23 6 SBSS K
+score 4
+final 4
