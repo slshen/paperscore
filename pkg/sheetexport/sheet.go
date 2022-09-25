@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/slshen/sb/pkg/config"
@@ -20,11 +22,17 @@ type SheetExport struct {
 	service     *sheets.Service
 }
 
-func NewSheetExport(config *config.Config) (*SheetExport, error) {
+type ExportConfig struct {
+	UserEmail     string `mapstructure:"user_email"`
+	JSONKeyFile   string `mapstructure:"json_key_file"`
+	SpreadsheetID string `mapstructure:"spreadsheet_id"`
+}
+
+func NewSheetExport(config *ExportConfig) (*SheetExport, error) {
 	ex := &SheetExport{
 		SpreadsheetID: config.SpreadsheetID,
 	}
-	key, err := config.GetGoogleKey()
+	key, err := os.ReadFile(config.JSONKeyFile)
 	if err != nil {
 		return nil, err
 	}
@@ -43,6 +51,24 @@ func NewSheetExport(config *config.Config) (*SheetExport, error) {
 	}
 	log.Default().Printf("Loaded spreadsheet %s", config.SpreadsheetID)
 	return ex, err
+}
+
+func NewExportConfig(config *config.Config) *ExportConfig {
+	var c ExportConfig
+	config.Decode(&c)
+	if c.JSONKeyFile == "" {
+		// goofy backward compat
+		c.JSONKeyFile = config.GetString("SheetJsonKey")
+	}
+	if c.JSONKeyFile == "" {
+		c.JSONKeyFile = "google_key.json"
+	}
+	if c.UserEmail == "" {
+		// more goofy backward compat
+		c.UserEmail = config.GetString("SheetUser")
+	}
+	c.JSONKeyFile = filepath.Join(config.Dir, c.JSONKeyFile)
+	return &c
 }
 
 func (ex *SheetExport) reload() error {

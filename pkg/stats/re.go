@@ -51,6 +51,16 @@ func GetExpectedRuns(re RunExpectancy, state *game.State) float64 {
 	return re.GetExpectedRuns(state.Outs, GetOccupiedBases(state))
 }
 
+func GetExpectedRunsChange(re RunExpectancy, state *game.State) (runsBefore float64, runsAfter float64, runsScored int, change float64) {
+	runsBefore = GetExpectedRuns(re, state.LastState)
+	if state.Outs < 3 {
+		runsAfter = GetExpectedRuns(re, state)
+	}
+	runsScored = len(state.ScoringRunners)
+	change = runsAfter - runsBefore + float64(runsScored)
+	return
+}
+
 func GetRunExpectancyData(re RunExpectancy) *dataframe.Data {
 	var (
 		runners    = &dataframe.Column{Name: "Runr", Format: "%4s"}

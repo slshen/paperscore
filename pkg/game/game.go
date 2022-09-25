@@ -36,7 +36,7 @@ type Game struct {
 	date          time.Time
 }
 
-type altStatesMap map[*State][]*State
+type altStatesMap map[*State]*State
 
 var gameFileRegexp = regexp.MustCompile(`\d\d\d\d\d\d\d\d-\d.(yaml|gm)`)
 
@@ -80,7 +80,7 @@ func ReadGames(fileOrDirs []string) ([]*Game, error) {
 			}
 			for _, ent := range ents {
 				if ent.IsDir() {
-					moreGames, err := ReadGamesDir(filepath.Join(fileOrDir, ent.Name()))
+					moreGames, err := ReadGames([]string{filepath.Join(fileOrDir, ent.Name())})
 					if err != nil {
 						return nil, err
 					}
@@ -126,7 +126,7 @@ func ReadGameFiles(paths []string) (games []*Game, errs error) {
 	for _, path := range paths {
 		g, err := ReadGameFile(path)
 		if err != nil {
-			errs = multierror.Append(errs, fmt.Errorf("in game %s - %w", path, err))
+			errs = multierror.Append(errs, err)
 		}
 		games = append(games, g)
 	}
@@ -281,7 +281,12 @@ func (g *Game) runPlays(battingTeam, fieldingTeam *Team, half Half, events []*ga
 				errs = multierror.Append(errs, err)
 			}
 			if state != nil {
-				g.altStates[lastState] = append(g.altStates[lastState], state)
+				if g.altStates[lastState] != nil {
+					errs = multierror.Append(errs,
+						fmt.Errorf("%s: only a single alternate state is allowed", event.Pos))
+				} else {
+					g.altStates[lastState] = state
+				}
 			}
 		default:
 			s, err := m.handleSpecialEvent(event, lastState)
@@ -296,7 +301,7 @@ func (g *Game) runPlays(battingTeam, fieldingTeam *Team, half Half, events []*ga
 	return
 }
 
-func (g *Game) GetAlternativeStates(state *State) []*State {
+func (g *Game) GetAlternativeState(state *State) *State {
 	return g.altStates[state]
 }
 

@@ -44,9 +44,18 @@ func GetTeam(dir, name, id string) (*Team, error) {
 		if dir == "" {
 			return nil, fmt.Errorf("team %s cannot be loaded without a directory", id)
 		}
-		if err := team.readFile(dir, id); err != nil {
-			return nil, err
+		for i := 0; i < 3; i++ {
+			err := team.readFile(dir, id)
+			if err == nil {
+				return team, nil
+			}
+			if errors.Is(err, os.ErrNotExist) {
+				dir = filepath.Clean(filepath.Join(dir, ".."))
+			} else {
+				return nil, err
+			}
 		}
+		return team, fmt.Errorf("cannot find team file for %s", id)
 	}
 	return team, nil
 }
@@ -59,9 +68,6 @@ func (team *Team) readFile(dir, id string) error {
 	path := filepath.Join(dir, fmt.Sprintf("%s.yaml", id))
 	dat, err := os.ReadFile(path)
 	if err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-			return nil
-		}
 		return err
 	}
 	if err := yaml.Unmarshal(dat, team); err != nil {

@@ -17,11 +17,16 @@ func boxCommand() *cobra.Command {
 		pdfFormat    bool
 		scoringPlays bool
 		plays        bool
+		re           reArgs
 	)
 	c := &cobra.Command{
 		Use:   "box",
 		Short: "Generate a box score",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			re, err := re.getRunExpectancy()
+			if err != nil {
+				return err
+			}
 			games, err := game.ReadGameFiles(args)
 			if err != nil {
 				return err
@@ -44,8 +49,9 @@ func boxCommand() *cobra.Command {
 			} else {
 				out = os.Stdout
 			}
+
 			for i, g := range games {
-				box, err := boxscore.NewBoxScore(g, nil)
+				box, err := boxscore.NewBoxScore(g, re)
 				if err != nil {
 					return err
 				}
@@ -75,5 +81,6 @@ func boxCommand() *cobra.Command {
 	c.Flags().BoolVar(&pdfFormat, "pdf", false, "Run paps to convert output to pdf")
 	c.Flags().BoolVar(&scoringPlays, "scoring", false, "Include scoring plays in box")
 	c.Flags().BoolVar(&plays, "plays", false, "Include play by play in box")
+	re.registerFlags(c.Flags())
 	return c
 }

@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
-
-	"github.com/alecthomas/participle/v2/lexer"
 )
 
 type Pitches string
 type PlayerID string
-type FileLocation = lexer.Position
+type FileLocation struct {
+	Filename string
+	Line     int
+}
 
 type Half string
 
@@ -20,7 +21,7 @@ const (
 )
 
 type State struct {
-	Pos          FileLocation
+	Pos          FileLocation `yaml:",flow"`
 	InningNumber int
 	Half
 	Outs    int
@@ -47,6 +48,10 @@ type PlateAppearance struct {
 	Complete   bool `yaml:",omitempty"` // PA completed
 	Incomplete bool `yaml:",omitempty"` // inning ended w/batter still up
 	Modifiers  `yaml:",omitempty,flow"`
+}
+
+func (pos FileLocation) String() string {
+	return fmt.Sprintf("%s:%d", pos.Filename, pos.Line)
 }
 
 func (state *State) Top() bool {

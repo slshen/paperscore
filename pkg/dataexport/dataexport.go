@@ -3,6 +3,7 @@ package dataexport
 import (
 	"regexp"
 	"sort"
+	"time"
 
 	"github.com/slshen/sb/pkg/dataframe"
 	"github.com/slshen/sb/pkg/dataframe/pkg"
@@ -31,24 +32,7 @@ func (exp *DataExport) Read(games []*game.Game) (*pkg.DataPackage, error) {
 		Description: "Softball tournaments",
 		Data:        &dataframe.Data{},
 	}
-	var events Events
-	for _, g := range games {
-		evs, err := GetEvents(g)
-		if err != nil {
-			return nil, err
-		}
-		events = append(events, evs...)
-	}
-	dp.AddResource(&pkg.DataResource{
-		Path:        "events.csv",
-		Description: "All events",
-		Data:        events.GetData(),
-	})
-	dp.AddResource(&pkg.DataResource{
-		Path:        "advances.csv",
-		Description: "Advances",
-		Data:        events.GetAdvancesData(),
-	})
+	tournamentIDS := map[*game.Game]string{}
 	groups := tournament.GroupByTournament(games)
 	sort.Slice(groups, func(i, j int) bool {
 		return groups[j].Date.Before(groups[i].Date)
@@ -57,14 +41,49 @@ func (exp *DataExport) Read(games []*game.Game) (*pkg.DataPackage, error) {
 	for _, group := range groups {
 		tourney := newTournament(group)
 		idx = tournaments.AppendStruct(idx, tourney)
-		res, err := tourney.getResources(exp)
-		if err != nil {
+		for _, g := range group.Games {
+			tournamentIDS[g] = tourney.TournamentID
+		}
+	}
+	tournaments.Arrange("TournamentID", "Name", "Date", "Wins", "Losses", "Ties")
+	dp.AddResource(tournaments)
+	var events, alts Events
+	var gms Games
+	gs := newGameStats(exp.re)
+	for _, g := range games {
+		evs, as := GetEvents(exp.re, g, tournamentIDS[g])
+		events = append(events, evs...)
+		alts = append(alts, as...)
+		gms = append(gms, newGame(g, tournamentIDS[g]))
+		if err := gs.read(g, tournamentIDS[g]); err != nil {
 			return nil, err
 		}
-		dp.AddResource(res...)
 	}
-	tournaments.Arrange("ID", "Name", "Date", "Wins", "Losses", "Ties")
-	dp.AddResource(tournaments)
+	dp.AddResource(&pkg.DataResource{
+		Path:        "games.csv",
+		Description: "Game summary",
+		Data:        gms.GetData(),
+	})
+	dp.AddResource(&pkg.DataResource{
+		Path:        "batting.csv",
+		Description: "Game by game batting stats",
+		Data:        gs.battingDat,
+	})
+	dp.AddResource(&pkg.DataResource{
+		Path:        "events.csv",
+		Description: "All events",
+		Data:        events.GetData(),
+	})
+	dp.AddResource(&pkg.DataResource{
+		Path:        "alt_events.csv",
+		Description: "Alternative events",
+		Data:        alts.GetData(),
+	})
+	dp.AddResource(&pkg.DataResource{
+		Path:        "advances.csv",
+		Description: "Advances",
+		Data:        events.GetAdvancesData(),
+	})
 	dp.AddResource(&pkg.DataResource{
 		Description: "Run expectancy data used",
 		Path:        "run-expectancy.csv",
@@ -93,4 +112,8 @@ var nameIDRe = regexp.MustCompile(`[-/\\ ]`)
 
 func ToID(s string) string {
 	return nameIDRe.ReplaceAllLiteralString(s, "-")
+}
+
+func toDate(d time.Time) string {
+	return d.Format("2006-01-02")
 }

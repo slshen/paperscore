@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/slshen/sb/pkg/config"
 	"github.com/slshen/sb/pkg/game"
 	"github.com/slshen/sb/pkg/stats"
 	"github.com/spf13/pflag"
@@ -29,6 +30,9 @@ func (re *reArgs) getRunExpectancy() (stats.RunExpectancy, error) {
 			}
 		}
 		return re, nil
+	}
+	if re.matrixFile == "" {
+		re.matrixFile = config.GetConfig().GetString("re_matrix")
 	}
 	if re.matrixFile != "" {
 		return stats.ReadREMatrix(re.matrixFile)

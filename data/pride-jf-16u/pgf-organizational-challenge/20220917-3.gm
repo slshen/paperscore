@@ -1,0 +1,107 @@
+date: 9/17/2022
+game: 3
+visitorid: pride-jf-16u
+home: AC Rampage 16u
+timelimit: 80m
+tournament: PGF Organizational Challenge
+---
+visitorplays
+pitching 8
+1 17 BX 43/G4
+2 6 FSBX S6/G6
+3 26 BBBX S7/G7 B-1 1-2
+4 00 CX 4/P4/IF
+5 11 BFBX S8/L8 B-1 1-2 2-H
+6 7 X 53/G5
+score 1
+
+7 2 BBCBX 63/G6
+8 3 X 9/L9
+9 18 FX 1/P1
+score 1
+
+10 13 BBCX 63/G6
+11 10 BX 163/L1
+12 22 BFCX 63/G6
+score 1
+
+13 17 CBX 6/P6
+14 6 X 34/G3/B
+15 26 X 8/L8
+score 1
+
+16 00 CBCBS K
+17 11 CBBX 63/G6
+18 7 BBCBX E6/G6 B-1
+19 2 CBCX S7/G7 B-1 1-2
+20 3 X S8/L8 B-1 1-2 2-H
+21 18 CX E6/G6 B-1 1-2 2-3
+22 13 BBX S8/L89 B-1 1-2 2-H 3-H
+23 10 X S8/L8 B-1 1-2 2-3
+24 22 X E9/P3D B-1 1-2 2-H 3-H
+25 17 CFX E6/G6 B-1 1-2 2-3
+26 6 X S7/L7 B-1 1-2 2-3 3-H
+27 26 X S7/G6 B-1 2-H 3-H 1X3(745)
+   alt S7/G6 B-1 1-2 2-H 3-H : no need to go 1-3
+score 9
+
+homeplays
+pitching 11
+1 22 CBX 9/L9
+2 10 X 8//F78S
+3 16 BFFX 63/G6
+score 0
+
+4 29 BBFFFX S7/G6
+5 00 BB WP 1-2
+  ... BCB W+WP 2-3
+  alt W
+6 8 B WP 1-2
+  alt NP
+  ... CBBB W
+7 77 CBBX FC6/G6 B-1 1-2 2X3(63) 3-H
+8 52 CB SB3;SB2
+  ... FBC K
+9 7 CB WP 2-3 3-H
+  alt NP
+  ... BB WP 3-H
+  alt NP
+  ... SC K
+score 3
+
+10 90 FBFX S8/P6D
+  alt 6/P6D : not talking
+11 3 BBX FC4/G4 B-1 1X2(46)
+12 22 CBFBFX D7/L78 B-2 1-H
+pitching 00
+13 10 X E2/P1/B B-1 2-3
+  alt 23/P1/B : kicked
+14 16 X S1/G1/B B-1 1-2
+15 29 SCS K
+16 00 BSSFX E6/G6 B-1 1-2 2-3 3-H
+  alt 63/G6
+17 8 BBBCB W B-1 1-2 2-3 3-H
+18 77 SBBB PO3(E2) 1-2 2-3 3-H
+  alt NP
+  ... CS K
+score 7
+
+19 52 SBBCBB W
+20 7 CFX FC4/G4 B-1 1X2(46)
+  alt 46(1)63/GDP : no throw
+21 90 X S8/F8S 1-2
+22 3 C SB3;SB2
+  ... CS K
+23 22 SBBBB W
+24 10 BBBB W B-1 1-2 2-3 3-H
+25 16 H HP B-1 1-2 2-3 3-H
+pitching 22
+26 29 CBBFC K
+score 9
+
+27 00 BCBX S8/L78
+28 8 BBX 7/F7
+29 77 CFBBBB W 1-2
+30 52 X FC6/G6 B-1 1-2 2X3(RINT)
+31 7 BB CS3(E2) 2-H
+  alt SB3 : game ender

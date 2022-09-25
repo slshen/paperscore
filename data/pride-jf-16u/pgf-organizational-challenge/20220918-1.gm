@@ -1,0 +1,89 @@
+date: 9/18/2022
+game: 1
+visitorid: pride-jf-16u
+home: AASA Bryson
+timelimit: 80m
+tournament: PGF Organizational Challenge
+---
+visitorplays
+pitching 24
+1 6 SBX 13/G1
+2 17 CFBFFBX 63/G6
+3 26 CFBC K
+score 0
+
+4 3 X S8/G8
+5 2 BBCX 8/F89
+6 18 FCX S7/G7 B-1 1-2
+7 11 CX S9/L9 B-1 1-2 2-H
+8 7 X 46(1)63/G4/GDP
+score 1
+
+9 10 BX 9/F9
+10 6 BBBX 6/P6
+11 17 CFBX 13/G1
+score 1
+
+12 26 BBBB W
+13 3 X 64(1)43/GDP/G6
+14 2 BX 43/G4
+score 1
+
+15 18 BX S7/L7
+16 11 BBBCX 6(1)63/GDP/G6
+17 13 CFBX 9/F9
+score 1
+final 1
+
+homeplays
+pitching 22
+1 28 CFBBFH HP
+2 15 CCX S7/G6 B-1 1-2
+3 3 SBBFFX H/F8 B-H 1-H 2-H
+pitching 00
+4 42 CFFX 3/G3
+5 25 SX E7/F7 B-1
+  alt 7/F7
+6 4 X E5/P5 B-1 1-2
+  alt 5/P5
+7 5 SBFS K
+8 22 SSC K
+score 3
+
+9 13 BSSFFX D3/G3
+  alt 3/G3
+10 28 BFBSFX D7/L78 B-2 2-H
+11 15 FFC K
+12 3 BBBCB W
+13 42 SFS K
+14 25 FFFX 9/F9S
+score 4
+
+15 4 CBBFFX D7/F7
+16 5 CBBSFX S8/F8 B-1 2-3
+  alt 8/F8 : center fielder gave up
+17 22 B WP 3-H 1-2
+  alt NP
+  ... FSS K
+18 7 CCFFBFB WP 2-3
+  alt NP
+  ... FX 8/F8/SF 3-H
+19 28 BSBFX E6/P6D B-1
+  alt 7/P7 : no talking
+20 15 BFBBB W B-1 1-2
+21 3 BFBCBB W B-1 1-2 2-3
+22 42 CFBB WP 2-3 3-H
+  alt NP
+  ... BX 7/F7
+score 7
+
+23 25 BX S7/G5
+24 4 FBSX 7/F7
+25 5 CSX 3/P1
+26 22 SFBFBBB W B-1 1-2
+27 13 X 8/F8
+score 7
+
+28 28 SSBX D7/F7
+29 15 BBBX H/F7 B-H 2-H : run rule
+final 9

@@ -1,57 +1,77 @@
 package config
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
+	"unicode"
 
+	"github.com/mitchellh/mapstructure"
 	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
-	UserEmail     string `yaml:"user_email"`
-	JSONKeyFile   string `yaml:"json_key_file"`
-	SpreadsheetID string `yaml:"spreadsheet_id"`
-
-	jsonKey []byte
+	Dir    string
+	Values map[string]any
 }
 
-func NewConfig() (*Config, error) {
-	config := &Config{}
+var config *Config
+
+func GetConfig() *Config {
+	if config != nil {
+		return config
+	}
+	config = &Config{}
 	home, err := os.UserHomeDir()
 	if err != nil {
-		return nil, err
+		return config
 	}
-	dir := filepath.Join(home, ".softball")
-	configFile := filepath.Join(dir, "config.yaml")
+	config.Dir = filepath.Join(home, ".softball")
+	configFile := filepath.Join(config.Dir, "config.yaml")
 	dat, err := os.ReadFile(configFile)
 	if err == nil {
-		if err := yaml.Unmarshal(dat, config); err != nil {
-			return nil, err
+		if err := yaml.Unmarshal(dat, &config.Values); err != nil {
+			log.Default().Printf("Cannot read config %s - %s", configFile, err)
+			return config
 		}
 		log.Default().Printf("Loaded config from %s", configFile)
 	}
-	config.jsonKey = []byte(os.Getenv("SOFTBALL_SHEET_JSON_KEY"))
-	if len(config.jsonKey) == 0 && config.JSONKeyFile != "" {
-		jsonKeyFile := filepath.Join(dir, "google_key.json")
-		config.jsonKey, err = os.ReadFile(jsonKeyFile)
-		if err != nil {
-			return nil, err
-		}
-	}
-	if len(config.jsonKey) == 0 {
-		return nil, fmt.Errorf("no google service account key found")
-	}
-	if user := os.Getenv("SOFTBALL_SHEET_USER"); user != "" {
-		config.UserEmail = user
-	}
-	if id := os.Getenv("SOFTBALL_SHEET_ID"); id != "" {
-		config.SpreadsheetID = id
-	}
-	return config, nil
+	config.setFromEnviron()
+	return config
 }
 
-func (c *Config) GetGoogleKey() ([]byte, error) {
-	return c.jsonKey, nil
+func (config *Config) setFromEnviron() {
+	for _, nv := range os.Environ() {
+		eq := strings.IndexRune(nv, '=')
+		n := nv[0:eq]
+		if strings.HasPrefix(n, "SOFTBALL_") {
+			var k strings.Builder
+			cap := true
+			for _, ch := range n[9:] {
+				switch {
+				case cap:
+					k.WriteRune(unicode.ToUpper(ch))
+					cap = false
+				case ch == '_':
+					cap = true
+				default:
+					k.WriteRune(unicode.ToLower(ch))
+				}
+			}
+			config.Values[k.String()] = nv[eq+1:]
+		}
+	}
+}
+
+func (config *Config) Decode(s any) {
+	err := mapstructure.Decode(config.Values, s)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (config *Config) GetString(key string) string {
+	val, _ := config.Values[key].(string)
+	return val
 }

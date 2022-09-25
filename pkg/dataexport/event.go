@@ -8,44 +8,44 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/slshen/sb/pkg/dataframe"
 	"github.com/slshen/sb/pkg/game"
+	"github.com/slshen/sb/pkg/stats"
 )
 
 type Event struct {
-	EventID      string
-	File         string
-	Line         int
-	Home         string
-	Visitor      string
-	Tournament   string
-	Date         string
-	GameNumber   int
-	InningNumber int
-	BattingTeam  string
-	game.Half
+	EventID              string
+	File                 string
+	Line                 int
+	GameID               string
+	TournamentID         string
+	Home                 string
+	Visitor              string
+	Tournament           string
+	Date                 string
+	GameNumber           int
+	InningNumber         int
+	BattingTeam          string
+	Half                 string
 	Outs                 int
 	Score                int
 	OutsOnPlay           int
-	Pitcher              game.PlayerID
+	Pitcher              string
+	PitcherNumber        string
 	PANumber             int
 	PlayCode             string
-	AdvancesCodes        []string
-	Type                 game.PlayType
-	Runner1              game.PlayerID
-	Runner2              game.PlayerID
-	Runner3              game.PlayerID
+	AdvancesCodes        string
+	Type                 string
+	Runner1              string
+	Runner2              string
+	Runner3              string
 	CaughtStealingBase   string
-	CaughtStealingRunner game.PlayerID
-	PickedOffRunner      game.PlayerID
+	CaughtStealingRunner string
+	PickedOffRunner      string
 	FieldingError        string
-	Fielder1             int
-	Fielder2             int
-	Fielder3             int
-	Fielder4             int
-	Fielder5             int
-	Fielder6             int
+	Fielders             string
 	StolenBases          int
-	Batter               game.PlayerID
-	Pitches              game.Pitches
+	Batter               string
+	BatterNumber         string
+	Pitches              string
 	NotOutOnPlay         bool
 	Complete             bool
 	Incomplete           bool
@@ -53,82 +53,119 @@ type Event struct {
 	RunsOnPlay           int
 	Comment              string
 	AlternativeFor       string
+	REChange             float64
 
 	state *game.State
 }
 
 type Events []*Event
 
-func GetEvents(g *game.Game) (Events, error) {
-	var events Events
+func GetEvents(re stats.RunExpectancy, g *game.Game, tournamentID string) (events Events, alts Events) {
 	for _, state := range g.GetStates() {
-		var battingTeam string
-		if state.Top() {
-			battingTeam = g.Visitor.Name
-		} else {
-			battingTeam = g.Home.Name
-		}
-		event := &Event{
-			EventID:              getEventID(g, state),
-			File:                 state.Pos.Filename,
-			Line:                 state.Pos.Line,
-			Home:                 g.Home.Name,
-			Visitor:              g.Visitor.Name,
-			Tournament:           g.Tournament,
-			Date:                 g.GetDate().Format("2006-01-02"),
-			GameNumber:           parseInt(g.Number),
-			InningNumber:         state.InningNumber,
-			BattingTeam:          battingTeam,
-			Half:                 state.Half,
-			Outs:                 state.Outs,
-			Score:                state.Score,
-			OutsOnPlay:           state.OutsOnPlay,
-			Pitcher:              state.Pitcher,
-			PANumber:             state.PlateAppearance.Number,
-			PlayCode:             state.PlayCode,
-			AdvancesCodes:        state.AdvancesCodes,
-			Runner1:              state.Runners[0],
-			Runner2:              state.Runners[1],
-			Runner3:              state.Runners[2],
-			Fielder1:             getFielder(state, 0),
-			Fielder2:             getFielder(state, 1),
-			Fielder3:             getFielder(state, 2),
-			Fielder4:             getFielder(state, 3),
-			Fielder5:             getFielder(state, 4),
-			Fielder6:             getFielder(state, 5),
-			CaughtStealingBase:   state.CaughtStealingBase,
-			CaughtStealingRunner: state.CaughtStealingRunner,
-			PickedOffRunner:      state.PickedOffRunner,
-			Batter:               state.Batter,
-			Pitches:              state.Pitches,
-			NotOutOnPlay:         state.NotOutOnPlay,
-			FieldingError:        state.FieldingError.String(),
-			Modifiers:            strings.Join(state.Modifiers, "/"),
-			StolenBases:          len(state.StolenBases),
-			RunsOnPlay:           len(state.ScoringRunners),
-			Complete:             state.Complete,
-			Incomplete:           state.Incomplete,
-			Comment:              state.Comment,
-			state:                state,
-		}
-		if state.AlternativeFor != nil {
-			event.AlternativeFor = getEventID(g, state.AlternativeFor)
-		}
+		event := getEvent(g, re, state, tournamentID)
 		events = append(events, event)
+		if alt := g.GetAlternativeState(state); alt != nil {
+			altEvent := getEvent(g, re, alt, tournamentID)
+			alts = append(alts, altEvent)
+		}
 	}
-	return events, nil
+	return
 }
 
-func getFielder(state *game.State, n int) int {
-	if n < len(state.Fielders) {
-		return state.Fielders[n]
+func getEvent(g *game.Game, re stats.RunExpectancy, state *game.State, tournamentID string) *Event {
+	var battingTeam string
+	if state.Top() {
+		battingTeam = g.Visitor.Name
+	} else {
+		battingTeam = g.Home.Name
 	}
-	return 0
+	batter := getBatterPlayer(g, state)
+	pitcher := getPitcherPlayer(g, state)
+	event := &Event{
+		EventID:              getEventID(g, state),
+		File:                 state.Pos.Filename,
+		Line:                 state.Pos.Line,
+		GameID:               getGameID(g),
+		TournamentID:         tournamentID,
+		Home:                 g.Home.Name,
+		Visitor:              g.Visitor.Name,
+		Tournament:           g.Tournament,
+		Date:                 g.GetDate().Format("2006-01-02"),
+		GameNumber:           parseInt(g.Number),
+		InningNumber:         state.InningNumber,
+		Half:                 "B",
+		BattingTeam:          battingTeam,
+		Outs:                 state.Outs,
+		Score:                state.Score,
+		OutsOnPlay:           state.OutsOnPlay,
+		Pitcher:              pitcher.NameOrNumber(),
+		PitcherNumber:        pitcher.Number,
+		PANumber:             state.PlateAppearance.Number,
+		PlayCode:             state.PlayCode,
+		AdvancesCodes:        strings.Join(state.AdvancesCodes, " "),
+		Runner1:              string(state.Runners[0]),
+		Runner2:              string(state.Runners[1]),
+		Runner3:              string(state.Runners[2]),
+		Fielders:             getFielders(state),
+		CaughtStealingBase:   state.CaughtStealingBase,
+		CaughtStealingRunner: string(state.CaughtStealingRunner),
+		PickedOffRunner:      string(state.PickedOffRunner),
+		Batter:               batter.NameOrNumber(),
+		BatterNumber:         batter.Number,
+		Pitches:              string(state.Pitches),
+		NotOutOnPlay:         state.NotOutOnPlay,
+		FieldingError:        state.FieldingError.String(),
+		Modifiers:            strings.Join(state.Modifiers, "/"),
+		StolenBases:          len(state.StolenBases),
+		RunsOnPlay:           len(state.ScoringRunners),
+		Complete:             state.Complete,
+		Incomplete:           state.Incomplete,
+		Comment:              state.Comment,
+		state:                state,
+	}
+	if state.Top() {
+		event.Half = "T"
+	}
+	if re != nil {
+		_, _, _, event.REChange = stats.GetExpectedRunsChange(re, state)
+	}
+	if state.AlternativeFor != nil {
+		event.AlternativeFor = getEventID(g, state.AlternativeFor)
+	}
+	return event
+}
+
+func getBatterPlayer(g *game.Game, state *game.State) *game.Player {
+	team := g.Home
+	if state.Top() {
+		team = g.Visitor
+	}
+	return team.GetPlayer(state.Batter)
+}
+
+func getPitcherPlayer(g *game.Game, state *game.State) *game.Player {
+	team := g.Visitor
+	if state.Top() {
+		team = g.Home
+	}
+	return team.GetPlayer(state.Pitcher)
+}
+
+func getFielders(state *game.State) string {
+	var s strings.Builder
+	for _, f := range state.Fielders {
+		fmt.Fprintf(&s, "%d", f)
+	}
+	return s.String()
+}
+
+func getGameID(g *game.Game) string {
+	d := g.GetDate()
+	return fmt.Sprintf("%s-%s", d.Format("20060102"), g.Number)
 }
 
 func getEventID(g *game.Game, state *game.State) string {
-	d := g.GetDate()
-	return fmt.Sprintf("%s-%s-%d", d.Format("20060102"), g.Number, state.Pos.Line)
+	return fmt.Sprintf("%s-%d", getGameID(g), state.Pos.Line)
 }
 
 func parseInt(s string) int {

@@ -48,7 +48,8 @@ func TestAlternativeStates(t *testing.T) {
 	assert.Len(states, 27)
 	pa6 := states[5]
 	assert.Equal("E4/G4", pa6.PlayCode)
-	alts := g.GetAlternativeStates(pa6)
-	assert.Len(alts, 1)
-	assert.Equal("43/G4", alts[0].PlayCode)
+	alt := g.GetAlternativeState(pa6)
+	if assert.NotNil(alt) {
+		assert.Equal("43/G4", alt.PlayCode)
+	}
 }

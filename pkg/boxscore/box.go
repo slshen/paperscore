@@ -29,6 +29,7 @@ type Comment struct {
 
 type BoxScore struct {
 	Game          *game.Game
+	Stats         *stats.GameStats
 	Score         Score
 	InningScore   []Score
 	HomeLineup    *Lineup
@@ -46,6 +47,7 @@ func NewBoxScore(g *game.Game, re stats.RunExpectancy) (*BoxScore, error) {
 	}
 	boxscore := &BoxScore{
 		Game:          g,
+		Stats:         gs,
 		HomeLineup:    &Lineup{gs.TeamStats[g.Home.Name]},
 		VisitorLineup: &Lineup{gs.TeamStats[g.Visitor.Name]},
 	}
@@ -130,6 +132,16 @@ func (box *BoxScore) InningScoreTable() *dataframe.Data {
 	return tab
 }
 
+func (box *BoxScore) AltPlays() *dataframe.Data {
+	dat := box.Stats.GetAltData()
+	dat = dat.Select(
+		dataframe.Col("In"),
+		dataframe.Rename("Reality", "Play").WithFormat("%-30s"),
+		dataframe.Col("RCost"), dataframe.Col("Comment"))
+	dat.Name = "ALT"
+	return dat
+}
+
 func (box *BoxScore) ScoringPlays() (string, error) {
 	gen := playbyplay.Generator{
 		Game:        box.Game,
@@ -151,5 +163,5 @@ func (box *BoxScore) Render(w io.Writer) error {
 	if err != nil {
 		return err
 	}
-	return tmpl.ExecuteTemplate(w, "score.tmpl", box)
+	return tmpl.ExecuteTemplate(w, "box.tmpl", box)
 }

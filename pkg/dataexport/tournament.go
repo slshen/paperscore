@@ -1,56 +1,29 @@
 package dataexport
 
 import (
-	"fmt"
 	"time"
 
-	"github.com/slshen/sb/pkg/dataframe/pkg"
 	"github.com/slshen/sb/pkg/tournament"
 )
 
 type Tournament struct {
-	Name   string
-	ID     string
-	Date   string
-	Wins   int
-	Losses int
-	Ties   int
+	Name         string
+	TournamentID string
+	Date         string
+	Wins         int
+	Losses       int
+	Ties         int
 
 	group *tournament.Group
 }
 
 func newTournament(group *tournament.Group) *Tournament {
 	return &Tournament{
-		ID:    ToID(group.Name),
-		Name:  group.Games[0].Tournament,
-		Date:  group.Date.Format(time.RFC3339),
-		group: group,
+		TournamentID: ToID(group.Name),
+		Name:         group.Games[0].Tournament,
+		Date:         group.Date.Format(time.RFC3339),
+		group:        group,
 	}
-}
-
-func (t *Tournament) getResources(exp *DataExport) ([]pkg.Resource, error) {
-	report, err := tournament.NewReport(exp.us, exp.re, t.group)
-	if err != nil {
-		return nil, err
-	}
-	res := []pkg.Resource{
-		&pkg.DataResource{
-			Description: fmt.Sprintf("Batting stats for %s", t.Name),
-			Path:        fmt.Sprintf("%s/batting.csv", t.ID),
-			Data:        report.GetBattingData(),
-		},
-		&pkg.DataResource{
-			Description: fmt.Sprintf("Plays by RE24 for %s", t.Name),
-			Path:        fmt.Sprintf("%s/plays.csv", t.ID),
-			Data:        report.GetRE24Data(),
-		},
-		&pkg.DataResource{
-			Description: fmt.Sprintf("Alternate plays for %s", t.Name),
-			Path:        fmt.Sprintf("%s/alt.csv", t.ID),
-			Data:        report.GetAltData(),
-		},
-	}
-	return res, nil
 }
 
 /*

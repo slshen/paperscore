@@ -1,0 +1,94 @@
+date: 8/4/2022
+game: 1
+visitorid: pride-2022
+home: Clutch Up M Rojas 14u
+timelimit: 90m
+tournament: PGF Nationals
+league: PGF
+---
+visitorplays
+1 6 CX S5/G5/B
+2 17 BBBCB W 1-2
+3 26 BBSC 53/G5/SH 1-2 2-3
+4 2 BBCCC K
+5 00 BSFS K
+score 0
+
+6 11 FSBBX S8/G8
+7 7 X 23/G2/B/SH 1-2
+8 88 BBFX 6/P6
+9 10 CBCBX 13/G1
+score 0
+
+10 6 BX S4/G4
+11 17 BBB SB2
+  ... CCB W
+12 26 CX FC6/G6 B-1 1-2 2X3(65)
+13 2 FBFX E4/G4 B-2 1-3 2-H
+14 00 BSBCFBB W
+15 11 CX 1/P1
+16 7 BCBBB W 1-2 2-3 3-H
+17 88 FBX 13/G1
+score 2
+
+18 10 BBBB W
+19 6 CX 6/P6
+20 17 CCBFX 8/F8
+21 26 BCX 13/G1
+score 2
+
+22 2 BCCX 6/P6
+23 00 BX D8/L8
+24 11 BCBFX 4/P4
+25 7 B PB 2-3
+ ... BSX 13/G1/B
+score 2
+
+homeplays
+pitching 11
+1 1 CX 13/G1
+2 2 FBBCS K
+3 3 BBBCB W
+4 4 FBC SB2
+  ... BBB W
+5 5 B SB3 2-H(E2) 1-2
+  alt SB3;SB2
+  ... FFX 7/F7
+score 1
+
+6 6 BFX 53/G5
+7 7 BCBCFBB W
+8 8 BBCBB W 1-2
+9 9 BCBBB W 1-2 2-3
+10 1 BBX 43/G4 1-2 2-3 3-H
+11 2 FX E2/G2/B B-2 2-H 3-H
+  alt 23/G2/B
+12 3 BX 8/L8
+score 4
+
+13 4 BX 4/F4
+14 5 BBBCCB W
+15 6 BB SB2
+  ... BX 63/G6 2-3
+16 7 BBFFBFX 63/G6
+score 4
+
+17 8 BBBCX 63/G6
+18 9 CBBFFFBFB W
+19 1 X S6/G6 1-2
+20 2 X S1/G1/B 1-2 2-3
+21 3 BBFBX S8/L8 1-2 2-3 3-H
+22 4 BX S7/L7 1-2 2-3 3-H
+23 5 FBCBBFB W 1-2 2-3 3-H
+pitching 22
+24 6 FBBBFX 4(B)4(2)/FDP
+score 7
+
+25 7 BCBCFBFX S8/L8
+26 8 BBBH HP 1-2
+27 9 SSBBBFB W 1-2 2-3
+28 1 BX S9/F9 B-2 1-3 2-H 3-H
+  alt S9/F9 B-1 1-2 2-H 3-H : not cut
+29 2 FBBBH HP
+30 3 FX S1/G1 1-2 2-3 3-H : time expired
+final 10

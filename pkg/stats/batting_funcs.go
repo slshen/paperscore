@@ -81,5 +81,5 @@ func LAVG(idx *dataframe.Index, i int) float64 {
 	}
 	h := idx.GetInt(i, "Hits")
 	lo := idx.GetInt(i, "LineDriveOuts")
-	return float64(h+lo) / float64(ab)
+	return float64(h+lo) / float64(ab+lo)
 }

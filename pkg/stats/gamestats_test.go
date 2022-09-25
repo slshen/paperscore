@@ -33,7 +33,9 @@ func TestAlt(t *testing.T) {
 	assert.NoError(err)
 	gs := NewGameStats(re)
 	games, err := game.ReadGameFiles([]string{"../gamefile/testdata/test.gm"})
-	assert.NoError(err)
+	if !assert.NoError(err) {
+		return
+	}
 	assert.Len(games, 1)
 	assert.NoError(gs.Read(games[0]))
 	fmt.Println(gs.GetAltData())

@@ -42,7 +42,7 @@ func (red *REData) Record(gameID string, state *game.State) float64 {
 	if red.re == nil {
 		return 0
 	}
-	runsBefore, runsAfter, runsScored, change := getREChange(red.re, state)
+	runsBefore, runsAfter, runsScored, change := GetExpectedRunsChange(red.re, state)
 	var outs int
 	if state.LastState != nil {
 		outs = state.LastState.Outs
@@ -65,14 +65,4 @@ func (red *REData) Record(gameID string, state *game.State) float64 {
 	}
 	red.runners.AppendString(strings.Join(runnersStrings, " "))
 	return change
-}
-
-func getREChange(re RunExpectancy, state *game.State) (runsBefore float64, runsAfter float64, runsScored int, change float64) {
-	runsBefore = GetExpectedRuns(re, state.LastState)
-	if state.Outs < 3 {
-		runsAfter = GetExpectedRuns(re, state)
-	}
-	runsScored = len(state.ScoringRunners)
-	change = runsAfter - runsBefore + float64(runsScored)
-	return
 }

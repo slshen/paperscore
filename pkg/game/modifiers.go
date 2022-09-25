@@ -3,10 +3,11 @@ package game
 type Modifiers []string
 
 const (
-	Throwing     = "TH"
-	SacrificeHit = "SH"
-	SacrificeFly = "SF"
-	Obstruction  = "OBS"
+	Throwing               = "TH"
+	SacrificeHit           = "SH"
+	SacrificeFly           = "SF"
+	Obstruction            = "OBS"
+	GroundedIntoDoublePlay = "GDP"
 )
 
 const (

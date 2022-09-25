@@ -35,7 +35,7 @@ func (fe FieldingError) IsFieldingError() bool {
 }
 
 func (fe FieldingError) String() string {
-	if fe.IsFieldingError() {
+	if !fe.IsFieldingError() {
 		return ""
 	}
 	s := strings.Builder{}
