@@ -9,7 +9,7 @@ func Root() *cobra.Command {
 	root.SilenceUsage = true
 	root.AddCommand(readCommand(), boxCommand(), playByPlayCommand(),
 		statsCommand("batting"), statsCommand("pitching"), reCommand(),
-		exportCommand(), tournamentCommand(), reAnalysisCommand(),
+		tournamentCommand(), reAnalysisCommand(),
 		fmtCommand(), altCommand(), webdataCommand(), newGameCommand(),
 		battingCountCommand(), battingTimesSeenPitcherCommand(),
 		pitchingTimesSeenLineupCommand(),

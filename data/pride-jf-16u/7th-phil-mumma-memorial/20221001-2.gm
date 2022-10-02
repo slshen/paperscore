@@ -1,0 +1,80 @@
+date: 10/1/2022
+game: 2
+visitorid: pride-jf-16u
+home: Universal Macias 16u
+timelimit: 80m
+tournament: 7th Phill Mumma Memorial
+---
+visitorplays
+pitching 4
+1 17 CBX 43/G4
+2 6 SFS K
+3 26 BBFBX 53/G5
+4 3 BCX S8/L8
+5 11 FFBX E8/F8 B-1 1-2
+6 2 BCCFBBFB W 1-2 2-3
+7 18 CBBBCFFX S8/G8 1-2 2-3 3-H
+8 10 BBCFBC K
+9 13 CSBC K
+10 00 BFX 43/G4
+pitching 100
+11 17 BBBCX 53/G5/B
+12 6 CS S7/L7
+13 26 CFS K
+14 3 X 43/G4
+15 11 BBBX 1/L1
+16 2 SBFX S7/P7
+17 18 CFBBC K
+18 10 FCBFBX 4/P4
+19 13 BCBFX 1/L1
+20 00 BBSX H/L8
+21 17 CBSS K
+22 6 CBFX D7/F7
+23 26 BCCBS K
+final 2
+
+homeplays
+pitching 11
+1 101 BBBCB W
+2 102 B SB2
+  ... B SB3
+  ... FX 63/G6 3-H
+3 103 BBBB W
+4 104 CFX S8/G8 1-2
+5 105 X S9/L9 B-1 1-3 2-H
+6 106 B SB2;SBH
+  alt SB2
+  ... FFX 53/G5
+7 107 X 8/F8
+score 3
+
+8 108 CBBBB W
+9 109 CB WP 1-2
+  alt NP
+  ... BX S8/L8 B-1 2-H
+pitching 00
+10 110 B SB2
+  ... BSBSS K
+11 101 BX 8/F8
+12 102 CX S8/L8 2-H
+13 103 BFBH HP 1-2
+14 104 BBFSX S1/G1 1-2 2-3
+15 105 CBX 8/F8
+score 5
+
+16 106 BBX S8/G8
+17 107 BB SB2
+  ... X 6/P6
+18 108 CX S8/G8 2-H
+19 109 CBBBX S6/G6 1-2
+20 111 SX 8/F8
+21 101 X S4/G4 2XH(42) 1-2
+score 6
+
+22 102 SSBX 7/F7
+23 103 CFX D5/G5 B-3 : no error?
+24 104 X 8/F8/SH 3-H
+25 112 X S8/F8
+26 106 FSFS K
+score 7
+final 7
