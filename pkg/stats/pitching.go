@@ -44,10 +44,10 @@ func (p *Pitching) Record(state *game.State) {
 			p.WP++
 		}
 	}
-	switch state.Play.Type {
-	case game.WildPitch:
+	if state.Play.Is(game.WildPitch, game.WalkWildPitch, game.StrikeOutWildPitch) {
 		p.WP++
-	case game.StolenBase:
+	}
+	if state.Play.Is(game.StolenBase, game.StrikeOutStolenBase) || len(state.StolenBases) > 0 {
 		p.StolenBases++
 	}
 	if state.Complete || state.Outs == 3 {

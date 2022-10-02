@@ -42,6 +42,9 @@ func GetConfig() *Config {
 }
 
 func (config *Config) setFromEnviron() {
+	if config.Values == nil {
+		config.Values = make(map[string]any)
+	}
 	for _, nv := range os.Environ() {
 		eq := strings.IndexRune(nv, '=')
 		n := nv[0:eq]
