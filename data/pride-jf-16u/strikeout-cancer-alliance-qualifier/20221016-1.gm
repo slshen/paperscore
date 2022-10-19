@@ -1,0 +1,121 @@
+date: 10/16/2022
+game: 1
+home: AC Rampage
+visitorid: pride-jf-16u
+timelimit: 95m
+tournament: Strikeout Cancer Alliance Qualifier
+---
+visitorplays
+pitching 77
+1 17 CFBS K
+2 6 BFBFFX 43/G4
+3 18 CCX S8/G8
+4 11 X D7/L78 B-3 1-H
+5 7 BFBFBFFFB W
+6 2 BBBCSFX 6/P6
+score 1
+
+7 3 X 63/G6
+8 00 X 8/P8
+9 13 BFX S1/G1
+10 17 X 6/P6
+score 1
+
+11 6 BX 5/P5
+12 18 BSBFX S7/G6
+13 11 BX S6/L6 1-2
+14 7 BX S3/P3 1-2 2-3
+15 2 CX 9/F9/SF 3-H
+16 3 X D8/F8 1-H 2-H
+17 00 CBCX 5/P5
+score 4
+
+pitching 8
+18 13 BBFX 13/G1
+19 17 X 43/G4
+20 6 FBX S4/G4
+21 18 B SB2
+ ... B SB3
+ ... X 63/G6
+score 4
+
+22 11 X D7/L6
+23 7 BBBB W
+24 2 BBBFX S7/G6 B-1 1-2 2-3
+25 3 X 12(3)23/GDP/G1 1-2 2-3
+26 00 X 43/G4
+score 4
+
+27 13 BX 53/G5
+28 17 CFBBBX 43/G4
+29 10 BX H/F7 B-H
+30 18 X 8/F8
+score 5
+
+31 11 BX S8/F8
+32 7 FX S7/L7 1-2
+33 2 BBBCB W 1-2 2-3
+34 3 CBBX S7/F7 1-2 2-3 3-H
+35 00 BSCFFX D9/F89 1-3 2-H 3-H
+36 13 BX S8/F8 B-2 2X3(8125) 3-H
+  alt S8/F8 B-2 2-3 3-H(E8) : no need to advance 2-3
+37 17 BX 43/G4 2-3
+38 6 FX S8/L8 3-H
+39 18 B WP 1-2
+  ... F FLE3
+  ... X D9/F9 2-H
+40 11 FBX E7/F7 B-1 2-H
+41 7 X 8/F8
+score 12
+final 12
+
+homeplays
+pitching 00
+1 22 FFFBFFS K
+2 00 BFFX 63/G6
+3 29 SCBFFFS K
+score 0
+
+4 8 BBCBB W
+5 7 CCFBF NP
+  alt 5/P5 : should have caught
+  ... S K
+6 16 BSSFBFC K
+7 25 SFS K
+score 0
+
+8 77 BBX 6/P6
+9 3 CBBBCS K
+10 22 BBX 8/F8
+score 0
+
+11 00 BX 3/P3
+12 29 X 7/F7
+13 8 BBX 8/L8
+score 0
+
+14 7 BFBX 53/G5
+15 16 BFSBFFS K
+16 25 BCFX E6/G6 B-1
+  alt 63/G6
+17 77 CBX S5/L5 1-2
+18 3 BX 13/G3/B
+score 0
+
+19 22 CSFBS K
+20 00 BCFS K23
+21 29 FSX 7/F7
+score 0
+
+22 8 BBBB W
+23 7 BBFBCX S7/F7 1-2
+24 16 CSX 7/F7
+25 25 SX 3/G3 1-2 2-3
+26 77 FBCX S8/L8 2-H 3-H
+27 3 BFFX S5/L5 B-2 1-3
+28 22 BBB WP 2-3 3-H
+  alt NP
+  ... CFB W
+29 00 BX 8/L8
+score 3
+final 3

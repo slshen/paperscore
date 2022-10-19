@@ -1,0 +1,100 @@
+date: 10/16/2022
+game: 2
+visitorid: pride-jf-16u
+home: Batbusters Spignola
+timelimit: 95m
+tournament: Strikeout Cancer Alliance Qualifier
+---
+visitorplays
+pitching 71
+1 17 CFX 8/F8
+2 3 BBCBFX S9/G4
+3 18 BBBX D8/L8 1XH(842)
+  alt D8/L8 1-3
+4 11 X S8/G8 2-H
+5 7 X 4/P4
+score 1
+
+6 2 BCX 63/G6
+7 10 BFBCFBX 3/G3
+8 13 BBX 1/P1
+score 1
+
+9 26 BBX 7/F7
+10 17 BCBFBB W
+11 3 X 64(1)43/GDP/G6
+score 1
+
+pitching 89
+12 18 FBBBB W
+13 11 X S6/G6 1-2
+14 7 X FC6/G6 B-1 1-2 2X3(65)
+15 2 BCBX 8/F78
+16 10 CX S8/G6 1-2 2-3
+17 13 CBCBX 63/G6
+score 1
+
+18 26 CX S7/P7S
+19 17 SBX S4/G4 1-2
+20 3 CX 9/F9 2-3
+21 18 BX 6/P6
+22 11 BX D8/L78 1-H 3-H
+23 7 FBX S5/G5/B 2-3
+24 2 BCBX S9/L9 1-3 3-H
+pitching 24
+25 10 FFFFBFBBX FC6/G6 1X2(64)
+score 4
+
+26 13 BBSCX 13/G1
+27 26 BBCBB W
+28 17 BCBX 7/F78
+29 3 CFX S9/L9 1-3
+30 18 X 9/F9
+score 4
+final 4
+
+homeplays
+pitching 11
+1 5 X 13/G1/B
+2 8 FFBX E6/G6 B-1
+  alt 63/G6
+3 22 X S7/L7 B-3 1-H(E7)
+4 1 CBX T9/F9 3-H
+5 81 CBX 2/P2
+6 7 CFX 13/G1
+score 2
+
+7 4 BX 53/G5
+8 10 BBFSC K
+9 88 BX 63/G6
+score 2
+
+10 5 X S1/G1/B
+11 8 X S6/G6 1-2
+12 22 BX E1/G1 B-1 1-2 2-3
+  alt 13/G1 1-2 2-3
+13 1 X 8/F8/SF 1-2 2-3 3-H
+14 81 BX S8/F7S B-2 2-3 3-H
+pitching 00
+15 7 SBBBSS K
+16 4 FFS K
+score 4
+
+17 10 CSBFX 43/G4
+18 88 SBBX 8/F8
+19 5 SSBFBBFB W
+20 8 BX 53/G5
+score 4
+
+21 22 BX 7/F7
+22 1 CFBX 6/F8S
+23 81 CFBFS K
+score 4
+
+24 7 BBBB W
+25 4 BX S1/G1/B 1-2
+26 10 BBCSX 5/P5
+27 88 SB SB3;SB2
+  ... BBFS K
+28 5 BSFFB SBH : delayed steal
+final 5
