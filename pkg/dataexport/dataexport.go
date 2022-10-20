@@ -54,7 +54,11 @@ func (exp *DataExport) Read(games []*game.Game) (*pkg.DataPackage, error) {
 		evs, as := GetEvents(exp.re, g, tournamentIDS[g])
 		events = append(events, evs...)
 		alts = append(alts, as...)
-		gms = append(gms, newGame(g, tournamentIDS[g]))
+		gm, err := newGame(g, tournamentIDS[g])
+		if err != nil {
+			return nil, err
+		}
+		gms = append(gms, gm)
 		if err := gs.read(g, tournamentIDS[g]); err != nil {
 			return nil, err
 		}
