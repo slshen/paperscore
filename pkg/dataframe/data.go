@@ -318,14 +318,16 @@ func (dat *Data) String() string {
 	return s.String()
 }
 
-func (dat *Data) RenderCSV(w io.Writer) error {
+func (dat *Data) RenderCSV(w io.Writer, withHeader bool) error {
 	cw := csv.NewWriter(w)
 	record := make([]string, len(dat.Columns))
-	for i, col := range dat.Columns {
-		record[i] = col.Name
-	}
-	if err := cw.Write(record); err != nil {
-		return err
+	if withHeader {
+		for i, col := range dat.Columns {
+			record[i] = col.Name
+		}
+		if err := cw.Write(record); err != nil {
+			return err
+		}
 	}
 	var err error
 	dat.RApply(func(row int) {

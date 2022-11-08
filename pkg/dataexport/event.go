@@ -34,9 +34,12 @@ type Event struct {
 	PlayCode             string
 	AdvancesCodes        string
 	Type                 string
-	Runner1              string
-	Runner2              string
-	Runner3              string
+	R1                   string
+	R2                   string
+	R3                   string
+	PrevR1               string
+	PrevR2               string
+	PrevR3               string
 	CaughtStealingBase   string
 	CaughtStealingRunner string
 	PickedOffRunner      string
@@ -103,9 +106,9 @@ func getEvent(g *game.Game, re stats.RunExpectancy, state *game.State, tournamen
 		PANumber:             state.PlateAppearance.Number,
 		PlayCode:             state.PlayCode,
 		AdvancesCodes:        strings.Join(state.AdvancesCodes, " "),
-		Runner1:              string(state.Runners[0]),
-		Runner2:              string(state.Runners[1]),
-		Runner3:              string(state.Runners[2]),
+		R1:                   string(state.Runners[0]),
+		R2:                   string(state.Runners[1]),
+		R3:                   string(state.Runners[2]),
 		Fielders:             getFielders(state),
 		CaughtStealingBase:   state.CaughtStealingBase,
 		CaughtStealingRunner: string(state.CaughtStealingRunner),
@@ -122,6 +125,11 @@ func getEvent(g *game.Game, re stats.RunExpectancy, state *game.State, tournamen
 		Incomplete:           state.Incomplete,
 		Comment:              state.Comment,
 		state:                state,
+	}
+	if last := state.LastState; last != nil {
+		event.PrevR1 = string(last.Runners[0])
+		event.PrevR2 = string(last.Runners[1])
+		event.PrevR3 = string(last.Runners[2])
 	}
 	if state.Top() {
 		event.Half = "T"

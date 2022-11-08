@@ -41,7 +41,7 @@ func statsCommand(statsType string) *cobra.Command {
 				data = mg.GetPitchingData()
 			}
 			if csv {
-				return data.RenderCSV(os.Stdout)
+				return data.RenderCSV(os.Stdout, true)
 			} else {
 				fmt.Println(data)
 			}

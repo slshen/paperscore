@@ -71,7 +71,9 @@ func (re *ObservedRunExpectancy) Read(g *game.Game) error {
 		}
 		index := re.getIndex(state.Outs, GetOccupiedBases(state))
 		if re.inProgress[index] == nil {
-			re.inProgress[index] = &stateObservation{}
+			re.inProgress[index] = &stateObservation{
+				count: 1,
+			}
 		}
 		re.inProgress[index].count++
 	}

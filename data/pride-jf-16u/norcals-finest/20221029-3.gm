@@ -1,0 +1,85 @@
+date: 10/29/2022
+game: 3
+visitorid: pride-jf-16u
+home: Batbusters Spignola
+timelimit: 80m
+tournament: Norcal's Finest
+---
+visitorplays
+pitching 40
+1 17 CBBCBB W
+2 6 BBBB W 1-2
+3 18 CSBBBX E5/G5 B-1 1-2 2-H
+4 11 CFB SB3;SB2
+ ... X S8/L8 2-3 3-H
+5 7 X FC3/P3 B-1 1X2(36)
+6 3 X 9/F9/SF 3-H
+7 10 CBBBX 4/L4
+score 3
+
+8 2 CBBFFBFX 4/P4D
+9 13 BFBBB W
+10 22 BBBB W 1-2
+pitching 24
+11 00 BBBFX D8/L78 1-3 2-H
+12 17 BX DGR/L89 2-H 3-H
+13 6 BCX 4/P4
+14 18 FBX 63/G6
+score 6
+
+15 11 CBX S7/G7
+pitching 89
+16 7 BSX S3/G3/B 1-2
+17 3 BX 8/L8
+18 10 X S9/L9 1-2 2-3
+19 2 BBX D9/L89 1-H 2-H 3-H
+20 13 CBCBX E4/G4 B-1 2-3
+21 22 BBX E1/G1 B-1 1-3 3-H
+22 00 CX FC6/G6 B-1 1X2(64) 3-H
+23 17 CBCBBB W 1-2
+24 6 X S6/G6 1-2 2-3
+25 18 CSFX 3/G3
+score 11
+
+26 11 X 9/F9
+27 7 BBBB W
+28 3 BBBB W 1-2
+29 10 BB SB3
+ ... X 4(B)43(1)/LDP
+final 11
+
+homeplays
+pitching 22
+1 5 CBBFC K
+2 55 BSCBBS K
+3 22 X S9/L9
+4 1 BCSFBFFFBC K
+score 0
+
+5 81 BX S8/L8
+6 17 SCX S4/G4 B-2 1-3(E4)
+  alt S4/G4 B-1 1-2
+7 10 X 4/P4
+8 24 CBBFX 8/F8/SF 3-H
+9 88 CB WP 2-3
+  ... BFBX 8/F8
+score 1
+
+10 5 CX E5/G5 B-1
+11 55 BBSB WP 1-2
+ ... SFFS K
+12 22 X E6/G6 B-2 2-H(E7)
+  alt 63/G6 2-3
+13 1 BBBCX 4/P4
+14 81 CX 43/G4
+score 2
+
+15 17 SBBFX S8/G8
+16 10 BCX 4/P4
+17 89 CSS K
+18 88 X E6/G6 B-1 1-2
+  alt 63/G6
+19 5 BBFSB WP 1-2 2-3
+  ... S K
+score 2
+final 2
