@@ -51,7 +51,7 @@ func (r *DataResource) GetDescription() string {
 }
 
 func (r *DataResource) WriteContent(w io.Writer) error {
-	return r.Data.RenderCSV(w)
+	return r.Data.RenderCSV(w, true)
 }
 
 func (f *FileResource) GetPath() string {

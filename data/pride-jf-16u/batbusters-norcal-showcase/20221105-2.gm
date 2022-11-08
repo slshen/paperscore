@@ -1,0 +1,87 @@
+date: 11/5/2022
+game: 2
+visitorid: pride-jf-16u
+home: Batbusters Peterson
+timelimit: 90m
+tournament: Batbusters Norcal Showcase
+---
+visitorplays
+pitching 9
+1 18 BSFFH HP
+2 6 BCCS K
+3 3 BFFBBS K
+4 11 FBBBB W 1-2
+5 7 SFX 1/P1
+score 0
+
+6 2 SCC K
+7 10 X 4/P4
+8 26 BCSS K
+score 0
+
+9 22 SCBBFBFX 43/G4
+10 00 BSBBSB W
+11 13 BCX S9/L9 1-2
+12 18 CBCX 6/L6
+13 6 BFCBBX S7/G6 1-2 2-3
+14 3 FCX S9/L9 1-2 2-3 3-H
+15 11 FCFS K
+score 1
+
+16 7 BFX 8/F8
+17 2 BBFX S7/G5
+18 10 BCSBX 8/F8
+19 26 BCFBFS K
+score 1
+
+20 22 BCCBX S9/L9
+21 00 CBFBFBB W 1-2
+22 13 FFC K
+23 18 CFBFBFX S8/L8 1-2 2-3
+24 6 BBBB W 1-2 2-3 3-H
+25 3 CFX 43/G4 1-2 2-3 3-H
+26 11 BCBX 43/G4
+score 3
+
+27 7 BX 53/G5
+28 2 CBFBFBB W
+29 10 CBFBX 4/P4
+30 26 BFFX 53/G5
+score 3
+final 3
+
+homeplays
+pitching 00
+1 88 SFBFBBC K
+2 73 SX 53/G5
+3 000 CBFS K
+4 28 BX 6/P6
+5 3 BFBBB W
+6 25 BB SB2
+  ... BCFFFX 7/F7
+7 13 BFSS K
+score 0
+
+8 27 SSS K
+9 7 SBSFX 53/G5
+10 5 BBX 13/G1
+score 0
+
+11 9 BBBCCFS K
+12 15 SX S7/L7 B-2(E7)
+  alt S7/L7
+13 14 X 13/G1 2-3
+14 88 CCFS K
+score 0
+
+15 73 SBX 43/G4
+16 000 X 63/G6
+17 28 BBCX D8/L78
+18 3 CFBS K
+score 0
+
+19 25 BBBB W
+20 13 SBBX S2/G2 1-2
+  alt 24/G2 1-2
+21 27 SSS K : time expired
+final 0

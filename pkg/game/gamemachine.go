@@ -333,10 +333,10 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 		if err := m.handleStolenBase(play, state, pp.playMatches); err != nil {
 			return err
 		}
-	case pp.playIs("K2$"):
+	case pp.playIs("K2$") || pp.playIs("K2"):
 		state.Play = Play{
 			Type:     StrikeOut,
-			Fielders: []int{2, pp.getFielder(0)},
+			Fielders: pp.getAllFielders(0),
 		}
 		state.recordOut()
 		state.Complete = true

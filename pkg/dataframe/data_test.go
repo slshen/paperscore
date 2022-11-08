@@ -24,7 +24,7 @@ func TestString(t *testing.T) {
 	}
 	fmt.Println(dat)
 	s := &strings.Builder{}
-	assert.NoError(dat.RenderCSV(s))
+	assert.NoError(dat.RenderCSV(s, true))
 	fmt.Println(s.String())
 	s.Reset()
 	assert.NoError(dat.RenderMarkdown(s))

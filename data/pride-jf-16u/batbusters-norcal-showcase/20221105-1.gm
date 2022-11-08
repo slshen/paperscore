@@ -1,0 +1,106 @@
+date: 11/05/2022
+game: 1
+homeid: pride-jf-16u
+visitor: Bombers 16u
+timelimit: 90m
+tournament: Batbusters Norcal Showcase
+---
+visitorplays
+pitching 22
+1 80 X S7/L7S
+2 77 BCX 3(B)3(1)/FDP
+3 3 BBX D7/L7
+4 14 SSC K23
+score 0
+
+5 13 FBX 8/F8S
+6 21 BSSS K
+7 57 BFX E3/G5 B-1
+  alt 53/G5
+8 28 SFBX 63/G6
+score 0
+
+9 4 FFX E6/G6 B-1
+  alt 63/G6
+10 80 X 5/P5 1-2(E5/TH)
+  alt 5/P5
+11 77 CFBBBFC K
+12 3 FH HP
+13 3 BX 53/G5 : batter out of order (showcase rules)
+score 0
+
+14 14 BFSS K
+15 13 FX S8/P8S
+16 21 FSBS K
+17 57 FSBBS K
+score 0
+
+18 28 BFX 63/G6
+19 4 BSSBS K23
+20 80 SBSX E5/P5 B-1
+  alt 5/P5
+21 77 B SB2
+  ... BBCFH HP
+22 3 BFBFFFBFS K
+score 0
+
+23 14 X 6/P6
+24 13 BBBB W
+25 21 B WP 1-2
+  alt NP
+  ... BBB W
+26 57 BX 6/P6
+27 28 BBX 9/F9
+score 0
+
+homeplays
+pitching 14
+1 18 CBX S8/L8
+2 6 BBBB W 1-2
+3 3 CB SB3;SB2
+  ... BFX FC5/G5 B-1 3-H
+4 11 SFS K
+5 7 C SB3
+  ... CS K
+6 2 BBCS CS2(26)
+  alt NP
+score 1
+
+6 2 FCX 6/P6
+7 10 FX H/L78 B-H
+8 26 CCBX 63/G6
+9 22 BBX 3/G3
+score 2
+
+10 00 CX S7/L7
+11 13 CFX D7/L7 1-H
+12 18 BBX S8/F8S B-2 2XH(82)
+  alt S8/F8S B-1 2-3 : no need to stretch
+
+13 6 FFBBFFX S3/P3D 2-3
+14 3 B SB2;SBH : delayed steal
+ ... X 4/P4
+15 11 BFX 4/P4
+score 4
+
+16 7 FX S7/L7
+17 2 BX D7/F78 1-3
+18 10 X 8/F8/SF 3-H
+19 26 X 13/G1
+20 22 BH HP
+21 00 BX 9/F9
+score 5
+
+22 13 BX E2/G2 B-2
+23 18 BX H/L7 B-H 2-H
+24 6 BX D8/F8
+25 3 X D9/L9 2-H
+26 11 X S8/G6 2-3
+27 7 SBBCS K
+28 2 BBBCX FC6/G6 B-1 1X2(64) 3-H
+29 10 CX DGR/L8 1-3
+30 26 BFX S6/G6 B-1 2-3 3-H
+31 22 BCFX 43/G4
+score 10
+final 10
+

@@ -17,7 +17,7 @@ func reCommand() *cobra.Command {
 		freq       bool
 		pivot      bool
 		raw        bool
-		bandwidth  float64
+		plain      bool
 	)
 	re24 := &stats.ObservedRunExpectancy{}
 	c := &cobra.Command{
@@ -49,9 +49,17 @@ func reCommand() *cobra.Command {
 				}
 			default:
 				data = stats.GetRunExpectancyData(re24)
+				if plain {
+					data = data.Select(
+						dataframe.Col("Runr"),
+						dataframe.Col("0Out"),
+						dataframe.Col("1Out"),
+						dataframe.Col("2Out"),
+					)
+				}
 			}
 			if csv {
-				return data.RenderCSV(os.Stdout)
+				return data.RenderCSV(os.Stdout, false)
 			}
 			fmt.Println(data)
 			return nil
@@ -62,7 +70,7 @@ func reCommand() *cobra.Command {
 	c.Flags().BoolVar(&freq, "freq", false, "Print the frequency of # runs scored per 24-base/out state")
 	c.Flags().BoolVar(&pivot, "pivot", false, "Pivot the frequency data by runs")
 	c.Flags().BoolVar(&raw, "raw", false, "Get the raw run data")
-	c.Flags().Float64Var(&bandwidth, "bandwidth", 0, "KDE bandwidth")
+	c.Flags().BoolVar(&plain, "plain", false, "Write data without counts")
 	return c
 }
 
