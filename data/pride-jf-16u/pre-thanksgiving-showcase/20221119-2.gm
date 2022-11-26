@@ -1,0 +1,100 @@
+date: 11/19/2022
+game: 2
+home: Soar Athletics
+visitorid: pride-jf-16u
+timelimit: 90m
+tournament: Pre-Thanksgiving Showcase
+---
+visitorplays
+pitching 6
+1 17 BCBBCB W
+2 6 BB SB2
+ ... CBB W
+3 3 X 343/G3 1-2 2-3
+4 11 BBX S6/G6 3XH(32)
+ alt S6/G6 : no need to adv from 3
+5 7 BBCBCB W 1-2 2-3
+6 18 CX 3/P3
+score 0
+
+7 2 BX S7/L7
+8 10 FCX 6/P6
+9 26 BCX S2/G2/B 1-2
+10 00 CBBFBC K
+11 13 SCBBBX 13/G1
+score 0
+
+12 22 CCBH HP
+13 17 CCFX S7/L7 1-2
+14 6 BBBX FC6/G6 B-1 1-2 2-3
+15 3 CSBFFH HP 1-2 2-3 3-H
+pitching 00
+16 11 BX 9/F9/SF 3-H
+17 7 X 3/G3/B/SH 1-2 2-3
+18 18 SX S7/L7 B-2 2-H(E7) 3-H
+19 2 BCBBB W
+20 10 X 8/F8
+score 4
+
+21 26 BBX DGR/L8
+22 00 BBFX 6/P6
+23 13 B PB 2-3
+ ... FBBFX 43/G4 3-H
+24 22 BCBFX 43/G4
+25 17 CBX S5/G5/B
+26 6 BBC SB2
+ ... BX 43/G4 2-3
+27 3 BBBCFX 43/G4 3-H
+28 11 BX 5/P5
+score 6
+
+29 7 BBCBSB W
+30 18 FBX D8/F8 1-H
+31 2 X S9/P3D 2-H
+32 10 X S7/G7 1-2
+33 26 BCBCBB W 1-2 2-3
+34 00 BFBX FC6/G6 B-1 1-2 2-3 3XH(62)
+35 13 CCBS K
+36 22 BBFB NP : time expired
+final 8
+
+homeplays
+pitching 00
+1 25 BCBSS K
+2 13 BBSSS K
+3 5 FX S7/P7S
+4 6 B WP 1-2
+  alt NP
+  ... SCX 8/F8
+score 0
+
+5 15 CSS K
+6 00 BSSX 6/P6
+7 12 CSS K23
+score 0
+
+8 77 SSBS K
+9 7 FBFC K
+10 25 SBBFX S6/G6
+11 13 C SB2
+ ... BBSBFB W+SB3
+ alt W
+12 5 CFX 63/G6
+score 0
+
+13 6 FSFBBS K
+14 15 FBCX 8/F8
+15 00 BFX S8/L8S
+16 12 FBSS K
+score 0
+
+17 77 SSFBBS K
+18 7 SBBX S6/G6 B-2(E6/TH)
+ alt S5/G5
+19 25 FBSBBFC K
+20 13 BSFX E5/G5 B-2 2-H
+ alt 53/G5
+21 5 X 43/G4
+score 1
+final 1
+

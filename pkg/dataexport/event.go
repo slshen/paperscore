@@ -37,9 +37,8 @@ type Event struct {
 	R1                   string
 	R2                   string
 	R3                   string
-	PrevR1               string
-	PrevR2               string
-	PrevR3               string
+	StartBaseOutCode     string
+	ResultBaseOutCode    string
 	CaughtStealingBase   string
 	CaughtStealingRunner string
 	PickedOffRunner      string
@@ -52,6 +51,7 @@ type Event struct {
 	NotOutOnPlay         bool
 	Complete             bool
 	Incomplete           bool
+	AB                   bool
 	Modifiers            string
 	RunsOnPlay           int
 	Comment              string
@@ -96,7 +96,7 @@ func getEvent(g *game.Game, re stats.RunExpectancy, state *game.State, tournamen
 		Date:                 g.GetDate().Format("2006-01-02"),
 		GameNumber:           parseInt(g.Number),
 		InningNumber:         state.InningNumber,
-		Half:                 "B",
+		Half:                 string(state.Half),
 		BattingTeam:          battingTeam,
 		Outs:                 state.Outs,
 		Score:                state.Score,
@@ -109,6 +109,7 @@ func getEvent(g *game.Game, re stats.RunExpectancy, state *game.State, tournamen
 		R1:                   string(state.Runners[0]),
 		R2:                   string(state.Runners[1]),
 		R3:                   string(state.Runners[2]),
+		ResultBaseOutCode:    getBaseOutCode(state),
 		Fielders:             getFielders(state),
 		CaughtStealingBase:   state.CaughtStealingBase,
 		CaughtStealingRunner: string(state.CaughtStealingRunner),
@@ -123,16 +124,14 @@ func getEvent(g *game.Game, re stats.RunExpectancy, state *game.State, tournamen
 		RunsOnPlay:           len(state.ScoringRunners),
 		Complete:             state.Complete,
 		Incomplete:           state.Incomplete,
+		AB:                   state.IsAB(),
 		Comment:              state.Comment,
 		state:                state,
 	}
 	if last := state.LastState; last != nil {
-		event.PrevR1 = string(last.Runners[0])
-		event.PrevR2 = string(last.Runners[1])
-		event.PrevR3 = string(last.Runners[2])
-	}
-	if state.Top() {
-		event.Half = "T"
+		event.StartBaseOutCode = getBaseOutCode(last)
+	} else {
+		event.StartBaseOutCode = "0xxx"
 	}
 	if re != nil {
 		_, _, _, event.REChange = stats.GetExpectedRunsChange(re, state)
@@ -141,6 +140,22 @@ func getEvent(g *game.Game, re stats.RunExpectancy, state *game.State, tournamen
 		event.AlternativeFor = getEventID(g, state.AlternativeFor)
 	}
 	return event
+}
+
+func getBaseOutCode(state *game.State) string {
+	s := make([]byte, 4)
+	s[0] = '0' + byte(state.Outs)
+	for i := 1; i < 4; i++ {
+		switch {
+		case state.Outs == 3:
+			s[i] = 'x'
+		case state.Runners[3-i] == "":
+			s[i] = 'x'
+		default:
+			s[i] = '3' - byte(i-1)
+		}
+	}
+	return string(s)
 }
 
 func getBatterPlayer(g *game.Game, state *game.State) *game.Player {

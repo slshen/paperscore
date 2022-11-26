@@ -76,6 +76,7 @@ func (p *YAMLParser) parseYAMLEvents(pos lexer.Position, value interface{}) (eve
 	if !ok {
 		return
 	}
+	pa := 1
 	for _, s := range plays {
 		pos.Line++
 		code := p.toString(s)
@@ -111,10 +112,11 @@ func (p *YAMLParser) parseYAMLEvents(pos lexer.Position, value interface{}) (eve
 			// ignore
 		default:
 			play := &ActualPlay{
-				Pos:           pos,
-				Batter:        p.parseBatter(p.getPart(parts, 0)),
-				PitchSequence: p.getPart(parts, 1),
-				Comment:       p.getPart(parts, 3),
+				Pos:             pos,
+				Batter:          p.parseBatter(p.getPart(parts, 0)),
+				PitchSequence:   p.getPart(parts, 1),
+				Comment:         p.getPart(parts, 3),
+				PlateAppearance: Numbers(fmt.Sprintf("%d", pa)),
 			}
 			code := p.getPart(parts, 2)
 			dot := strings.IndexRune(code, '.')
@@ -130,9 +132,25 @@ func (p *YAMLParser) parseYAMLEvents(pos lexer.Position, value interface{}) (eve
 				Pos:  pos,
 				Play: play,
 			})
+			if p.isPAComplete(code) {
+				pa++
+			}
 		}
 	}
 	return
+}
+
+func (p *YAMLParser) isPAComplete(code string) bool {
+	if strings.HasPrefix(code, "SB") ||
+		strings.HasPrefix(code, "WP") ||
+		strings.HasPrefix(code, "PB") ||
+		strings.HasPrefix(code, "CS") ||
+		strings.HasPrefix(code, "PO") ||
+		code == "NP" ||
+		strings.HasPrefix(code, "FLE") {
+		return false
+	}
+	return true
 }
 
 func (p *YAMLParser) parseBatter(s string) Numbers {

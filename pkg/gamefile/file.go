@@ -113,7 +113,22 @@ func (f *File) Validate() error {
 			f.VisitorEvents = append(f.VisitorEvents, te.Events...)
 		}
 	}
+	f.setPlateAppearances(f.HomeEvents)
+	f.setPlateAppearances(f.VisitorEvents)
 	return nil
+}
+
+func (f *File) setPlateAppearances(events []*Event) {
+	var pa Numbers
+	for _, event := range events {
+		if event.Play != nil {
+			if event.Play.ContinuedPlateAppearance {
+				event.Play.PlateAppearance = pa
+			} else {
+				pa = event.Play.PlateAppearance
+			}
+		}
+	}
 }
 
 func (f *File) Write(w io.Writer) {
