@@ -1,0 +1,84 @@
+date: 11/18/2022
+game: 2
+home: USA Ahtletics Turner
+visitorid: pride-jf-16u
+timelimit: 80m
+tournament: Pre-Thanksgiving Showcase
+---
+visitorplays
+pitching 72
+1 17 FBX 6/P6
+2 6 X 4/P4
+3 3 SBBX 4/L4
+score 0
+
+4 11 X 6/P6
+5 7 X 53/G5/B
+6 18 CBX 5/P5
+score 0
+
+7 2 CSBS K
+8 10 BBCBCC K
+9 26 CSBC K
+score 0
+
+10 00 X D8/L8
+11 13 BBX 8/L8
+12 22 SBCS K
+13 17 X 43/G4
+score 0
+
+14 6 FBCBBB W
+15 3 X 1(B)13(1)/LDP/P1
+  alt SB2
+16 11 SSFBBFFX 43/G4
+score 0
+
+17 7 X 7/F7
+18 18 BBBCB W
+19 10 SFX S8/F8 1-2
+20 2 BFBSBC K
+21 26 BBX 2/P2
+score 0
+
+homeplays
+pitching 00
+1 17 BBFCX 6/P6
+2 3 CFBFBFS K
+3 32 CBFS K
+score 0
+
+4 42 BFX S7/G7
+5 36 X S9/P9S 1-2
+6 9 BBB WP 1-2 2-3
+ alt NP
+ ... CB W
+7 72 X FC4/G4 B-1 1-2 2-3 3XH(42)
+8 77 BC PO3(E2) 1-2 2-3 3-H
+  alt NP
+  ... CS K
+9 22 SFBC K
+score 1
+
+10 14 FSBS K
+11 25 SSFX E6/G6 B-1
+  alt 63/G6
+12 6 FS CS2(26)
+  ... C K
+score 1
+
+13 17 BFBBCC K
+14 3 BFSS K
+15 32 BBBCCS K
+score 1
+
+16 42 SBBCS K
+17 36 SX 63/G6
+18 9 BSSC K
+score 1
+
+19 72 BSFC K
+20 77 SSS K
+21 22 BFSBBX S8/G8 : time expired
+final 1
+

@@ -13,7 +13,6 @@ type gameMachine struct {
 	battingTeam  *Team
 	fieldingTeam *Team
 	pitcher      PlayerID
-	PA           int
 	basePutOuts  map[string]bool
 	final        bool
 	modifiers    Modifiers
@@ -71,6 +70,7 @@ func (m *gameMachine) handleAlternative(alt *gamefile.Alternative, lastState *St
 
 func (m *gameMachine) handleActualPlay(play *gamefile.ActualPlay, lastState *State) (*State, error) {
 	state := m.newState(play.Pos, lastState)
+	state.PlateAppearance.Number = play.PlateAppearance.Int()
 	if play.ContinuedPlateAppearance {
 		if state.LastState == nil {
 			return nil, fmt.Errorf("%s: ... can only be used to continue a plate appearance", play.GetPos())
@@ -149,9 +149,7 @@ func (m *gameMachine) handlePlay(play gamefile.Play, state *State) error {
 			state.Pitches += "X"
 		}
 		state.Modifiers = m.modifiers
-		m.PA++
 	}
-	state.PlateAppearance.Number = m.PA
 	return nil
 }
 
@@ -324,6 +322,15 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 			Type: Walk,
 		}
 		m.impliedAdvance(play, state, "B-1")
+		state.Complete = true
+	case pp.playIs("W+SB%"):
+		state.Play = Play{
+			Type: Walk,
+		}
+		m.impliedAdvance(play, state, "B-1")
+		if err := m.handleStolenBase(play, state, pp.playMatches); err != nil {
+			return err
+		}
 		state.Complete = true
 	case pp.playIs("SB%;SB%;SB%") || pp.playIs("SB%;SB%") || pp.playIs("SB%"):
 		state.Play = Play{

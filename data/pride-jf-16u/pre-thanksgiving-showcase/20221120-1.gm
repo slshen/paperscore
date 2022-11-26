@@ -1,0 +1,76 @@
+date: 11/20/2022
+game: 1
+home: Washington Ladyhawks
+visitorid: pride-jf-16u
+timelimit: 90m
+tournament: Pre-Thanksgiving Showcase
+---
+visitorplays
+pitching 32
+1 17 BSBBB W
+2 6 CCS K
+3 18 CX E8/F8 B-1 1-2
+4 11 CX E6/G6 B-1 1-2 2-H
+5 7 BFBFS K
+6 3 BCX 1/L1
+score 1
+
+7 2 CFS K
+8 10 X 4/P4
+9 26 CSBFFX 13/G1
+score 1
+
+10 00 BCBX S9/L9
+11 13 CCFS K
+12 22 CBCS K
+13 17 CCBX S9/L9 1-2
+14 6 CX S2/G2/B 1-2 2-3
+15 18 CBBFFX 7/L7
+score 1
+
+16 11 BCBX DGR/G5
+17 7 BFB WP 2-3
+ ... X 8/F8
+18 3 CFFX 43/G4 3-H
+19 2 X 9/F9
+score 2
+
+20 10 CX 53/G5
+21 26 BBCBSX S8/L8
+22 00 X S8/L78 1-2
+23 13 BFBFS K
+24 22 CSBS K
+score 2
+
+homeplays
+pitching 00
+1 14 BFBBSFFFFS K
+2 8 BCBBB W
+3 32 CBSFC K
+4 1 CSX 9/F9S
+score 0
+
+5 7 SX 8/F8
+6 17 SBSBBS K
+7 33 SBSFFBC K
+score 0
+
+8 22 CFBBC K
+9 26 SBBSS K
+10 19 BSCC K
+score 0
+
+11 34 CCS K
+12 5 FCBS K
+13 3 CFX 43/G4
+score 0
+
+14 18 SFFFS K
+15 14 SBFBFFBB W
+16 8 BBB WP 1-2
+  alt NP
+  ... CCX 43/G4 2-3
+17 32 BBBB W
+18 1 BCFFB SB2
+  ... X 13/G1
+score 0
