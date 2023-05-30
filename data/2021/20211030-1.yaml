@@ -35,9 +35,9 @@ visitorplays:
   - inn,4,2
   - mf17,CBX,43/G
   - aw6,CX,S2/B.B-1
-  - cm22,CX,53/G.B-1;1-2
-  - kg2,CCX,S8/L8.B-1;1-2;2-H
-  - ms11,X,HP.B-1;1-2;2-3
+  - cm22,CX,53/G.1-2
+  - kg2,CCX,S8/L8.B-1;2-H
+  - ms11,X,HP.B-1;1-2
   - bj00,X,D8/F89.B-2;1-H;2-H
   - mj18,CFFX,9/F9
   - inn,5,5
