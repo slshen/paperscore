@@ -1,0 +1,99 @@
+# in this model there are only singles and outs
+# outs and singles always advance the runners one base
+S = 0.45
+O = ~S
+
+0xxx {
+    S -> 0xx1
+    O -> 1xxx
+}
+
+0xx1 {
+    S -> 0x21
+    O -> 1x2x
+}
+
+0x21 {
+    S -> 0321
+    O -> 132x
+}
+
+0321 {
+    S(1) -> 0321
+    O(1) -> 132x
+}
+
+132x {
+    S(1) -> 13x1
+    O(1) -> 23xx
+}
+
+13x1 {
+    S(1) -> 1x21
+    O(1) -> 2x2x
+}
+
+1x21 {
+    S -> 1321
+    O -> 232x
+}
+
+1321 {
+    S(1) -> 1321
+    O(1) -> 232x
+}
+
+232x {
+    S(1) -> 23x1
+    O -> 3xxx
+}
+
+23x1 {
+    S(1) -> 2x21
+    O -> 3xxx
+}
+
+2x21 {
+    S -> 2321
+    O -> 3xxx
+}
+
+2321 {
+    S(1) -> 2321
+    O -> 3xxx
+}
+
+2x2x {
+    S -> 23x1
+    O -> 3xxx
+}
+
+1xxx {
+    S -> 1xx1
+    O -> 2xxx
+}
+
+1xx1 {
+    S -> 1x21
+    O -> 2x2x
+}
+
+1x2x {
+    S -> 13x1
+    O -> 23xx
+}
+
+2xxx {
+    S -> 2xx1
+    O -> 3xxx
+}
+
+23xx {
+    S(1) -> 2xx1
+    O -> 3xxx
+}
+
+2xx1 {
+    S -> 2x21
+    O -> 3xxx
+}

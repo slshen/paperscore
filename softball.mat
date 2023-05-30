@@ -1,0 +1,330 @@
+S = 0.179
+AO = 0.174
+GO = 0.149
+K = 0.122
+W = 0.097
+ROE = 0.054
+WPB = 0.045
+SB2 = 0.044
+D = 0.038
+FC = 0.034
+HP = 0.015
+SB3 = 0.011
+DP = 0.008
+
+0xxx {
+    S -> 0xx1
+    AO -> 1xxx
+    GO -> 1xxx
+    K -> 1xxx
+    W -> 0xx1
+    ROE -> 0xx1
+    D -> 0x2x
+    HP -> 0xx1
+}
+
+0xx1 {
+    S -> 0x21
+    AO -> 1xx1
+    GO -> 1x2x
+    K -> 1xx1
+    W -> 0x21
+    ROE -> 0x21
+    D -> 032x
+    FC -> 1xx1
+    HP -> 0x21
+    SB2 -> 0x2x
+    WPB -> 0x2x
+    DP -> 2xxx
+}
+
+1xxx {
+    S -> 1xx1
+    AO -> 2xxx
+    GO -> 2xxx
+    K -> 2xxx
+    W -> 1xx1
+    ROE -> 1xx1
+    D -> 1x2x
+    HP -> 1xx1
+}
+
+032x {
+    S(1) -> 03x1
+    AO(1) -> 1x2x
+    GO(1) -> 13xx
+    K -> 132x
+    W -> 0321
+    ROE(1) -> 03x1
+    D(2) -> 0x2x
+    FC(1) -> 1xx1
+    HP -> 0321
+    WPB(1) -> 03xx
+}
+
+13xx {
+    S(1) -> 1xx1
+    AO(1) -> 2xxx
+    GO(1) -> 2xxx
+    K -> 23xx
+    W -> 13x1
+    ROE(1) -> 1xx1
+    D(1) -> 1x2x
+    FC -> 2xx1
+    HP -> 13x1
+    WPB(1) -> 1xxx
+}
+
+0x21 {
+    S -> 0321
+    AO -> 1x21
+    GO -> 132x
+    K -> 1x21
+    W -> 0321
+    ROE -> 0321
+    D(1) -> 032x
+    FC -> 13x1
+    HP -> 0321
+    WPB -> 032x
+    SB3 -> 032x
+    DP -> 23xx
+}
+
+132x {
+    S(1) -> 13x1
+    AO(1) -> 2x2x
+    GO(1) -> 2x2x
+    K -> 232x
+    W -> 1321
+    ROE(1) -> 13x1
+    D(2) -> 1x2x
+    FC -> 23x1
+    HP -> 1321
+    WPB(1) -> 13xx
+}
+
+232x {
+    S(1) -> 23x1
+    AO -> 3xxx
+    GO -> 3xxx
+    K -> 3xxx
+    W -> 2321
+    ROE(1) -> 23x1
+    D(2) -> 2x2x
+    HP -> 2321
+    WPB(1) -> 23xx
+    FC -> 3xxx
+}
+
+23xx {
+    S(1) -> 2xx1
+    AO -> 3xxx
+    GO -> 3xxx
+    K -> 3xxx
+    W -> 23x1
+    ROE(1) -> 2xx1
+    D(1) -> 2x2x
+    HP -> 23x1
+    WPB(1) -> 2xxx
+    FC -> 3xxx
+}
+
+1x2x {
+    S -> 13x1
+    AO -> 2x2x
+    GO -> 2x2x
+    K -> 2x2x
+    W -> 1x21
+    ROE -> 13x1
+    D(1) -> 1x2x
+    HP -> 1x21
+    WPB -> 13xx
+    FC -> 2xx1
+    SB3 -> 13xx
+}
+
+03x1 {
+    S(1) -> 0x21
+    AO(1) -> 1xx1
+    GO(1) -> 1x2x
+    K -> 13x1
+    W -> 1321
+    ROE(1) -> 0x21
+    D(1) -> 03x1
+    HP -> 0321
+    WPB(1) -> 0x2x
+    FC(1) -> 1xx1
+    SB2 -> 032x
+    DP(1) -> 2xxx
+}
+
+2x2x {
+    S -> 23x1
+    AO -> 3xxx
+    GO -> 3xxx
+    K -> 3xxx
+    W -> 2x21
+    ROE -> 23x1
+    D(1) -> 2x2x
+    HP -> 2x21
+    WPB -> 23xx
+    FC -> 3xxx
+    SB3 -> 23xx
+}
+
+1x21 {
+    S -> 1321
+    AO -> 2x21
+    GO -> 232x
+    K -> 2x21
+    W -> 1321
+    ROE -> 1321
+    D(1) -> 132x
+    HP -> 1321
+    FC -> 23xx
+    SB3 -> 132x
+    DP -> 3xxx
+}
+
+1321 {
+    S(1) -> 1321
+    AO(1) -> 23x1
+    GO(1) -> 232x
+    K -> 2321
+    W(1) -> 1321
+    ROE(1) -> 1321
+    D(2) -> 1x2x
+    HP(1) -> 1321
+    FC -> 2321
+    DP -> 3xxx
+}
+
+2321 {
+    S(1) -> 2321
+    AO -> 3xxx
+    GO -> 3xxx
+    K -> 3xxx
+    W(1) -> 2321
+    ROE(1) -> 2321
+    D(3) -> 2x2x
+    HP(1) -> 2321
+    FC -> 3xxx
+}
+
+2xx1 {
+    S -> 2x21
+    AO -> 3xxx
+    GO -> 3xxx
+    K -> 3xxx
+    W -> 2x21
+    ROE -> 2x21
+    # more likely than 232x ?
+    D(1) -> 2x2x
+    HP -> 2x21
+    FC -> 3xxx
+}
+
+1xx1 {
+    S -> 1x21
+    AO -> 2xx1
+    GO -> 2x2x
+    K -> 2xx1
+    W -> 1x21
+    ROE -> 1x21
+    D -> 132x
+    HP -> 1x21
+    FC -> 2xx1
+    DP -> 3xxx
+    SB2 -> 1x2x
+}
+
+2x21 {
+    S -> 2321
+    AO -> 3xxx
+    GO -> 3xxx
+    K -> 3xxx
+    W -> 2321
+    ROE -> 2321
+    D(2) -> 2x2x
+    HP -> 2321
+    FC -> 3xxx
+    SB3 -> 232x
+}
+
+03xx {
+    S(1) -> 0xx1
+    AO(1) -> 1xxx
+    GO -> 13xx
+    K -> 13xx
+    W -> 03x1
+    ROE(1) -> 0xx1
+    D(1) -> 0x2x
+    HP -> 03x1
+    FC -> 1xx1
+}
+
+0321 {
+    S(1) -> 0321
+    AO(1) -> 1x21
+    GO(1) -> 132x
+    K -> 1321
+    W(1) -> 0321
+    ROE(1) -> 0321
+    D(2) -> 032x
+    HP(1) -> 0321
+    FC(1) -> 1x21
+    # todo - probably should limit DP to 43 combo
+    DP -> 232x
+}
+
+13x1 {
+    S(1) -> 1x21
+    AO(1) -> 2xx1
+    GO(1) -> 2xx1
+    K -> 23x1
+    W -> 1321
+    ROE -> 1321
+    HP -> 1321
+    FC(1) -> 2xx1
+    DP -> 3xxx
+    SB2 -> 132x
+}
+
+0x2x {
+    S -> 03x1
+    AO -> 1x2x
+    # GO depends on 43 or 63
+    GO -> 1x2x
+    K -> 1x2x
+    W -> 0x21
+    ROE -> 0x21
+    HP -> 0x21
+    FC -> 1xx1
+    SB3 -> 03xx
+    D(1) -> 0x2x
+}
+
+23x1 {
+    S(1) -> 2x21
+    AO -> 3xxx
+    GO -> 3xxx
+    K -> 3xxx
+    W -> 2321
+    ROE -> 2321
+    FC -> 3xxx
+    SB2 -> 232x
+    HP -> 2321
+    # is 1 or 2 runs more likely?
+    D(2) -> 2x2x
+}
+
+2xxx {
+    S -> 2xx1
+    AO -> 3xxx
+    GO -> 3xxx
+    K -> 3xxx
+    W -> 2xx1
+    ROE -> 2xx1
+    HP -> 2xx1
+    D -> 2x2x
+}
