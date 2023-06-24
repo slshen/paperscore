@@ -29,6 +29,7 @@ const (
 	StrikeOutWildPitch
 	StrikeOutPickedOff
 	StrikeOutStolenBase
+	StrikeOutCaughtStealing
 	FoulFlyError
 	NoPlay
 )
@@ -67,7 +68,7 @@ func (p *Play) IsHit() bool {
 
 func (p *Play) IsStrikeOut() bool {
 	return p.Is(StrikeOut, StrikeOutPassedBall, StrikeOutPickedOff, StrikeOutWildPitch,
-		StrikeOutStolenBase)
+		StrikeOutStolenBase, StrikeOutCaughtStealing)
 }
 
 func (p *Play) IsWalk() bool {

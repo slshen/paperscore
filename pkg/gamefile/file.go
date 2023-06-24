@@ -108,7 +108,7 @@ func (f *File) Validate() error {
 			f.HomeEvents = append(f.HomeEvents, te.Events...)
 		case "visitorplays":
 			if f.VisitorEvents != nil {
-				return fmt.Errorf("%s: duplicate vistiroplays section", te.Pos)
+				return fmt.Errorf("%s: duplicate visitorplays section", te.Pos)
 			}
 			f.VisitorEvents = append(f.VisitorEvents, te.Events...)
 		}
