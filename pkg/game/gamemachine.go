@@ -277,7 +277,15 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 		if err := m.handleStolenBase(play, state, pp.playMatches); err != nil {
 			return err
 		}
-	case pp.playIs("K+PO%($$)"):
+	case pp.playIs("K+CS%($$)"):
+		state.Play = Play{
+			Type:     StrikeOutCaughtStealing,
+			Fielders: pp.getFielders(1, 2),
+		}
+		state.Complete = true
+		state.recordOut()
+		return m.handleCaughtStealing(play, state, pp, CaughtStealing, NoError)
+	case pp.playIs("K+PO%($$)") || pp.playIs("K+PO%(E$)"):
 		from := pp.playMatches[0]
 		if !(from == "1" || from == "2" || from == "3") {
 			return fmt.Errorf("%s: illegal picked off base in %s", play.GetPos(), pp.playCode)
@@ -287,17 +295,24 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 			return fmt.Errorf("%s: cannot pick off in %s - %w", play.GetPos(), pp.playCode, err)
 		}
 		state.Play = Play{
-			Type:     StrikeOutPickedOff,
-			Fielders: pp.getFielders(1, 2),
+			Type: StrikeOutPickedOff,
 		}
 		state.Complete = true
 		state.recordOut()
-		advance := state.Advances.From(from)
-		if advance == nil {
-			state.recordOut()
-			m.putOut(from)
+		if strings.Contains(pp.playCode, "(E") {
+			state.Play.NotOutOnPlay = true
+			state.Play.FieldingError = FieldingError{
+				Fielder: pp.getFielder(1),
+			}
 		} else {
-			return fmt.Errorf("%s: picked off runner on %s cannot advance", play.GetPos(), from)
+			state.Play.Fielders = pp.getFielders(1, 2)
+			advance := state.Advances.From(from)
+			if advance == nil {
+				state.recordOut()
+				m.putOut(from)
+			} else {
+				return fmt.Errorf("%s: picked off runner on %s cannot advance", play.GetPos(), from)
+			}
 		}
 	case pp.playIs("W+WP"):
 		state.Play = Play{
@@ -553,11 +568,10 @@ func (m *gameMachine) handlePickedoff(play gamefile.Play, state *State, pp playC
 		FieldingError:   fieldingError,
 	}
 	advance := state.Advances.From(from)
-	if advance == nil {
+	state.NotOutOnPlay = (advance != nil && advance.IsFieldingError()) || fieldingError.IsFieldingError()
+	if !state.NotOutOnPlay {
 		state.recordOut()
 		m.putOut(from)
-	} else {
-		state.NotOutOnPlay = advance.IsFieldingError() || fieldingError.IsFieldingError()
 	}
 	return nil
 }

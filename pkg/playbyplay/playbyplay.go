@@ -281,7 +281,7 @@ func runningPlayDescription(team *game.Team, state, lastState *game.State) strin
 				fmt.Sprintf("%s steals %s", team.GetPlayer(runner).NameOrNumber(), base))
 		}
 		return strings.Join(sb, ", ")
-	case state.Play.Type == game.CaughtStealing:
+	case state.Play.Type == game.CaughtStealing || state.Play.Type == game.StrikeOutCaughtStealing:
 		return fmt.Sprintf("%s is caught stealing %s", team.GetPlayer(state.Runners[0]).NameOrNumber(), play.CaughtStealingBase)
 	case state.Play.Type == game.WildPitch:
 		return "On a wild pitch"

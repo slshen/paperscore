@@ -60,6 +60,8 @@ func (stats *TeamStats) RecordBatting(g *game.Game, state *game.State, reChange 
 	batting.GameAppearances[g.ID] = true
 	switch state.Play.Type {
 	case game.CaughtStealing:
+		fallthrough
+	case game.StrikeOutCaughtStealing:
 		if !state.NotOutOnPlay {
 			runner := stats.GetBatting(state.Pos, state.Play.CaughtStealingRunner)
 			runner.CaughtStealing++
@@ -117,7 +119,7 @@ func (stats *TeamStats) RecordBatting(g *game.Game, state *game.State, reChange 
 	if reChange != 0 {
 		var runners []game.PlayerID
 		switch {
-		case state.Play.Type == game.CaughtStealing:
+		case state.Play.Type == game.CaughtStealing || state.Play.Type == game.StrikeOutCaughtStealing:
 			runners = []game.PlayerID{state.CaughtStealingRunner}
 		case state.Play.Is(game.PickedOff, game.WalkPickedOff):
 			runners = []game.PlayerID{state.PickedOffRunner}
@@ -185,6 +187,10 @@ func (stats *TeamStats) RecordFielding(g *game.Game, state *game.State) {
 	case game.PickedOff:
 		fallthrough
 	case game.CaughtStealing:
+		fallthrough
+	case game.StrikeOutCaughtStealing:
+		fallthrough
+	case game.StrikeOutPickedOff:
 		if state.NotOutOnPlay && state.Play.FieldingError.IsFieldingError() {
 			stats.recordError(state.Play.FieldingError)
 		}
