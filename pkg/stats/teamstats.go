@@ -181,6 +181,8 @@ func (stats *TeamStats) RecordFielding(g *game.Game, state *game.State) {
 	pitching.GameAppearances[g.ID] = true
 	switch state.Play.Type {
 	case game.ReachedOnError:
+		fallthrough
+	case game.CatcherInterference:
 		stats.recordError(state.Play.FieldingError)
 	case game.WalkPickedOff:
 		fallthrough

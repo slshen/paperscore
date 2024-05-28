@@ -39,3 +39,9 @@ LineDriveOuts
 Inactive
 PopOuts
 GIDP
+FoulBunts
+MissedBunts
+PopupBunts
+BuntHits
+BuntSacrifices
+BuntOuts

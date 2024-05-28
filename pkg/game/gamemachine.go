@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -94,7 +95,6 @@ func (m *gameMachine) handlePlay(play gamefile.Play, state *State) error {
 	if state.PlayCode == "" {
 		return fmt.Errorf("%s: empty event code in %s", play.GetPos(), play.GetCode())
 	}
-	state.Comment = play.GetComment()
 	m.basePutOuts = nil
 	if err := m.parseAdvances(play, state); err != nil {
 		return err
@@ -237,7 +237,7 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 			Fielders: pp.getFielders(0),
 		}
 		if m.modifiers.Contains(SacrificeFly) {
-			// verify that we're only scoring a SacraficeFly if a runner scores
+			// verify that we're only scoring a SacrificeFly if a runner scores
 			ok := false
 			for _, adv := range state.Advances {
 				if adv.To == "H" && !adv.Out {
@@ -436,11 +436,22 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 		}
 		m.impliedAdvance(play, state, "B-1")
 		state.Complete = true
-	case pp.playIs("C/E$"):
+	case pp.playIs("C"):
+		var fielder int
+		e := regexp.MustCompile(`E([1-9])`)
+		for _, modifier := range pp.modifiers {
+			m := e.FindStringSubmatch(modifier)
+			if m != nil {
+				fielder = fielderNumber[m[1]]
+			}
+		}
+		if fielder == 0 {
+			return fmt.Errorf("%s: no fielder in catcher's interference", play.GetPos())
+		}
 		state.Play = Play{
 			Type: CatcherInterference,
 			FieldingError: FieldingError{
-				Fielder: pp.getFielder(0),
+				Fielder: fielder,
 			},
 		}
 		m.impliedAdvance(play, state, "B-1")
@@ -464,23 +475,10 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 		}
 		m.impliedAdvance(play, state, "B-1")
 		state.Complete = true
-	case pp.playIs("$$(%)$") || pp.playIs("$(%)$$") || pp.playIs("$$(%)$$"):
-		if !m.modifiers.Contains("GDP") {
-			return fmt.Errorf("%s: play should contain GDP modifier in %s", play.GetPos(), pp.playCode)
-		}
-		base := pp.playMatches[2]
-		_, err := state.GetBaseRunner(base)
-		if err != nil {
-			return fmt.Errorf("%s: no runner in double play %s - %w", play.GetPos(), pp.playCode, err)
-		}
-		state.Play = Play{
-			Type: DoublePlay,
-		}
-		// should pass fielders to record out to do assists
-		state.recordOut()
-		state.recordOut()
-		m.putOut(base)
-		state.Complete = true
+	case pp.playIs("$(%)$$"):
+		return m.handleGroundBallDoublePlay(play, state, pp, pp.playMatches[1])
+	case pp.playIs("$$(%)$") || pp.playIs("$$(%)$$"):
+		return m.handleGroundBallDoublePlay(play, state, pp, pp.playMatches[2])
 	case pp.playIs("$(B)$(%)") || pp.playIs("$(B)$$(%)") ||
 		pp.playIs("$(B)$$$(%)"):
 		if !m.modifiers.Contains("LDP", "FDP") {
@@ -523,6 +521,31 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 	default:
 		return fmt.Errorf("%s: unknown play %s", play.GetPos(), play.GetCode())
 	}
+	return nil
+}
+
+func (m *gameMachine) handleGroundBallDoublePlay(play gamefile.Play, state *State, pp playCodeParser, runnerBase string) error {
+	if !m.modifiers.Contains("GDP") {
+		return fmt.Errorf("%s: play should contain GDP modifier in %s", play.GetPos(), pp.playCode)
+	}
+	_, err := state.GetBaseRunner(runnerBase)
+	if err != nil {
+		return fmt.Errorf("%s: no runner in double play %s - %w", play.GetPos(), pp.playCode, err)
+	}
+	state.Play = Play{
+		Type: DoublePlay,
+	}
+	nextBase := NextBase[runnerBase]
+	if nextBase == "" {
+		return fmt.Errorf("%s: double play runner cannot be at %s", play.GetPos(), runnerBase)
+	}
+	paren := strings.IndexRune(pp.playCode, '(')
+	fielders := pp.playCode[0:paren]
+	m.impliedAdvance(play, state, fmt.Sprintf("%sX%s(%s)", runnerBase, nextBase, fielders))
+	// should pass fielders to record out to do assists
+	state.recordOut()
+	// m.putOut(runnerBase)
+	state.Complete = true
 	return nil
 }
 

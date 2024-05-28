@@ -39,21 +39,31 @@ type Property struct {
 
 type Event struct {
 	Pos         Position
-	Play        *ActualPlay  `parser:"@@ (NL|EOF)"`
+	Play        *ActualPlay  `parser:"@@"`
+	Afters      []*After     `parser:"  @@*"`
+	Comment     string       `parser:" @Text? (NL|EOF)"`
 	Alternative *Alternative `parser:"| 'alt' @@ (NL|EOF)"`
 	Pitcher     string       `parser:"| ('pitcher'|'pitching') @Code (NL|EOF)"`
 	RAdjRunner  Numbers      `parser:"| 'radj' @Numbers"`
 	RAdjBase    string       `parser:"      @Code (NL|EOF)"`
 	Score       string       `parser:"| 'score' @Code (NL|EOF)"`
 	Final       string       `parser:"| 'final' @Code (NL|EOF)"`
+	HSubEnter   Numbers      `parser:"| 'hsub' @Numbers"`
+	HSubFor     Numbers      `parser:"      'for' @Code (NL|EOF)"` // TODO why @Code
+	VSubEnter   Numbers      `parser:"| 'vsub' @Numbers"`
+	VSubFor     Numbers      `parser:"      'for' @Code (NL|EOF)"`
 	Empty       bool         `parser:"| @NL"`
+}
+
+type After struct {
+	CourtesyRunner *string `parser:"'cr' @Code"`
+	Conference     *bool   `parser:"| @'conf'"`
 }
 
 type Play interface {
 	GetPos() Position
 	GetCode() string
 	GetAdvances() []string
-	GetComment() string
 }
 
 type ActualPlay struct {
@@ -64,7 +74,6 @@ type ActualPlay struct {
 	PitchSequence            string   `parser:" @Code"`
 	Code                     string   `parser:" @Code"`
 	Advances                 []string `parser:" @Code*"`
-	Comment                  string   `parser:" @Text?"`
 }
 
 var _ Play = (*ActualPlay)(nil)
@@ -73,7 +82,7 @@ type Alternative struct {
 	Pos      Position
 	Code     string   `parser:"@Code"`
 	Advances []string `parser:"@Code*"`
-	Comment  string   `parser:" @Text?"`
+	Comment  string   `parser:"  @Text?"`
 }
 
 var _ Play = (*Alternative)(nil)
@@ -178,7 +187,7 @@ func (f *File) writeEvents(w io.Writer, name string, events []*Event) {
 				fmt.Fprintf(w, "  ... ")
 			}
 			fmt.Fprintf(w, "%s ", play.PitchSequence)
-			f.writeCodeAdvancesComment(w, play.Code, play.Advances, play.Comment)
+			f.writeCodeAdvancesComment(w, play.Code, play.Advances, event.Comment)
 		case event.Alternative != nil:
 			alt := event.Alternative
 			fmt.Fprintf(w, "  alt")
@@ -231,10 +240,6 @@ func (p *ActualPlay) GetCode() string {
 
 func (p *ActualPlay) GetAdvances() []string {
 	return p.Advances
-}
-
-func (p *ActualPlay) GetComment() string {
-	return p.Comment
 }
 
 func (a *Alternative) GetPos() Position {

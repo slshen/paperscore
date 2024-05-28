@@ -1,6 +1,9 @@
 package dataexport
 
 import (
+	"fmt"
+	"path/filepath"
+
 	"github.com/slshen/sb/pkg/boxscore"
 	"github.com/slshen/sb/pkg/dataframe"
 	"github.com/slshen/sb/pkg/game"
@@ -10,6 +13,7 @@ type Game struct {
 	GameID        string
 	GameNumber    string
 	GameDate      string
+	GameFile      string
 	Tournament    string
 	TournamentID  string
 	Home          string
@@ -33,6 +37,7 @@ func newGame(g *game.Game, tournamentID string) (*Game, error) {
 		GameID:        getGameID(g),
 		GameNumber:    g.Number,
 		GameDate:      g.GetDate().Format("2006-01-02"),
+		GameFile:      fmt.Sprintf("%s/%s", filepath.Base(filepath.Dir(g.File.Path)), filepath.Base(g.File.Path)),
 		Tournament:    g.Tournament,
 		TournamentID:  tournamentID,
 		Home:          g.Home.Name,

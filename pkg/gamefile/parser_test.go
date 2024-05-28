@@ -10,7 +10,9 @@ func TestParser(t *testing.T) {
 	assert := assert.New(t)
 	assert.NotNil(parser)
 	f, err := ParseFile("testdata/test.gm")
-	assert.NoError(err)
+	if !assert.NoError(err) {
+		return
+	}
 	assert.NotNil(f)
 	assert.Equal("pride-2022", f.Properties["visitorid"])
 	assert.NotNil(f.VisitorEvents)
@@ -26,5 +28,14 @@ func TestParser(t *testing.T) {
 			assert.Equal("CSFS", play.PitchSequence)
 			assert.Equal("K", play.Code)
 		}
+		event := events[9]
+		assert.NotNil(event)
+		if assert.NotNil(event.Alternative) {
+			assert.Equal("routine ground ball", event.Alternative.Comment)
+		}
+		event = events[8]
+		assert.True(*event.Afters[0].Conference)
+		event = events[3]
+		assert.Equal("9", *event.Afters[0].CourtesyRunner)
 	}
 }

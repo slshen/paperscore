@@ -18,6 +18,9 @@ func TestPitches(t *testing.T) {
 		{"CSBB", 2, 2, "2-2"},
 		{"C.X", 0, 1, "0-1"},
 		{"BCCFBX", 2, 2, "2-2"},
+		{"TLBB", 2, 2, "2-2"},
+		{"MM", 0, 2, "0-2"},
+		{"MCL", 0, 3, "0-3"},
 	} {
 		ps := Pitches(tc.in)
 		count, balls, strikes := ps.Count()

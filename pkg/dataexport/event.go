@@ -2,6 +2,7 @@ package dataexport
 
 import (
 	"fmt"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -57,6 +58,9 @@ type Event struct {
 	Comment              string
 	AlternativeFor       string
 	REChange             float64
+	FoulBunts            int
+	MissedBunts          int
+	Trajectory           string
 
 	state *game.State
 }
@@ -84,9 +88,10 @@ func getEvent(g *game.Game, re stats.RunExpectancy, state *game.State, tournamen
 	}
 	batter := getBatterPlayer(g, state)
 	pitcher := getPitcherPlayer(g, state)
+	// trajectory := state.Modifiers.Trajectory()
 	event := &Event{
 		EventID:              getEventID(g, state),
-		File:                 state.Pos.Filename,
+		File:                 fmt.Sprintf("%s/%s", filepath.Base(filepath.Dir(state.Pos.Filename)), filepath.Base(state.Pos.Filename)),
 		Line:                 state.Pos.Line,
 		GameID:               getGameID(g),
 		TournamentID:         tournamentID,
@@ -126,7 +131,11 @@ func getEvent(g *game.Game, re stats.RunExpectancy, state *game.State, tournamen
 		Incomplete:           state.Incomplete,
 		AB:                   state.IsAB(),
 		Comment:              state.Comment,
-		state:                state,
+		FoulBunts:            state.Pitches.CountUp('L'),
+		MissedBunts:          state.Pitches.CountUp('M'),
+		Trajectory:           string(state.Modifiers.Trajectory()),
+
+		state: state,
 	}
 	if last := state.LastState; last != nil {
 		event.StartBaseOutCode = getBaseOutCode(last)

@@ -272,6 +272,19 @@ func (g *Game) runPlays(battingTeam, fieldingTeam *Team, half Half, events []*ga
 				errs = multierror.Append(errs, err)
 			}
 			if state != nil {
+				for _, after := range event.Afters {
+					if after.CourtesyRunner != nil {
+						// assume courtesy runner is for batter
+						cr := m.battingTeam.parsePlayerID(*after.CourtesyRunner)
+						for i := range state.Runners {
+							if state.Runners[i] == state.Batter {
+								state.Runners[i] = cr
+								break
+							}
+						}
+					}
+				}
+				state.Comment = event.Comment
 				states = append(states, state)
 				lastState = state
 			}
@@ -281,6 +294,7 @@ func (g *Game) runPlays(battingTeam, fieldingTeam *Team, half Half, events []*ga
 				errs = multierror.Append(errs, err)
 			}
 			if state != nil {
+				state.Comment = event.Alternative.Comment
 				if g.altStates[lastState] != nil {
 					errs = multierror.Append(errs,
 						fmt.Errorf("%s: only a single alternate state is allowed", event.Pos))
