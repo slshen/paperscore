@@ -35,6 +35,11 @@ var PreviousBase = map[string]string{
 	"3": "2",
 	"2": "1",
 }
+var NextBase = map[string]string{
+	"1": "2",
+	"2": "3",
+	"3": "H",
+}
 var runnerNumber = map[string]int{
 	"1": 0,
 	"2": 1,

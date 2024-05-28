@@ -30,6 +30,12 @@ type Batting struct {
 	RE24                           float64
 	LineDriveOuts                  int
 	LOPH                           int
+	FoulBunts                      int
+	MissedBunts                    int
+	PopupBunts                     int
+	BuntHits                       int
+	BuntSacrifices                 int
+	BuntOuts                       int
 }
 
 func (b *Batting) Update() {
@@ -101,7 +107,8 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 		if state.IsAB() {
 			b.AB++
 		}
-		if state.Modifiers.Trajectory() == game.LineDrive {
+		trajectory := state.Modifiers.Trajectory()
+		if trajectory == game.LineDrive {
 			b.LineDrives++
 			if !state.Play.IsHit() {
 				b.LineDriveOuts++
@@ -119,19 +126,36 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 		if state.Modifiers.Contains(game.GroundedIntoDoublePlay) {
 			b.GIDP++
 		}
+		if trajectory == game.Bunt || trajectory == game.BuntGrounder || trajectory == game.BuntPopup {
+			switch {
+			case state.Play.IsHit():
+				b.BuntHits++
+			case state.Modifiers.Contains(game.SacrificeHit):
+				b.BuntSacrifices++
+			default:
+				b.BuntOuts++
+			}
+			if trajectory == game.BuntPopup {
+				b.PopupBunts++
+			}
+		}
+		lastPitch := state.Pitches.Last()
+		if state.Play.Type == game.StrikeOut && (lastPitch == "L" || lastPitch == "M") {
+			b.BuntOuts++
+		}
+		if lastPitch == "X" {
+			b.Strikes++
+			b.Swings++
+		}
 	}
 	if state.Complete || state.Incomplete {
 		b.PitchesSeen += len(state.Pitches)
-		b.Strikes += state.Pitches.CountUp('C', 'S', 'F')
-		b.Swings += state.Pitches.CountUp('S', 'F')
-		b.Misses += state.Pitches.CountUp('S')
+		b.Strikes += state.Pitches.CountUp('C', 'S', 'F', 'M', 'L')
+		b.Swings += state.Pitches.CountUp('S', 'F', 'M')
+		b.Misses += state.Pitches.CountUp('S', 'M')
 		b.CalledStrikes += state.Pitches.CountUp('C')
-		if state.Pitches.Last() == "X" {
-			if state.Play.Type != game.HitByPitch {
-				b.Strikes++
-				b.Swings++
-			}
-		}
+		b.MissedBunts += state.Pitches.CountUp('M')
+		b.FoulBunts += state.Pitches.CountUp('L')
 	}
 	return
 }

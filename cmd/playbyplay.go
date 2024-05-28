@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"log"
 	"os"
 
 	"github.com/slshen/sb/pkg/game"
@@ -16,12 +17,12 @@ func playByPlayCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			games, err := game.ReadGameFiles(args)
 			if err != nil {
-				return err
+				log.Println(err)
 			}
 			for _, g := range games {
 				pbp.Game = g
 				if err := pbp.Generate(os.Stdout); err != nil {
-					return err
+					log.Println(err)
 				}
 			}
 			return nil

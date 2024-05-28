@@ -34,6 +34,6 @@ func TestParseYAML(t *testing.T) {
 	play = events[36].Play
 	if assert.NotNil(play) {
 		assert.Equal("00", play.Batter.String())
-		assert.Equal("advance on throw", play.Comment, play)
+		assert.Equal("advance on throw", events[36].Comment, play)
 	}
 }

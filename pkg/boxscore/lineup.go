@@ -158,6 +158,16 @@ func (lineup *Lineup) Walks() string {
 	return lineup.battingCounts(func(pd *stats.Batting) int { return pd.Walks })
 }
 
+func (lineup *Lineup) Bunts() string {
+	return lineup.battingCounts(func(b *stats.Batting) int { return b.BuntHits + b.BuntSacrifices })
+}
+
+func (lineup *Lineup) MissedOrFoulBunts() string {
+	return lineup.battingCounts(func(b *stats.Batting) int {
+		return b.FoulBunts + b.MissedBunts
+	})
+}
+
 func (lineup *Lineup) PitcherHPs() string {
 	return lineup.pitchingCounts(func(pd *stats.Pitching) int { return pd.HP })
 }

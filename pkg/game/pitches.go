@@ -24,7 +24,7 @@ func (ps Pitches) Count() (string, int, int) {
 	balls := ps.CountUp('B')
 	strikes := 0
 	for _, p := range ps {
-		if p == 'C' || p == 'S' {
+		if p == 'C' || p == 'S' || p == 'T' || p == 'M' || p == 'L' {
 			strikes++
 		} else if strikes < 2 && p == 'F' {
 			strikes++

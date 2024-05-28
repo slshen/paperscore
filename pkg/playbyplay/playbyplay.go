@@ -195,6 +195,10 @@ func trajectoryDescription(trajectory game.Trajectory) string {
 		return "pop fly"
 	case game.Bunt:
 		return "bunt"
+	case game.BuntGrounder:
+		return "bunt on the ground"
+	case game.BuntPopup:
+		return "popup bunt"
 	case game.GroundBall:
 		return "ground ball"
 	default:

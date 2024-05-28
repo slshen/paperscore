@@ -115,7 +115,6 @@ func (p *YAMLParser) parseYAMLEvents(pos lexer.Position, value interface{}) (eve
 				Pos:             pos,
 				Batter:          p.parseBatter(p.getPart(parts, 0)),
 				PitchSequence:   p.getPart(parts, 1),
-				Comment:         p.getPart(parts, 3),
 				PlateAppearance: Numbers(fmt.Sprintf("%d", pa)),
 			}
 			code := p.getPart(parts, 2)
@@ -129,8 +128,9 @@ func (p *YAMLParser) parseYAMLEvents(pos lexer.Position, value interface{}) (eve
 				play.Code = code
 			}
 			events = append(events, &Event{
-				Pos:  pos,
-				Play: play,
+				Pos:     pos,
+				Play:    play,
+				Comment: p.getPart(parts, 3),
 			})
 			if p.isPAComplete(code) {
 				pa++
