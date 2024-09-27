@@ -19,7 +19,7 @@ type gameMachine struct {
 	modifiers    Modifiers
 }
 
-func newGameMachine(half Half, battingTeam, fieldingTeam *Team) *gameMachine {
+func newGameMachine(battingTeam, fieldingTeam *Team) *gameMachine {
 	m := &gameMachine{
 		battingTeam:  battingTeam,
 		fieldingTeam: fieldingTeam,
@@ -74,7 +74,7 @@ func (m *gameMachine) handleActualPlay(play *gamefile.ActualPlay, lastState *Sta
 	state.PlateAppearance.Number = play.PlateAppearance.Int()
 	if play.ContinuedPlateAppearance {
 		if state.LastState == nil {
-			return nil, fmt.Errorf("%s: ... can only be used to continue a plate appearance", play.GetPos())
+			return nil, NewError("... can only be used to continue a plate appearance", play.GetPos())
 		}
 		state.Pitches = state.LastState.Pitches + Pitches(play.PitchSequence)
 		state.Batter = state.LastState.Batter
@@ -83,7 +83,7 @@ func (m *gameMachine) handleActualPlay(play *gamefile.ActualPlay, lastState *Sta
 		state.Pitches = Pitches(play.PitchSequence)
 	}
 	if state.Batter == "" {
-		return nil, fmt.Errorf("%s: no batter for %s", play.GetPos(), play.GetCode())
+		return nil, NewError("no batter for %s", play.GetPos(), play.GetCode())
 	}
 	err := m.handlePlay(play, state)
 	return state, err
@@ -93,7 +93,7 @@ func (m *gameMachine) handlePlay(play gamefile.Play, state *State) error {
 	state.PlayCode = play.GetCode()
 	state.AdvancesCodes = play.GetAdvances()
 	if state.PlayCode == "" {
-		return fmt.Errorf("%s: empty event code in %s", play.GetPos(), play.GetCode())
+		return NewError("empty event code in %s", play.GetPos(), play.GetCode())
 	}
 	m.basePutOuts = nil
 	if err := m.parseAdvances(play, state); err != nil {
@@ -115,32 +115,32 @@ func (m *gameMachine) handlePlay(play gamefile.Play, state *State) error {
 		_, balls, strikes := state.Pitches.Count()
 		if state.Play.IsBallInPlay() {
 			if strikes > 2 {
-				return fmt.Errorf("%s: cannot put ball in play with %d strikes (%s)", state.Pos, strikes, play.GetCode())
+				return NewError("cannot put ball in play with %d strikes (%s)", state.Pos, strikes, play.GetCode())
 			}
 			if balls > 3 {
-				return fmt.Errorf("%s: cannot put ball in play with %d balls (%s)", state.Pos, balls, play.GetCode())
+				return NewError("cannot put ball in play with %d balls (%s)", state.Pos, balls, play.GetCode())
 			}
 		}
 		if state.Play.IsStrikeOut() {
 			if state.Pitches[len(state.Pitches)-1] == 'X' {
-				return fmt.Errorf("%s: strike out pitch sequence should not end in X", state.Pos)
+				return NewError("strike out pitch sequence should not end in X", state.Pos)
 			}
 			if strikes != 3 {
-				return fmt.Errorf("%s: must strike out with 3 strikes", state.Pos)
+				return NewError("must strike out with 3 strikes", state.Pos)
 			}
 			if balls > 3 {
-				return fmt.Errorf("%s: cannot strike out with more than 3 balls", state.Pos)
+				return NewError("cannot strike out with more than 3 balls", state.Pos)
 			}
 		}
 		if state.Play.IsWalk() {
 			if state.Pitches[len(state.Pitches)-1] == 'X' {
-				return fmt.Errorf("%s: walk pitch sequence should not end in X", state.Pos)
+				return NewError("walk pitch sequence should not end in X", state.Pos)
 			}
 			if strikes > 2 {
-				return fmt.Errorf("%s: cannot walk with more than 2 strikes", state.Pos)
+				return NewError("cannot walk with more than 2 strikes", state.Pos)
 			}
 			if balls != 4 {
-				return fmt.Errorf("%s: must walk with 4 balls", state.Pos)
+				return NewError("must walk with 4 balls", state.Pos)
 			}
 		}
 		if !strings.HasSuffix(string(state.Pitches), "X") &&
@@ -169,19 +169,19 @@ func (m *gameMachine) handleSpecialEvent(event *gamefile.Event, state *State) (*
 	}
 	if event.Score != "" {
 		if state.Outs != 3 {
-			return nil, fmt.Errorf("%s: the inning with %d outs has not ended after %s",
+			return nil, NewError("the inning with %d outs has not ended after %s",
 				event.Pos, state.Outs, state.PlayCode)
 		}
 		score, err := strconv.Atoi(event.Score)
 		if err != nil || state.Score != score {
-			return nil, fmt.Errorf("%s: in inning %d # runs is %d not %s", event.Pos,
+			return nil, NewError("in inning %d # runs is %d not %s", event.Pos,
 				state.InningNumber, state.Score, event.Score)
 		}
 	}
 	if event.Final != "" {
 		score, err := strconv.Atoi(event.Final)
 		if err != nil || state.Score != score {
-			return nil, fmt.Errorf("%s: in inning %d final score is %d not %s", event.Pos,
+			return nil, NewError("in inning %d final score is %d not %s", event.Pos,
 				state.InningNumber, state.Score, event.Score)
 		}
 		m.final = true
@@ -190,10 +190,10 @@ func (m *gameMachine) handleSpecialEvent(event *gamefile.Event, state *State) (*
 		runner := m.battingTeam.parsePlayerID(event.RAdjRunner.String())
 		base := event.RAdjBase
 		if runner == "" || !(base == "1" || base == "2" || base == "3") {
-			return nil, fmt.Errorf("%s: invalid base %s for radj", event.Pos, event.RAdjBase)
+			return nil, NewError("invalid base %s for radj", event.Pos, event.RAdjBase)
 		}
 		if state.Outs != 3 {
-			return nil, fmt.Errorf("%s: radj must be at the inning start", event.Pos)
+			return nil, NewError("radj must be at the inning start", event.Pos)
 		}
 		lastState := &State{
 			InningNumber: state.InningNumber + 1,
@@ -245,7 +245,7 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 				}
 			}
 			if !ok {
-				return fmt.Errorf("%s: cannot score SacrificeFly unless a runner scores", play.GetPos())
+				return NewError("cannot score SacrificeFly unless a runner scores", play.GetPos())
 			}
 		}
 		state.recordOut()
@@ -288,11 +288,11 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 	case pp.playIs("K+PO%($$)") || pp.playIs("K+PO%(E$)"):
 		from := pp.playMatches[0]
 		if !(from == "1" || from == "2" || from == "3") {
-			return fmt.Errorf("%s: illegal picked off base in %s", play.GetPos(), pp.playCode)
+			return NewError("illegal picked off base in %s", play.GetPos(), pp.playCode)
 		}
 		_, err := state.GetBaseRunner(from)
 		if err != nil {
-			return fmt.Errorf("%s: cannot pick off in %s - %w", play.GetPos(), pp.playCode, err)
+			return NewError("cannot pick off in %s - %w", play.GetPos(), pp.playCode, err)
 		}
 		state.Play = Play{
 			Type: StrikeOutPickedOff,
@@ -311,7 +311,7 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 				state.recordOut()
 				m.putOut(from)
 			} else {
-				return fmt.Errorf("%s: picked off runner on %s cannot advance", play.GetPos(), from)
+				return NewError("picked off runner on %s cannot advance", play.GetPos(), from)
 			}
 		}
 	case pp.playIs("W+WP"):
@@ -426,7 +426,7 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 	case pp.playIs("E$"):
 		fe, err := parseFieldingError(play, pp.playCode)
 		if err != nil {
-			return fmt.Errorf("%s: cannot parse fielding error in %s - %w", play.GetPos(),
+			return NewError("cannot parse fielding error in %s - %w", play.GetPos(),
 				pp.playCode, err)
 		}
 		state.Play = Play{
@@ -446,7 +446,7 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 			}
 		}
 		if fielder == 0 {
-			return fmt.Errorf("%s: no fielder in catcher's interference", play.GetPos())
+			return NewError("no fielder in catcher's interference", play.GetPos())
 		}
 		state.Play = Play{
 			Type: CatcherInterference,
@@ -482,7 +482,7 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 	case pp.playIs("$(B)$(%)") || pp.playIs("$(B)$$(%)") ||
 		pp.playIs("$(B)$$$(%)"):
 		if !m.modifiers.Contains("LDP", "FDP") {
-			return fmt.Errorf("%s: play should contain LDP or FDP modifier in %s (%v)",
+			return NewError("play should contain LDP or FDP modifier in %s (%v)",
 				play.GetPos(), pp.playCode, state.Modifiers)
 		}
 		base := pp.playMatches[len(pp.playMatches)-1]
@@ -519,25 +519,25 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 		}
 		// no play
 	default:
-		return fmt.Errorf("%s: unknown play %s", play.GetPos(), play.GetCode())
+		return NewError("unknown play %s", play.GetPos(), play.GetCode())
 	}
 	return nil
 }
 
 func (m *gameMachine) handleGroundBallDoublePlay(play gamefile.Play, state *State, pp playCodeParser, runnerBase string) error {
 	if !m.modifiers.Contains("GDP") {
-		return fmt.Errorf("%s: play should contain GDP modifier in %s", play.GetPos(), pp.playCode)
+		return NewError("play should contain GDP modifier in %s", play.GetPos(), pp.playCode)
 	}
 	_, err := state.GetBaseRunner(runnerBase)
 	if err != nil {
-		return fmt.Errorf("%s: no runner in double play %s - %w", play.GetPos(), pp.playCode, err)
+		return NewError("no runner in double play %s - %w", play.GetPos(), pp.playCode, err)
 	}
 	state.Play = Play{
 		Type: DoublePlay,
 	}
 	nextBase := NextBase[runnerBase]
 	if nextBase == "" {
-		return fmt.Errorf("%s: double play runner cannot be at %s", play.GetPos(), runnerBase)
+		return NewError("double play runner cannot be at %s", play.GetPos(), runnerBase)
 	}
 	paren := strings.IndexRune(pp.playCode, '(')
 	fielders := pp.playCode[0:paren]
@@ -558,7 +558,7 @@ func (m *gameMachine) handleCaughtStealing(play gamefile.Play, state *State, pp 
 	advance := state.Advances.From(from)
 	runner, err := state.GetBaseRunner(from)
 	if err != nil {
-		return fmt.Errorf("%s: cannot catch stealing runner in %s - %w", play.GetPos(), pp.playCode, err)
+		return NewError("cannot catch stealing runner in %s - %w", play.GetPos(), pp.playCode, err)
 	}
 	state.Play = Play{
 		Type:                 CaughtStealing,
@@ -578,11 +578,11 @@ func (m *gameMachine) handleCaughtStealing(play gamefile.Play, state *State, pp 
 func (m *gameMachine) handlePickedoff(play gamefile.Play, state *State, pp playCodeParser, playType PlayType, fieldingError FieldingError) error {
 	from := pp.playMatches[0]
 	if !(from == "1" || from == "2" || from == "3") {
-		return fmt.Errorf("%s: illegal picked off base %s", play.GetPos(), from)
+		return NewError("illegal picked off base %s", play.GetPos(), from)
 	}
 	runner, err := state.GetBaseRunner(from)
 	if err != nil {
-		return fmt.Errorf("%s: cannot pick off runner - %w", play.GetPos(), err)
+		return NewError("cannot pick off runner - %w", play.GetPos(), err)
 	}
 	state.Play = Play{
 		Type:            playType,
@@ -601,7 +601,7 @@ func (m *gameMachine) handlePickedoff(play gamefile.Play, state *State, pp playC
 
 func (m *gameMachine) handleStolenBase(play gamefile.Play, state *State, eventMatches []string) error {
 	if state.LastState == nil {
-		return fmt.Errorf("%s: cannot steal bases at the start of a half-inning", play.GetPos())
+		return NewError("cannot steal bases at the start of a half-inning", play.GetPos())
 	}
 	for i := range eventMatches {
 		base := eventMatches[i]
@@ -620,13 +620,13 @@ func (m *gameMachine) handleStolenBase(play gamefile.Play, state *State, eventMa
 			adv = m.impliedAdvance(play, state, "3-H")
 			runner = state.LastState.Runners[2]
 		default:
-			return fmt.Errorf("%s: unknown stolen base code", play.GetPos())
+			return NewError("unknown stolen base code", play.GetPos())
 		}
 		adv.Runner = runner
 		adv.Steal = true
 		state.Play.StolenBases = append(state.Play.StolenBases, base)
 		if runner == "" {
-			return fmt.Errorf("%s: no runner can steal %s", play.GetPos(), base)
+			return NewError("no runner can steal %s", play.GetPos(), base)
 		}
 	}
 	return nil
@@ -656,10 +656,10 @@ func (m *gameMachine) moveRunners(play gamefile.Play, state *State) error {
 		to := BaseNumber[advance.To]
 		switch {
 		case state.LastState == nil && advance.From != "B":
-			return fmt.Errorf("%s: cannot advance a runner from %s to %s at start of half-inning",
+			return NewError("cannot advance a runner from %s to %s at start of half-inning",
 				play.GetPos(), advance.From, advance.To)
 		case advance.From != "B" && state.LastState != nil && state.LastState.Runners[from] == "":
-			return fmt.Errorf("%s: cannot advance non-existent runner from %s",
+			return NewError("cannot advance non-existent runner from %s",
 				play.GetPos(), advance.From)
 		case advance.Out:
 			state.recordOut()
@@ -674,13 +674,13 @@ func (m *gameMachine) moveRunners(play gamefile.Play, state *State) error {
 			}
 		case advance.From == "B":
 			if state.Runners[to] != "" && !isFieldersChoice3rdOut(state) {
-				return fmt.Errorf("%s: cannot advance batter-runner %s to %d because it's already occupied by %s",
+				return NewError("cannot advance batter-runner %s to %d because it's already occupied by %s",
 					play.GetPos(), state.Batter, to+1, state.Runners[to])
 			}
 			state.Runners[to] = state.Batter
 		default:
 			if state.Runners[to] != "" && !isFieldersChoice3rdOut(state) {
-				return fmt.Errorf("%s: cannot advance runner %s to %d because it's already occupied by %s",
+				return NewError("cannot advance runner %s to %d because it's already occupied by %s",
 					play.GetPos(), state.LastState.Runners[from], to+1, state.Runners[to])
 			}
 			state.Runners[to] = state.LastState.Runners[from]

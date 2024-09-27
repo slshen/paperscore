@@ -24,6 +24,7 @@ func Root() *cobra.Command {
 		fmtCommand(), altCommand(), webdataCommand(), newGameCommand(),
 		battingCountCommand(), battingTimesSeenPitcherCommand(),
 		pitchingTimesSeenLineupCommand(), simCommand(),
+		uiCommand(),
 	)
 	return root
 }

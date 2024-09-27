@@ -1,7 +1,6 @@
 package game
 
 import (
-	"fmt"
 	"regexp"
 
 	"github.com/slshen/sb/pkg/gamefile"
@@ -53,7 +52,7 @@ func (a *Advance) GoString() string {
 func parseAdvance(play gamefile.Play, s string) (*Advance, error) {
 	m := advanceRegexp.FindStringSubmatch(s)
 	if m == nil {
-		return nil, fmt.Errorf("%s: illegal advance code %s", play.GetPos(), s)
+		return nil, NewError("illegal advance code %s", play.GetPos(), s)
 	}
 	a := &Advance{
 		Code: s,
@@ -70,12 +69,12 @@ func parseAdvance(play gamefile.Play, s string) (*Advance, error) {
 				if f >= '1' && f <= '9' {
 					a.Fielders = append(a.Fielders, int(f-'1')+1)
 				} else {
-					return nil, fmt.Errorf("%s: illegal fielder %c for put out in advance code %s",
+					return nil, NewError("illegal fielder %c for put out in advance code %s",
 						play.GetPos(), f, s)
 				}
 			}
 			if len(a.Fielders) == 0 {
-				return nil, fmt.Errorf("%s: no fielders for put out in advancde code %s",
+				return nil, NewError("no fielders for put out in advancde code %s",
 					play.GetPos(), s)
 			}
 		}
@@ -110,20 +109,20 @@ func parseAdvances(play gamefile.Play, batter PlayerID, runners [3]PlayerID) (ad
 			return
 		}
 		if advances.From(advance.From) != nil {
-			err = fmt.Errorf("%s: cannot advance %s twice in %s", play.GetPos(), advance.From, as)
+			err = NewError("cannot advance %s twice in %s", play.GetPos(), advance.From, as)
 			return
 		}
 		if advance.From == "B" {
 			advance.Runner = batter
 		} else {
 			/*if runners == nil {
-				err = fmt.Errorf("%s: no runner to advance from %s at the start of a half-inning",
+				err = NewError("no runner to advance from %s at the start of a half-inning",
 					play.GetPos(), advance.From)
 				return
 			}*/
 			advance.Runner = runners[runnerNumber[advance.From]]
 			if advance.Runner == "" {
-				err = fmt.Errorf("%s: no runner to advance from %s in %s", play.GetPos(),
+				err = NewError("no runner to advance from %s in %s", play.GetPos(),
 					advance.From, as)
 				return
 			}
