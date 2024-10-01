@@ -1,7 +1,6 @@
 package game
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -146,10 +145,10 @@ func ReadGameFile(path string) (*Game, error) {
 	if err != nil {
 		return nil, err
 	}
-	return newGame(gf)
+	return NewGame(gf)
 }
 
-func newGame(gf *gamefile.File) (*Game, error) {
+func NewGame(gf *gamefile.File) (*Game, error) {
 	g := &Game{
 		File:       gf,
 		Tournament: gf.Properties["tournament"],
@@ -251,7 +250,7 @@ func (g *Game) runPlays(battingTeam, fieldingTeam *Team, half Half, events []*ga
 	if events == nil {
 		return
 	}
-	m := newGameMachine(half, battingTeam, fieldingTeam)
+	m := newGameMachine(battingTeam, fieldingTeam)
 	lastState := &State{
 		InningNumber: 1,
 		Half:         half,
@@ -262,7 +261,7 @@ func (g *Game) runPlays(battingTeam, fieldingTeam *Team, half Half, events []*ga
 		}
 		if m.final {
 			errs = multierror.Append(errs,
-				fmt.Errorf("%s: cannot have more plays after final score", event.Pos))
+				NewError("cannot have more plays after final score", event.Pos))
 			break
 		}
 		switch {
@@ -297,7 +296,7 @@ func (g *Game) runPlays(battingTeam, fieldingTeam *Team, half Half, events []*ga
 				state.Comment = event.Alternative.Comment
 				if g.altStates[lastState] != nil {
 					errs = multierror.Append(errs,
-						fmt.Errorf("%s: only a single alternate state is allowed", event.Pos))
+						NewError("only a single alternate state is allowed", event.Pos))
 				} else {
 					g.altStates[lastState] = state
 				}

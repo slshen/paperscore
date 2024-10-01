@@ -1,4 +1,6 @@
+__debug*
 /retrosheet
+test.gm
 *.pdf
 /*.csv
 /.vscode

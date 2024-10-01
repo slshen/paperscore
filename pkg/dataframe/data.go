@@ -34,11 +34,7 @@ func FromStructs(name string, values interface{}) (*Data, error) {
 	var idx *Index
 	for i := 0; i < v.Len(); i++ {
 		val := v.Index(i).Interface()
-		var err error
 		idx = dat.AppendStruct(idx, val)
-		if err != nil {
-			return nil, err
-		}
 	}
 	return dat, nil
 }
@@ -139,6 +135,15 @@ func (dat *Data) RApply(f func(row int)) {
 	for r := 0; r < rc; r++ {
 		f(r)
 	}
+}
+
+func (dat *Data) GetColumn(name string) *Column {
+	for _, col := range dat.Columns {
+		if col.Name == name {
+			return col
+		}
+	}
+	return nil
 }
 
 func (dat *Data) GetRow(r int) []interface{} {

@@ -8,7 +8,7 @@ import (
 
 func TestParser(t *testing.T) {
 	assert := assert.New(t)
-	assert.NotNil(parser)
+	assert.NotNil(Parser)
 	f, err := ParseFile("testdata/test.gm")
 	if !assert.NoError(err) {
 		return

@@ -34,7 +34,7 @@ type TeamEvents struct {
 type Property struct {
 	Pos   Position
 	Key   string `parser:"@Ident"`
-	Value string `parser:"@Text (NL|EOF)"`
+	Value string `parser:"@Text (NL+|EOF)"`
 }
 
 type Event struct {
@@ -99,6 +99,10 @@ func (n Numbers) String() string {
 func (n Numbers) Int() int {
 	i, _ := strconv.Atoi(n.String())
 	return i
+}
+
+func (f *File) Parse(r io.Reader) error {
+	return nil
 }
 
 func (f *File) Validate() error {

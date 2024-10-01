@@ -4,14 +4,13 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+
+	"github.com/slshen/sb/pkg/gamefile"
 )
 
 type Pitches string
 type PlayerID string
-type FileLocation struct {
-	Filename string
-	Line     int
-}
+type FileLocation = gamefile.Position
 
 type Half string
 
@@ -50,10 +49,6 @@ type PlateAppearance struct {
 	Modifiers  `yaml:",omitempty,flow"`
 }
 
-func (pos FileLocation) String() string {
-	return fmt.Sprintf("%s:%d", pos.Filename, pos.Line)
-}
-
 func (state *State) Top() bool {
 	return state.Half == Top
 }
@@ -69,16 +64,16 @@ func (state *State) GetRunsScored() int {
 
 func (state *State) GetBaseRunner(base string) (runner PlayerID, err error) {
 	if base == "H" {
-		err = fmt.Errorf("a runner cannot be at H")
+		err = NewError("a runner cannot be at H", state.Pos)
 		return
 	}
 	if state.LastState == nil || (state.LastState.InningNumber != state.InningNumber) {
-		err = fmt.Errorf("no runners are on base at the start of a half-inning")
+		err = NewError("no runners are on base at the start of a half-inning", state.Pos)
 		return
 	}
 	runner = state.LastState.Runners[runnerNumber[base]]
 	if runner == "" {
-		err = fmt.Errorf("no runner on %s", base)
+		err = NewError("no runner on %s", state.Pos, base)
 	}
 	return
 }
