@@ -1,6 +1,10 @@
 package game
 
-import "strings"
+import (
+	"regexp"
+	"strconv"
+	"strings"
+)
 
 type Modifiers []string
 
@@ -23,6 +27,12 @@ const (
 )
 
 type Trajectory string
+type Location struct {
+	Fielder int
+	Length  string
+}
+
+var locationRe = regexp.MustCompile(`[A-Z]+([1-9])(S|D)?`)
 
 func (mods Modifiers) Trajectory() Trajectory {
 	for _, m := range mods {
@@ -51,6 +61,29 @@ func (mods Modifiers) Trajectory() Trajectory {
 		}
 	}
 	return ""
+}
+
+func (mods Modifiers) Location() *Location {
+	for _, m := range mods {
+		if m[0] != 'E' {
+			rm := locationRe.FindStringSubmatch(m)
+			if rm != nil {
+				// F8S = short center, P6D deep shortstop
+				fielder, _ := strconv.Atoi(rm[1])
+				var length string
+				if rm[2] == "D" {
+					length = "deep"
+				} else if rm[2] == "S" {
+					length = "short"
+				}
+				return &Location{
+					Fielder: fielder,
+					Length:  length,
+				}
+			}
+		}
+	}
+	return nil
 }
 
 func (mods Modifiers) Contains(codes ...string) bool {

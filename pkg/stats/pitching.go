@@ -80,6 +80,8 @@ func (p *Pitching) Record(state *game.State) {
 		case game.HitByPitch:
 			p.HP++
 		case game.Double:
+			fallthrough
+		case game.GroundRuleDouble:
 			p.Doubles++
 		case game.Triple:
 			p.Triples++

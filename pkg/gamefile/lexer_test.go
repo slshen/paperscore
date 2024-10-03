@@ -1,7 +1,6 @@
 package gamefile
 
 import (
-	"fmt"
 	"strings"
 	"testing"
 
@@ -19,7 +18,8 @@ no-nl: foo
 ---
 plays us 1-2
 1 00 S6/G6/B B-1 1-3(E3/TH) 2X3(635) : bunt single
-...`))
+... 2XH(82)
+2 1 bbbb w`))
 	assert.NoError(err)
 	if !assert.NotNil(lex) {
 		return
@@ -28,47 +28,55 @@ plays us 1-2
 	if !assert.NoError(err) {
 		return
 	}
+	symbolsByType := map[lexer.TokenType]string{}
 	for n, i := range gameFileDef.Symbols() {
-		fmt.Println(n, i)
+		symbolsByType[i] = n
 	}
 	for i, expTok := range []struct{ name, value string }{
-		{"Ident", "team"},
-		{"Text", "pride-2022"},
+		{"Key", "team"},
+		{"Value", "pride-2022"},
 		{"NL", ""},
-		{"Ident", "date"},
-		{"Text", "5/30/22"},
+		{"Key", "date"},
+		{"Value", "5/30/22"},
 		{"NL", ""},
-		{"Ident", "comment"},
-		{"Text", "Game started late"},
+		{"Key", "comment"},
+		{"Value", "Game started late"},
 		{"NL", ""},
-		{"Ident", "empty"},
+		{"Key", "empty"},
 		{"NL", ""},
-		{"Ident", "no-nl"},
-		{"Text", "foo"},
+		{"Key", "no-nl"},
+		{"Value", "foo"},
 		{"NL", ""},
 		{"Keyword", "plays"},
-		{"Keyword", "us"},
-		{"Code", "1-2"},
+		{"Token", "us"},
+		{"Token", "1-2"},
 		{"NL", ""},
-		{"Numbers", "1 "},
-		{"Numbers", "00 "},
-		{"Code", "S6/G6/B"},
-		{"Code", "B-1"},
-		{"Code", "1-3(E3/TH)"},
-		{"Code", "2X3(635)"},
-		{"Text", "bunt single"},
+		{"PA", "1"},
+		{"Token", "00"},
+		{"Token", "S6/G6/B"},
+		{"Advance", "B-1"},
+		{"Advance", "1-3(E3/TH)"},
+		{"Advance", "2X3(635)"},
+		{"Comment", "bunt single"},
 		{"NL", ""},
-		{"Dots", "..."},
+		{"PA", "..."},
+		{"Advance", "2XH(82)"},
+		{"NL", ""},
+		{"PA", "2"},
+		{"Token", "1"},
+		{"Token", "bbbb"},
+		{"Token", "w"},
 		{"EOF", ""},
 	} {
 		tok := toks[i]
 		if expTok.name != "" {
 			tokt := gameFileDef.Symbols()[expTok.name]
-			assert.Less(tokt, 0, "%s not token at %v", tok.Value, tok.Pos)
-			assert.Equal(tokt, tok.Type, "token not %s at %v", expTok.name, tok.Pos)
+			actualToken := symbolsByType[tok.Type]
+			assert.Less(tokt, 0, "%s not token at %v for token type %s", tok.Value, tok.Pos, expTok.name)
+			assert.Equal(tokt, tok.Type, "token type is %s (%s) not %s at %v", actualToken, tok.Value, expTok.name, tok.Pos)
 		}
 		if expTok.value != "" {
-			assert.Equal(expTok.value, tok.Value)
+			assert.Equal(expTok.value, tok.Value, "token value not expected at %v", tok.Pos)
 		}
 	}
 }

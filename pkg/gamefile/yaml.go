@@ -153,15 +153,15 @@ func (p *YAMLParser) isPAComplete(code string) bool {
 	return true
 }
 
-func (p *YAMLParser) parseBatter(s string) Numbers {
+func (p *YAMLParser) parseBatter(s string) string {
 	// the yaml format allows letters at the start of a batter
 	// but the gamefile format only allows digits, so remove the
 	// letters
 	m := regexp.MustCompile(`[a-z]*([0-9]+)`).FindStringSubmatch(s)
 	if m != nil {
-		return Numbers(m[1])
+		return m[1]
 	}
-	return Numbers("000")
+	return "000"
 }
 
 func (p *YAMLParser) getPart(parts []string, i int) string {

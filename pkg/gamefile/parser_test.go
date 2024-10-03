@@ -24,7 +24,7 @@ func TestParser(t *testing.T) {
 		if assert.NotNil(play) {
 			assert.Equal(1, play.PlateAppearance.Int())
 			assert.NoError(err)
-			assert.Equal("7", play.Batter.String())
+			assert.Equal("7", play.Batter)
 			assert.Equal("CSFS", play.PitchSequence)
 			assert.Equal("K", play.Code)
 		}
@@ -34,8 +34,13 @@ func TestParser(t *testing.T) {
 			assert.Equal("routine ground ball", event.Alternative.Comment)
 		}
 		event = events[8]
-		assert.True(*event.Afters[0].Conference)
+		if assert.Len(event.Afters, 1) && assert.NotNil(event.Afters[0].Conference) {
+			assert.True(*event.Afters[0].Conference)
+		}
 		event = events[3]
 		assert.Equal("9", *event.Afters[0].CourtesyRunner)
+		event = events[20]
+		assert.Equal("3", event.VSubEnter)
+		assert.Equal("2", event.VSubFor)
 	}
 }

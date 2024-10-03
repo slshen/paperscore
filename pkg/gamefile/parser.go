@@ -6,7 +6,10 @@ import (
 	"github.com/alecthomas/participle/v2"
 )
 
-var Parser = participle.MustBuild[File](participle.Lexer(gameFileDef))
+var Parser = participle.MustBuild[File](
+	participle.Lexer(gameFileDef),
+	participle.UseLookahead(10),
+)
 
 func ParseString(path string, text string) (*File, error) {
 	file, err := Parser.ParseString(path, text)

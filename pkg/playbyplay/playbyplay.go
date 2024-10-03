@@ -99,8 +99,8 @@ func (gen *Generator) Generate(w io.Writer) error {
 				} else {
 					gen.score.home += len(state.ScoringRunners)
 				}
-				fmt.Fprintf(line, ". %d %s, %d %s", gen.score.visitor, gen.Game.Visitor.Name,
-					gen.score.home, gen.Game.Home.Name)
+				fmt.Fprintf(line, ". %s %d, %s %d", gen.Game.Visitor.Name, gen.score.visitor,
+					gen.Game.Home.Name, gen.score.home)
 			}
 		}
 		if state.Comment != "" {
@@ -167,7 +167,31 @@ func positionName(fielder int) string {
 	case 9:
 		return "right fielder"
 	}
-	return fmt.Sprintf("unknwn fielder %d", fielder)
+	return fmt.Sprintf("unknown fielder %d", fielder)
+}
+
+func locationName(fielder int) string {
+	switch fielder {
+	case 1:
+		return "the circle"
+	case 2:
+		return "home plate"
+	case 3:
+		return "first base"
+	case 4:
+		return "second base"
+	case 5:
+		return "third base"
+	case 6:
+		return "5-6 hole"
+	case 7:
+		return "left field"
+	case 8:
+		return "center field"
+	case 9:
+		return "right field"
+	}
+	return fmt.Sprintf("unknown location %d", fielder)
 }
 
 func hitTrajectory(state *game.State, hit string, fielders []int) string {
@@ -178,8 +202,23 @@ func hitTrajectory(state *game.State, hit string, fielders []int) string {
 		fmt.Fprintf(s, " on a %s", trajectory)
 	}
 	if len(fielders) > 0 {
-		for _, fielder := range fielders {
-			fmt.Fprintf(s, " to %s", positionName(fielder))
+		loc := state.Modifiers.Location()
+		for i, fielder := range fielders {
+			var adj string
+			if i == 0 && loc != nil {
+				adj = loc.Length
+			}
+			fmt.Fprintf(s, " to %s%s", adj, positionName(fielder))
+		}
+	} else {
+		// H and DGR don't have fielders
+		loc := state.Modifiers.Location()
+		if loc != nil {
+			var length string
+			if loc.Length != "" {
+				length = loc.Length + " "
+			}
+			fmt.Fprintf(s, " to %s%s", length, locationName(loc.Fielder))
 		}
 	}
 	return s.String()
@@ -213,6 +252,8 @@ func batterPlayDescription(state *game.State) string {
 		return hitTrajectory(state, "singles", play.Fielders)
 	case game.Double:
 		return hitTrajectory(state, "doubles", play.Fielders)
+	case game.GroundRuleDouble:
+		return hitTrajectory(state, "hits a ground rule double", play.Fielders)
 	case game.Triple:
 		return hitTrajectory(state, "triples", play.Fielders)
 	case game.Walk:
@@ -286,7 +327,7 @@ func runningPlayDescription(team *game.Team, state, lastState *game.State) strin
 		}
 		return strings.Join(sb, ", ")
 	case state.Play.Type == game.CaughtStealing || state.Play.Type == game.StrikeOutCaughtStealing:
-		return fmt.Sprintf("%s is caught stealing %s", team.GetPlayer(state.Runners[0]).NameOrNumber(), play.CaughtStealingBase)
+		return fmt.Sprintf("%s is caught stealing %s", team.GetPlayer(state.CaughtStealingRunner).NameOrNumber(), play.CaughtStealingBase)
 	case state.Play.Type == game.WildPitch:
 		return "On a wild pitch"
 	case state.Play.Type == game.PassedBall:
