@@ -73,7 +73,7 @@ func New() *UI {
 		0, 1, false).
 		AddItem(ui.messages, 6, 0, false).
 		AddItem(tview.NewFlex().
-			AddItem(tview.NewTextView().SetText("Quit:^Q Save:^S Choose:^L"), 0, 4, false).
+			AddItem(tview.NewTextView().SetText("Quit:^Q Save:^S Choose:^L Swap:^R"), 0, 4, false).
 			AddItem(ui.status, 0, 1, false),
 			1, 0, false)
 	ui.root.AddAndSwitchToPage("main", flex, true)
@@ -197,16 +197,20 @@ func (ui *UI) parseGame(gamePath string) {
 	ui.properties.SetText("", false)
 	ui.homePlays.SetText("", false)
 	ui.visitorPlays.SetText("", false)
+	var r io.Reader
 	f, err := os.Open(ui.path)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
+			r = strings.NewReader(fmt.Sprintf("date: %s\ngame: 1\n---\n", time.Now().Format(gamefile.GameDateFormat)))
+		} else {
+			ui.messages.SetText(fmt.Sprintf("cannot open %s: %s", ui.path, err))
 			return
 		}
-		ui.messages.SetText(fmt.Sprintf("cannot parse %s: %s", ui.path, err))
-		return
+	} else {
+		defer f.Close()
+		r = f
 	}
-	defer f.Close()
-	scanner := bufio.NewScanner(f)
+	scanner := bufio.NewScanner(r)
 	state := "props"
 	var (
 		buf         strings.Builder
@@ -248,6 +252,38 @@ func (ui *UI) parseGame(gamePath string) {
 	if targetPlays != nil {
 		targetPlays.SetText(buf.String(), false)
 	}
+	// fake a key press so update cycle runs
+	ui.lastKey = time.Now()
+	ui.modified = false
+}
+
+func (ui *UI) chooseFile() {
+	ui.showDialog(NewChooser(path.Dir(ui.path), ui.path, func(s string, newgame bool) {
+		ui.closeDialog()
+		if s != "" {
+			if newgame {
+				ui.newGame(s)
+			} else {
+				ui.parseGame(s)
+			}
+		}
+	}))
+}
+
+func (ui *UI) swapHomeAndAway() {
+	var propertiesText strings.Builder
+	for _, line := range strings.Split(ui.properties.GetText(), "\n") {
+		if strings.HasPrefix(line, "home") && len(line) > 4 {
+			line = "visitor" + line[4:]
+		} else if strings.HasPrefix(line, "visitor") && len(line) > 7 {
+			line = "home" + line[7:]
+		}
+		fmt.Fprintln(&propertiesText, line)
+	}
+	ui.properties.SetText(propertiesText.String(), false)
+	visitorPlays, homePlays := ui.visitorPlays.GetText(), ui.homePlays.GetText()
+	ui.visitorPlays.Replace(0, ui.visitorPlays.GetTextLength(), homePlays)
+	ui.homePlays.Replace(0, ui.homePlays.GetTextLength(), visitorPlays)
 	ui.lastKey = time.Now()
 }
 
@@ -265,18 +301,11 @@ func (ui *UI) inputHandler(event *tcell.EventKey) *tcell.EventKey {
 		return nil
 	case tcell.KeyCtrlL:
 		if ui.dialog == nil {
-			ui.showDialog(NewChooser(path.Dir(ui.path), ui.path, func(s string, newgame bool) {
-				ui.closeDialog()
-				if s != "" {
-					if newgame {
-						ui.newGame(s)
-					} else {
-						ui.parseGame(s)
-					}
-				}
-			}))
+			ui.chooseFile()
 		}
 		return nil
+	case tcell.KeyCtrlR:
+		ui.swapHomeAndAway()
 	case tcell.KeyCtrlP:
 		return tcell.NewEventKey(tcell.KeyUp, 0, 0)
 	case tcell.KeyCtrlN:
@@ -370,19 +399,17 @@ func (ui *UI) save() {
 			ui.path = path.Join(path.Dir(ui.path), canonName)
 		}
 		f, err := os.Create(ui.path)
-		var msg string
 		if err != nil {
-			msg = fmt.Sprintf("[yellow:red]%s", err.Error())
+			msg := fmt.Sprintf("cannot save %s [yellow:red]%s", ui.path, err.Error())
+			ui.messages.SetText(msg)
 		} else {
 			_, _ = f.WriteString(text)
 			f.Close()
-			msg = fmt.Sprintf("%s [green]saved", ui.path)
-		}
-		ui.messages.SetText(msg)
-		ui.modified = false
-		ui.status.SetText(path.Base(ui.path))
-		if canonName != "" {
-			_ = os.Remove(originalPath)
+			ui.modified = false
+			ui.status.SetText(path.Base(ui.path))
+			if canonName != "" {
+				_ = os.Remove(originalPath)
+			}
 		}
 	}
 	if canonName != "" {

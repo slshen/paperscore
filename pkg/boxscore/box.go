@@ -125,6 +125,10 @@ func (box *BoxScore) InningScoreTable() *dataframe.Data {
 			Values: []int{box.VisitorLineup.TotalHits(), box.HomeLineup.TotalHits()},
 		},
 		&dataframe.Column{
+			Name: " W", Format: "%2d",
+			Values: []int{box.VisitorLineup.TotalWalks(), box.HomeLineup.TotalWalks()},
+		},
+		&dataframe.Column{
 			Name: " E", Format: "%2d",
 			Values: []int{box.VisitorLineup.Errors, box.HomeLineup.Errors},
 		},
