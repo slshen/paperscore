@@ -18,7 +18,7 @@ func TestParseYAML(t *testing.T) {
 	assert.Equal("2", events[0].Pitcher)
 	play := events[1].Play
 	if assert.NotNil(play) {
-		assert.Equal(Numbers("17"), play.Batter)
+		assert.Equal("17", play.Batter)
 		assert.Equal("BBBB", play.PitchSequence)
 		assert.Equal("W", play.Code)
 		if assert.Len(play.Advances, 1) {
@@ -27,13 +27,13 @@ func TestParseYAML(t *testing.T) {
 	}
 	play = events[2].Play
 	if assert.NotNil(play) {
-		assert.Equal("6", play.Batter.String())
+		assert.Equal("6", play.Batter)
 		assert.Equal("C", play.PitchSequence)
 		assert.Equal("SB2", play.Code)
 	}
 	play = events[36].Play
 	if assert.NotNil(play) {
-		assert.Equal("00", play.Batter.String())
+		assert.Equal("00", play.Batter)
 		assert.Equal("advance on throw", events[36].Comment, play)
 	}
 }

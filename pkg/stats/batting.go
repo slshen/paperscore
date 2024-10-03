@@ -66,6 +66,8 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 		case game.Single:
 			b.Singles++
 		case game.Double:
+			fallthrough
+		case game.GroundRuleDouble:
 			b.Doubles++
 		case game.Triple:
 			b.Triples++

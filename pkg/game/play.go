@@ -5,6 +5,7 @@ type PlayType byte
 const (
 	Single PlayType = iota
 	Double
+	GroundRuleDouble
 	Triple
 	HomeRun
 	CaughtStealing
@@ -63,7 +64,7 @@ func (p *Play) Is(ts ...PlayType) bool {
 }
 
 func (p *Play) IsHit() bool {
-	return p.Type == Single || p.Type == Double || p.Type == Triple || p.Type == HomeRun
+	return p.Type == Single || p.Type == Double || p.Type == Triple || p.Type == HomeRun || p.Type == GroundRuleDouble
 }
 
 func (p *Play) IsStrikeOut() bool {

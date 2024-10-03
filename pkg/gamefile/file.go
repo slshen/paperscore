@@ -33,30 +33,30 @@ type TeamEvents struct {
 
 type Property struct {
 	Pos   Position
-	Key   string `parser:"@Ident"`
-	Value string `parser:"@Text (NL+|EOF)"`
+	Key   string `parser:"@Key"`
+	Value string `parser:"@Value (NL+|EOF)"`
 }
 
 type Event struct {
 	Pos         Position
-	Play        *ActualPlay  `parser:"@@"`
-	Afters      []*After     `parser:"  @@*"`
-	Comment     string       `parser:" @Text? (NL|EOF)"`
-	Alternative *Alternative `parser:"| 'alt' @@ (NL|EOF)"`
-	Pitcher     string       `parser:"| ('pitcher'|'pitching') @Code (NL|EOF)"`
-	RAdjRunner  Numbers      `parser:"| 'radj' @Numbers"`
-	RAdjBase    string       `parser:"      @Code (NL|EOF)"`
-	Score       string       `parser:"| 'score' @Code (NL|EOF)"`
-	Final       string       `parser:"| 'final' @Code (NL|EOF)"`
-	HSubEnter   Numbers      `parser:"| 'hsub' @Numbers"`
-	HSubFor     Numbers      `parser:"      'for' @Code (NL|EOF)"` // TODO why @Code
-	VSubEnter   Numbers      `parser:"| 'vsub' @Numbers"`
-	VSubFor     Numbers      `parser:"      'for' @Code (NL|EOF)"`
+	Alternative *Alternative `parser:"'alt' @@ (NL|EOF)"`
+	Pitcher     string       `parser:"| ('pitcher'|'pitching') @Token (NL|EOF)"`
+	RAdjRunner  Numbers      `parser:"| 'radj' @Token"`
+	RAdjBase    string       `parser:"      @Token (NL|EOF)"`
+	Score       string       `parser:"| 'score' @Token (NL|EOF)"`
+	Final       string       `parser:"| 'final' @Token (NL|EOF)"`
+	HSubEnter   string       `parser:"| 'hsub' @Token"`
+	HSubFor     string       `parser:"      'for' @Token (NL|EOF)"`
+	VSubEnter   string       `parser:"| 'vsub' @Token"`
+	VSubFor     string       `parser:"      'for' @Token (NL|EOF)"`
+	Play        *ActualPlay  `parser:"| @@"`
+	Afters      []*After     `parser:"   @@*"`
+	Comment     string       `parser:"   @Comment? (NL|EOF)"`
 	Empty       bool         `parser:"| @NL"`
 }
 
 type After struct {
-	CourtesyRunner *string `parser:"'cr' @Code"`
+	CourtesyRunner *string `parser:"'cr' @Token"`
 	Conference     *bool   `parser:"| @'conf'"`
 }
 
@@ -68,21 +68,21 @@ type Play interface {
 
 type ActualPlay struct {
 	Pos                      Position
-	PlateAppearance          Numbers  `parser:"((@Numbers"`
-	Batter                   Numbers  `parser:"  @Numbers)"`
-	ContinuedPlateAppearance bool     `parser:" | @Dots)"`
-	PitchSequence            string   `parser:" @Code"`
-	Code                     string   `parser:" @Code"`
-	Advances                 []string `parser:" @Code*"`
+	ContinuedPlateAppearance bool     `parser:"((@'...')"`
+	PlateAppearance          Numbers  `parser:" | (@PA"`
+	Batter                   string   `parser:"    @Token))"`
+	PitchSequence            string   `parser:" @Token"`
+	Code                     string   `parser:" @Token"`
+	Advances                 []string `parser:" @Advance*"`
 }
 
 var _ Play = (*ActualPlay)(nil)
 
 type Alternative struct {
 	Pos      Position
-	Code     string   `parser:"@Code"`
-	Advances []string `parser:"@Code*"`
-	Comment  string   `parser:"  @Text?"`
+	Code     string   `parser:"@Token"`
+	Advances []string `parser:"@Advance*"`
+	Comment  string   `parser:"  @Comment?"`
 }
 
 var _ Play = (*Alternative)(nil)
@@ -105,6 +105,27 @@ func (f *File) Parse(r io.Reader) error {
 	return nil
 }
 
+func (p *ActualPlay) normalize() {
+	if p == nil {
+		return
+	}
+	for i, adv := range p.Advances {
+		p.Advances[i] = strings.ToUpper(adv)
+	}
+	p.Code = strings.ToUpper(p.Code)
+	p.PitchSequence = strings.ToUpper(p.PitchSequence)
+}
+
+func (a *Alternative) normalize() {
+	if a == nil {
+		return
+	}
+	for i, adv := range a.Advances {
+		a.Advances[i] = strings.ToUpper(adv)
+	}
+	a.Code = strings.ToUpper(a.Code)
+}
+
 func (f *File) Validate() error {
 	f.Properties = make(map[string]string)
 	f.PropertyPos = make(map[string]Position)
@@ -113,6 +134,11 @@ func (f *File) Validate() error {
 		f.PropertyPos[prop.Key] = prop.Pos
 	}
 	for _, te := range f.TeamEvents {
+		for _, event := range te.Events {
+			// make codes upper code
+			event.Play.normalize()
+			event.Alternative.normalize()
+		}
 		switch te.HomeOrVisitor {
 		case "homeplays":
 			if f.HomeEvents != nil {
@@ -186,16 +212,16 @@ func (f *File) writeEvents(w io.Writer, name string, events []*Event) {
 				} else {
 					pa += 1
 				}
-				fmt.Fprintf(w, "%d %s ", pa, play.Batter.String())
+				fmt.Fprintf(w, "%d %s ", pa, play.Batter)
 			} else {
 				fmt.Fprintf(w, "  ... ")
 			}
 			fmt.Fprintf(w, "%s ", play.PitchSequence)
-			f.writeCodeAdvancesComment(w, play.Code, play.Advances, event.Comment)
+			f.writeCodeAdvancesComment(w, play.Code, play.Advances, event.Afters, event.Comment)
 		case event.Alternative != nil:
 			alt := event.Alternative
 			fmt.Fprintf(w, "  alt")
-			f.writeCodeAdvancesComment(w, alt.Code, alt.Advances, alt.Comment)
+			f.writeCodeAdvancesComment(w, alt.Code, alt.Advances, nil, alt.Comment)
 		case event.Pitcher != "":
 			fmt.Fprintf(w, "pitching %s\n", event.Pitcher)
 		case event.RAdjBase != "":
@@ -209,10 +235,18 @@ func (f *File) writeEvents(w io.Writer, name string, events []*Event) {
 	fmt.Fprintln(w)
 }
 
-func (f *File) writeCodeAdvancesComment(w io.Writer, code string, advances []string, comment string) {
+func (f *File) writeCodeAdvancesComment(w io.Writer, code string, advances []string, afters []*After, comment string) {
 	fmt.Fprintf(w, "%s", code)
 	for _, adv := range advances {
 		fmt.Fprintf(w, " %s", adv)
+	}
+	for _, aft := range afters {
+		if aft.Conference != nil {
+			fmt.Fprint(w, " conf")
+		}
+		if aft.CourtesyRunner != nil {
+			fmt.Fprintf(w, " cr %s", *aft.CourtesyRunner)
+		}
 	}
 	if comment != "" {
 		fmt.Fprintf(w, " : %s", comment)

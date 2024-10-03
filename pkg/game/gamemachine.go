@@ -79,7 +79,7 @@ func (m *gameMachine) handleActualPlay(play *gamefile.ActualPlay, lastState *Sta
 		state.Pitches = state.LastState.Pitches + Pitches(play.PitchSequence)
 		state.Batter = state.LastState.Batter
 	} else {
-		state.Batter = m.battingTeam.parsePlayerID(play.Batter.String())
+		state.Batter = m.battingTeam.parsePlayerID(play.Batter)
 		state.Pitches = Pitches(play.PitchSequence)
 	}
 	if state.Batter == "" {
@@ -390,7 +390,7 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 		state.Complete = true
 	case pp.playIs("DGR"):
 		state.Play = Play{
-			Type: Double,
+			Type: GroundRuleDouble,
 		}
 		m.impliedAdvance(play, state, "B-2")
 		state.Complete = true

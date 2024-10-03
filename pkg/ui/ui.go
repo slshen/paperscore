@@ -194,9 +194,6 @@ func (ui *UI) parseGame(gamePath string) {
 	ui.status.SetText(path.Base(ui.path))
 	ui.box.SetText("")
 	ui.messages.SetText("")
-	ui.properties.SetText("", false)
-	ui.homePlays.SetText("", false)
-	ui.visitorPlays.SetText("", false)
 	var r io.Reader
 	f, err := os.Open(ui.path)
 	if err != nil {
@@ -204,6 +201,9 @@ func (ui *UI) parseGame(gamePath string) {
 			r = strings.NewReader(fmt.Sprintf("date: %s\ngame: 1\n---\n", time.Now().Format(gamefile.GameDateFormat)))
 		} else {
 			ui.messages.SetText(fmt.Sprintf("cannot open %s: %s", ui.path, err))
+			ui.properties.SetText("", false)
+			ui.homePlays.SetText("", false)
+			ui.visitorPlays.SetText("", false)
 			return
 		}
 	} else {
@@ -222,7 +222,7 @@ func (ui *UI) parseGame(gamePath string) {
 		case state == "props":
 			if line == "---" {
 				state = "plays"
-				ui.properties.SetText(buf.String(), false)
+				ui.properties.Replace(0, ui.properties.GetTextLength(), buf.String())
 				buf.Reset()
 			} else {
 				fmt.Fprintln(&buf, line)
@@ -235,7 +235,7 @@ func (ui *UI) parseGame(gamePath string) {
 			targetPlays = ui.visitorPlays
 		case targetPlays != nil:
 			if (line == "homeplays" || line == "visitorplays") && line != state {
-				targetPlays.SetText(buf.String(), false)
+				targetPlays.Replace(0, targetPlays.GetTextLength(), buf.String())
 				buf.Reset()
 				if state == "homeplays" {
 					targetPlays = ui.visitorPlays
@@ -250,7 +250,7 @@ func (ui *UI) parseGame(gamePath string) {
 		}
 	}
 	if targetPlays != nil {
-		targetPlays.SetText(buf.String(), false)
+		targetPlays.Replace(0, targetPlays.GetTextLength(), buf.String())
 	}
 	// fake a key press so update cycle runs
 	ui.lastKey = time.Now()
@@ -339,10 +339,9 @@ func (ui *UI) inputHandler(event *tcell.EventKey) *tcell.EventKey {
 		}
 	}
 	if focusInc != 0 {
-		f := ui.app.GetFocus()
 		j := 0
 		for i := range ui.focusOrder {
-			if ui.focusOrder[i] == f {
+			if ui.focusOrder[i].HasFocus() {
 				j = i + focusInc
 				if j < 0 {
 					j = len(ui.focusOrder) - 1
@@ -392,23 +391,29 @@ func (ui *UI) save() {
 				canonName = ""
 			}
 		}
+		var s strings.Builder
+		gf.Write(&s)
+		text = s.String()
 	}
 	doSave := func() {
 		originalPath := ui.path
 		if canonName != "" {
 			ui.path = path.Join(path.Dir(ui.path), canonName)
 		}
-		f, err := os.Create(ui.path)
+		f, err := os.CreateTemp(path.Dir(ui.path), fmt.Sprintf("%s*", ui.path))
 		if err != nil {
 			msg := fmt.Sprintf("cannot save %s [yellow:red]%s", ui.path, err.Error())
 			ui.messages.SetText(msg)
 		} else {
 			_, _ = f.WriteString(text)
 			f.Close()
-			ui.modified = false
-			ui.status.SetText(path.Base(ui.path))
-			if canonName != "" {
-				_ = os.Remove(originalPath)
+			if err := os.Rename(f.Name(), ui.path); err != nil {
+				ui.messages.SetText(fmt.Sprintf("could not save %s [yellow:red]%s", ui.path, err.Error()))
+			} else {
+				ui.parseGame(ui.path)
+				if canonName != "" {
+					_ = os.Remove(originalPath)
+				}
 			}
 		}
 	}
