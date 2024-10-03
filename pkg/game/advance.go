@@ -74,7 +74,7 @@ func parseAdvance(play gamefile.Play, s string) (*Advance, error) {
 				}
 			}
 			if len(a.Fielders) == 0 {
-				return nil, NewError("no fielders for put out in advancde code %s",
+				return nil, NewError("no fielders for put out in advance code %s",
 					play.GetPos(), s)
 			}
 		}

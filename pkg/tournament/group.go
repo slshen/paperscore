@@ -39,7 +39,7 @@ func GroupByTournament(games []*game.Game) (res []*Group) {
 
 func isSameTournament(gr *Group, g *game.Game) bool {
 	d := gr.Games[len(gr.Games)-1].GetDate()
-	return g.GetDate() == d || g.GetDate() == d.AddDate(0, 0, 1)
+	return g.GetDate() == d || g.GetDate().Before(d.AddDate(0, 0, 2))
 }
 
 func createTournamentGroup(g *game.Game) *Group {
