@@ -47,6 +47,24 @@ func (f *File) WriteNewGame(nextDay bool) (*File, error) {
 				})
 		}
 	}
+	ng.HomeEvents = []*Event{
+		{Pitcher: "0"},
+		{Play: &ActualPlay{
+			PlateAppearance: "1",
+			Batter:          "1",
+			PitchSequence:   ".",
+			Code:            "NP",
+		}},
+	}
+	ng.VisitorEvents = []*Event{
+		{Pitcher: "0"},
+		{Play: &ActualPlay{
+			PlateAppearance: "1",
+			Batter:          "1",
+			PitchSequence:   ".",
+			Code:            "NP",
+		}},
+	}
 	if err := ng.Validate(); err != nil {
 		return nil, err
 	}

@@ -284,7 +284,7 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 		}
 		state.Complete = true
 		state.recordOut()
-		return m.handleCaughtStealing(play, state, pp, CaughtStealing, NoError)
+		return m.handleCaughtStealing(play, state, pp, NoError)
 	case pp.playIs("K+PO%($$)") || pp.playIs("K+PO%(E$)"):
 		from := pp.playMatches[0]
 		if !(from == "1" || from == "2" || from == "3") {
@@ -502,9 +502,9 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 		fieldingError := FieldingError{
 			Fielder: pp.getFielder(1),
 		}
-		return m.handleCaughtStealing(play, state, pp, PickedOff, fieldingError)
+		return m.handleCaughtStealing(play, state, pp, fieldingError)
 	case pp.playIs("CS%($$)") || pp.playIs("CS%($$$)") || pp.playIs("CS%($$$$)"):
-		return m.handleCaughtStealing(play, state, pp, CaughtStealing, NoError)
+		return m.handleCaughtStealing(play, state, pp, NoError)
 	case pp.playIs("FLE$"):
 		state.Play = Play{
 			Type:     FoulFlyError,
@@ -549,7 +549,7 @@ func (m *gameMachine) handleGroundBallDoublePlay(play gamefile.Play, state *Stat
 	return nil
 }
 
-func (m *gameMachine) handleCaughtStealing(play gamefile.Play, state *State, pp playCodeParser, playType PlayType, fieldingError FieldingError) error {
+func (m *gameMachine) handleCaughtStealing(play gamefile.Play, state *State, pp playCodeParser, fieldingError FieldingError) error {
 	to := pp.playMatches[0]
 	if !(to == "2" || to == "3" || to == "H") {
 		return fmt.Errorf("illegal caught stealing base code %s", pp.playCode)

@@ -40,7 +40,7 @@ func TestParser(t *testing.T) {
 		event = events[3]
 		assert.Equal("9", *event.Afters[0].CourtesyRunner)
 		event = events[20]
-		assert.Equal("3", event.VSubEnter)
-		assert.Equal("2", event.VSubFor)
+		assert.Equal("3", event.Sub.VSubEnter)
+		assert.Equal("2", event.Sub.VSubExit)
 	}
 }

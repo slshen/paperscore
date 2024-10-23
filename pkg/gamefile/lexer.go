@@ -24,7 +24,7 @@ var gameFileDef = lexer.MustStateful(
 			rule("comment", `//.*[\n\r]`, nil),
 		},
 		"PA": {
-			rule("Advance", `[Bb123][-Xx][123H]([^ \t\n\r]*)`, nil),
+			rule("Advance", `[Bb123][-Xx][123Hh]([^ \t\n\r]*)`, nil),
 			rule("colon", `(:|--)[ \t]*`, lexer.Push("PAComment")),
 			rule("NL", `[\n\r]`, lexer.Pop()),
 			rule("Token", `[^ \t\n\r]+`, nil),
