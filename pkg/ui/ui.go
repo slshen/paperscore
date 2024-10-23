@@ -376,14 +376,15 @@ func (ui *UI) newGame(gamePath string) {
 	if newGamePath == "" {
 		newGamePath = path.Join(path.Dir(gamePath), time.Now().Format(gamefile.GameDateFormat)+"-1.gm")
 	}
+	ui.homePlays.SetText("", false)
+	ui.visitorPlays.SetText("", false)
 	ui.parseGame(newGamePath)
 }
 
 func (ui *UI) save() {
 	text := ui.getGameText()
 	var canonName string
-	gf, _ := gamefile.ParseString(ui.path, text)
-	if gf != nil {
+	if gf, err := gamefile.ParseString(ui.path, text); err == nil {
 		gm, _ := game.NewGame(gf)
 		if gm != nil && gm.GetDate().Unix() != 0 && gm.Number != "" {
 			canonName = fmt.Sprintf("%s-%s.gm", gm.GetDate().Format("20060102"), gm.Number)
@@ -400,7 +401,7 @@ func (ui *UI) save() {
 		if canonName != "" {
 			ui.path = path.Join(path.Dir(ui.path), canonName)
 		}
-		f, err := os.CreateTemp(path.Dir(ui.path), fmt.Sprintf("%s*", ui.path))
+		f, err := os.CreateTemp(path.Dir(ui.path), fmt.Sprintf("%s*", path.Base(ui.path)))
 		if err != nil {
 			msg := fmt.Sprintf("cannot save %s [yellow:red]%s", ui.path, err.Error())
 			ui.messages.SetText(msg)

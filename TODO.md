@@ -1,3 +1,5 @@
+* Implment sub, hsub, vsub
+
 * Verify stats for games in tests
 
 * Check for runners advancing past other runners, disappearing runners

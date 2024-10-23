@@ -39,25 +39,28 @@ type Property struct {
 
 type Event struct {
 	Pos         Position
-	Alternative *Alternative `parser:"'alt' @@ (NL|EOF)"`
-	Pitcher     string       `parser:"| ('pitcher'|'pitching') @Token (NL|EOF)"`
-	RAdjRunner  Numbers      `parser:"| 'radj' @Token"`
-	RAdjBase    string       `parser:"      @Token (NL|EOF)"`
-	Score       string       `parser:"| 'score' @Token (NL|EOF)"`
-	Final       string       `parser:"| 'final' @Token (NL|EOF)"`
-	HSubEnter   string       `parser:"| 'hsub' @Token"`
-	HSubFor     string       `parser:"      'for' @Token (NL|EOF)"`
-	VSubEnter   string       `parser:"| 'vsub' @Token"`
-	VSubFor     string       `parser:"      'for' @Token (NL|EOF)"`
-	Play        *ActualPlay  `parser:"| @@"`
-	Afters      []*After     `parser:"   @@*"`
-	Comment     string       `parser:"   @Comment? (NL|EOF)"`
-	Empty       bool         `parser:"| @NL"`
+	Alternative *Alternative    `parser:"'alt' @@ (NL|EOF)"`
+	Pitcher     string          `parser:"| ('pitcher'|'pitching') @Token (NL|EOF)"`
+	RAdjRunner  Numbers         `parser:"| 'radj' @Token"`
+	RAdjBase    string          `parser:"      @Token (NL|EOF)"`
+	Score       string          `parser:"| 'score' @Token (NL|EOF)"`
+	Final       string          `parser:"| 'final' @Token (NL|EOF)"`
+	Sub         *LineupChange   `parser:"| @@"`
+	Play        *ActualPlay     `parser:"| @@"`
+	Afters      []*LineupChange `parser:"   @@*"`
+	Comment     string          `parser:"   @Comment? (NL|EOF)"`
+	Empty       bool            `parser:"| @NL"`
 }
 
-type After struct {
+type LineupChange struct {
 	CourtesyRunner *string `parser:"'cr' @Token"`
 	Conference     *bool   `parser:"| @'conf'"`
+	SubEnter       string  `parser:"| 'sub' @Token"`
+	SubExit        string  `parser:"|     'for' @Token"`
+	HSubEnter      string  `parser:"| 'hsub' @Token"`
+	HSubExit       string  `parser:"      'for' @Token (NL|EOF)"`
+	VSubEnter      string  `parser:"| 'vsub' @Token"`
+	VSubExit       string  `parser:"      'for' @Token (NL|EOF)"`
 }
 
 type Play interface {
@@ -220,7 +223,7 @@ func (f *File) writeEvents(w io.Writer, name string, events []*Event) {
 			f.writeCodeAdvancesComment(w, play.Code, play.Advances, event.Afters, event.Comment)
 		case event.Alternative != nil:
 			alt := event.Alternative
-			fmt.Fprintf(w, "  alt")
+			fmt.Fprintf(w, "  alt ")
 			f.writeCodeAdvancesComment(w, alt.Code, alt.Advances, nil, alt.Comment)
 		case event.Pitcher != "":
 			fmt.Fprintf(w, "pitching %s\n", event.Pitcher)
@@ -235,7 +238,7 @@ func (f *File) writeEvents(w io.Writer, name string, events []*Event) {
 	fmt.Fprintln(w)
 }
 
-func (f *File) writeCodeAdvancesComment(w io.Writer, code string, advances []string, afters []*After, comment string) {
+func (f *File) writeCodeAdvancesComment(w io.Writer, code string, advances []string, afters []*LineupChange, comment string) {
 	fmt.Fprintf(w, "%s", code)
 	for _, adv := range advances {
 		fmt.Fprintf(w, " %s", adv)
