@@ -3,9 +3,9 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/slshen/sb/pkg/dataexport"
-	"github.com/slshen/sb/pkg/dataframe/pkg"
-	"github.com/slshen/sb/pkg/game"
+	"github.com/slshen/paperscore/pkg/dataexport"
+	"github.com/slshen/paperscore/pkg/dataframe/pkg"
+	"github.com/slshen/paperscore/pkg/game"
 	"github.com/spf13/cobra"
 )
 

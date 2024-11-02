@@ -3,7 +3,7 @@ package stats
 import (
 	"fmt"
 
-	"github.com/slshen/sb/pkg/game"
+	"github.com/slshen/paperscore/pkg/game"
 )
 
 type Pitching struct {

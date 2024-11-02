@@ -3,7 +3,7 @@ package game
 import (
 	"testing"
 
-	"github.com/slshen/sb/pkg/gamefile"
+	"github.com/slshen/paperscore/pkg/gamefile"
 	"github.com/stretchr/testify/assert"
 )
 

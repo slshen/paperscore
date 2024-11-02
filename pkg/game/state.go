@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/slshen/sb/pkg/gamefile"
+	"github.com/slshen/paperscore/pkg/gamefile"
 )
 
 type Pitches string

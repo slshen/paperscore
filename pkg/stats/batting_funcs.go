@@ -1,6 +1,6 @@
 package stats
 
-import "github.com/slshen/sb/pkg/dataframe"
+import "github.com/slshen/paperscore/pkg/dataframe"
 
 func OnBase(idx *dataframe.Index, row int) float64 {
 	hbp := idx.GetInt(row, "HitByPitch")

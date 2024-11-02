@@ -1,4 +1,4 @@
-module github.com/slshen/sb
+module github.com/slshen/paperscore
 
 go 1.22.0
 

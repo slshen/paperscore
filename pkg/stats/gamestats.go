@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/slshen/sb/pkg/dataframe"
-	"github.com/slshen/sb/pkg/game"
+	"github.com/slshen/paperscore/pkg/dataframe"
+	"github.com/slshen/paperscore/pkg/game"
 )
 
 type GameStats struct {

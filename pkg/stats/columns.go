@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/slshen/sb/pkg/dataframe"
+	"github.com/slshen/paperscore/pkg/dataframe"
 )
 
 //go:embed *_columns.txt

@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/slshen/sb/pkg/boxscore"
-	"github.com/slshen/sb/pkg/game"
-	"github.com/slshen/sb/pkg/stats"
+	"github.com/slshen/paperscore/pkg/boxscore"
+	"github.com/slshen/paperscore/pkg/game"
+	"github.com/slshen/paperscore/pkg/stats"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )

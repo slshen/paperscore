@@ -1,6 +1,6 @@
 package stats
 
-import "github.com/slshen/sb/pkg/game"
+import "github.com/slshen/paperscore/pkg/game"
 
 type PlayerData struct {
 	Name            string

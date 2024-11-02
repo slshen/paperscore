@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/slshen/sb/pkg/game"
+	"github.com/slshen/paperscore/pkg/game"
 	"github.com/stretchr/testify/assert"
 )
 

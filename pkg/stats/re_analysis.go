@@ -1,6 +1,6 @@
 package stats
 
-import "github.com/slshen/sb/pkg/dataframe"
+import "github.com/slshen/paperscore/pkg/dataframe"
 
 type REAnalysis struct {
 	RE RunExpectancy

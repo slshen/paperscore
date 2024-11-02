@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 
-	"github.com/slshen/sb/pkg/markov"
+	"github.com/slshen/paperscore/pkg/markov"
 )
 
 type ExprModel struct {

@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/go-multierror"
-	"github.com/slshen/sb/pkg/gamefile"
+	"github.com/slshen/paperscore/pkg/gamefile"
 )
 
 type Score struct {

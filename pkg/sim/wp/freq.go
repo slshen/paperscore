@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/slshen/sb/pkg/stats"
+	"github.com/slshen/paperscore/pkg/stats"
 )
 
 type RunFrequency struct {

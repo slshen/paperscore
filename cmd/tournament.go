@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/slshen/sb/pkg/dataframe"
-	"github.com/slshen/sb/pkg/game"
-	"github.com/slshen/sb/pkg/tournament"
+	"github.com/slshen/paperscore/pkg/dataframe"
+	"github.com/slshen/paperscore/pkg/game"
+	"github.com/slshen/paperscore/pkg/tournament"
 	"github.com/spf13/cobra"
 )
 

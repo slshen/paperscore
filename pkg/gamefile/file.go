@@ -235,7 +235,6 @@ func (f *File) writeEvents(w io.Writer, name string, events []*Event) {
 			fmt.Fprintf(w, "final %s\n", event.Final)
 		}
 	}
-	fmt.Fprintln(w)
 }
 
 func (f *File) writeCodeAdvancesComment(w io.Writer, code string, advances []string, afters []*LineupChange, comment string) {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/slshen/sb/pkg/gamefile"
+	"github.com/slshen/paperscore/pkg/gamefile"
 )
 
 type FieldingError struct {

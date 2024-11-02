@@ -17,10 +17,10 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/hashicorp/go-multierror"
 	"github.com/rivo/tview"
-	"github.com/slshen/sb/pkg/boxscore"
-	"github.com/slshen/sb/pkg/game"
-	"github.com/slshen/sb/pkg/gamefile"
-	"github.com/slshen/sb/pkg/stats"
+	"github.com/slshen/paperscore/pkg/boxscore"
+	"github.com/slshen/paperscore/pkg/game"
+	"github.com/slshen/paperscore/pkg/gamefile"
+	"github.com/slshen/paperscore/pkg/stats"
 )
 
 type UI struct {
@@ -73,7 +73,7 @@ func New() *UI {
 		0, 1, false).
 		AddItem(ui.messages, 6, 0, false).
 		AddItem(tview.NewFlex().
-			AddItem(tview.NewTextView().SetText("Quit:^Q Save:^S Choose:^L Swap:^R"), 0, 4, false).
+			AddItem(tview.NewTextView().SetText("Quit:^Q Save:^S Choose:^L Swap:^R Box:^Z"), 0, 4, false).
 			AddItem(ui.status, 0, 1, false),
 			1, 0, false)
 	ui.root.AddAndSwitchToPage("main", flex, true)
@@ -288,6 +288,9 @@ func (ui *UI) swapHomeAndAway() {
 }
 
 func (ui *UI) inputHandler(event *tcell.EventKey) *tcell.EventKey {
+	if ui.dialog != nil {
+		return event
+	}
 	var focusInc int
 	switch event.Key() {
 	case tcell.KeyCtrlQ:
@@ -306,6 +309,9 @@ func (ui *UI) inputHandler(event *tcell.EventKey) *tcell.EventKey {
 		return nil
 	case tcell.KeyCtrlR:
 		ui.swapHomeAndAway()
+	case tcell.KeyCtrlZ:
+		ui.showBox()
+		return nil
 	case tcell.KeyCtrlP:
 		return tcell.NewEventKey(tcell.KeyUp, 0, 0)
 	case tcell.KeyCtrlN:
@@ -448,6 +454,40 @@ func (ui *UI) showQuestionDialog(question string, okLabel string, ok func()) {
 			ui.closeDialog()
 		})
 	ui.showDialog(modal)
+}
+
+func (ui *UI) showBox() {
+	gf, err := gamefile.ParseString(ui.path, ui.getGameText())
+	if err != nil {
+		ui.messages.SetText(fmt.Sprintf("gamefile is invalid: %s", err.Error()))
+		return
+	}
+	g, err := game.NewGame(gf)
+	if g == nil {
+		ui.messages.SetText(fmt.Sprintf("game is invalid: %s", err.Error()))
+		return
+	}
+	box, err := boxscore.NewBoxScore(g, ui.RE)
+	if err != nil {
+		ui.messages.SetText(fmt.Sprintf("could not generate boxscore: %s", err.Error()))
+		return
+	}
+	box.IncludePlays = true
+	var s strings.Builder
+	_ = box.Render(&s)
+	flex := tview.NewFlex().SetDirection(tview.FlexRow)
+	flex.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		if event.Key() == tcell.KeyCtrlQ {
+			ui.closeDialog()
+			return nil
+		}
+		return event
+	})
+	view := tview.NewTextView().SetText(s.String())
+	view.SetBorder(true)
+	flex.AddItem(view, 0, 1, true).
+		AddItem(tview.NewTextView().SetText("Close:^Q"), 1, 0, false)
+	ui.showDialog(flex)
 }
 
 func (ui *UI) backgroundUpdate(ticker *time.Ticker, done <-chan bool) {

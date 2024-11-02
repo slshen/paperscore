@@ -1,7 +1,7 @@
 package stats
 
 import (
-	"github.com/slshen/sb/pkg/game"
+	"github.com/slshen/paperscore/pkg/game"
 )
 
 type Batting struct {
@@ -152,9 +152,9 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 	}
 	if state.Complete || state.Incomplete {
 		b.PitchesSeen += len(state.Pitches)
-		b.Strikes += state.Pitches.CountUp('C', 'S', 'F', 'M', 'L')
-		b.Swings += state.Pitches.CountUp('S', 'F', 'M')
-		b.Misses += state.Pitches.CountUp('S', 'M')
+		b.Strikes += state.Pitches.CountUp('C', 'S', 'F', 'M', 'L', 'T')
+		b.Swings += state.Pitches.CountUp('S', 'F', 'M', 'T')
+		b.Misses += state.Pitches.CountUp('S', 'M', 'T')
 		b.CalledStrikes += state.Pitches.CountUp('C')
 		b.MissedBunts += state.Pitches.CountUp('M')
 		b.FoulBunts += state.Pitches.CountUp('L')

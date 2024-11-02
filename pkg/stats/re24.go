@@ -1,6 +1,6 @@
 package stats
 
-import "github.com/slshen/sb/pkg/dataframe"
+import "github.com/slshen/paperscore/pkg/dataframe"
 
 func GetBiggestRE24(dat *dataframe.Data, n int) *dataframe.Data {
 	idx := dat.GetIndex()
