@@ -5,7 +5,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/slshen/sb/pkg/game"
+	"github.com/slshen/paperscore/pkg/game"
 )
 
 type Group struct {

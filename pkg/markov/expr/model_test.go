@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/slshen/sb/pkg/markov"
+	"github.com/slshen/paperscore/pkg/markov"
 	"github.com/stretchr/testify/assert"
 )
 

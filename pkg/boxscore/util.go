@@ -6,7 +6,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/slshen/sb/pkg/text"
+	"github.com/slshen/paperscore/pkg/text"
 )
 
 func firstWord(s string, w int) string {

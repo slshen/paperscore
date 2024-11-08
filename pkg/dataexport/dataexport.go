@@ -5,11 +5,11 @@ import (
 	"sort"
 	"time"
 
-	"github.com/slshen/sb/pkg/dataframe"
-	"github.com/slshen/sb/pkg/dataframe/pkg"
-	"github.com/slshen/sb/pkg/game"
-	"github.com/slshen/sb/pkg/stats"
-	"github.com/slshen/sb/pkg/tournament"
+	"github.com/slshen/paperscore/pkg/dataframe"
+	"github.com/slshen/paperscore/pkg/dataframe/pkg"
+	"github.com/slshen/paperscore/pkg/game"
+	"github.com/slshen/paperscore/pkg/stats"
+	"github.com/slshen/paperscore/pkg/tournament"
 )
 
 type DataExport struct {

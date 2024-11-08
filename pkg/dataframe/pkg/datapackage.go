@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/slshen/sb/pkg/dataframe"
+	"github.com/slshen/paperscore/pkg/dataframe"
 )
 
 type License string

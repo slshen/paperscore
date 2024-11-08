@@ -5,8 +5,8 @@ import (
 	"io"
 	"strings"
 
-	"github.com/slshen/sb/pkg/game"
-	"github.com/slshen/sb/pkg/text"
+	"github.com/slshen/paperscore/pkg/game"
+	"github.com/slshen/paperscore/pkg/text"
 )
 
 type Generator struct {

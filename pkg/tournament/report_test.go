@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/slshen/sb/pkg/game"
-	"github.com/slshen/sb/pkg/stats"
+	"github.com/slshen/paperscore/pkg/game"
+	"github.com/slshen/paperscore/pkg/stats"
 	"github.com/stretchr/testify/assert"
 )
 

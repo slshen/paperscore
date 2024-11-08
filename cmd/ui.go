@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/slshen/sb/pkg/ui"
+	"github.com/slshen/paperscore/pkg/ui"
 	"github.com/spf13/cobra"
 )
 

@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/slshen/sb/cmd"
+	"github.com/slshen/paperscore/cmd"
 )
 
 func main() {

@@ -5,7 +5,7 @@ import (
 
 	"github.com/alecthomas/participle/v2"
 	"github.com/alecthomas/participle/v2/lexer"
-	"github.com/slshen/sb/pkg/markov"
+	"github.com/slshen/paperscore/pkg/markov"
 )
 
 type Position = lexer.Position

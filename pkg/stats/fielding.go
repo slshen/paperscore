@@ -1,7 +1,7 @@
 package stats
 
 import (
-	"github.com/slshen/sb/pkg/game"
+	"github.com/slshen/paperscore/pkg/game"
 )
 
 type FieldingStats struct {

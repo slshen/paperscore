@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/slshen/sb/pkg/text"
+	"github.com/slshen/paperscore/pkg/text"
 )
 
 type Update interface {

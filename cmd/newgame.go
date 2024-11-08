@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/slshen/sb/pkg/gamefile"
+	"github.com/slshen/paperscore/pkg/gamefile"
 	"github.com/spf13/cobra"
 )
 

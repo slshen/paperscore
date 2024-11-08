@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/slshen/sb/pkg/markov"
-	"github.com/slshen/sb/pkg/markov/expr"
+	"github.com/slshen/paperscore/pkg/markov"
+	"github.com/slshen/paperscore/pkg/markov/expr"
 	"github.com/spf13/cobra"
 )
 

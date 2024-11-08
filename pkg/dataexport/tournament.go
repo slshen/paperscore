@@ -3,7 +3,7 @@ package dataexport
 import (
 	"time"
 
-	"github.com/slshen/sb/pkg/tournament"
+	"github.com/slshen/paperscore/pkg/tournament"
 )
 
 type Tournament struct {
