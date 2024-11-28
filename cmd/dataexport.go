@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/slshen/paperscore/pkg/dataexport"
 	"github.com/slshen/paperscore/pkg/dataframe/pkg"
@@ -9,10 +10,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func webdataCommand() *cobra.Command {
+func dataExportCommand() *cobra.Command {
 	var (
 		re       reArgs
-		us       string
 		id       string
 		dir      string
 		gameDirs []string
@@ -20,9 +20,6 @@ func webdataCommand() *cobra.Command {
 	c := &cobra.Command{
 		Use: "data-export",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if us == "" {
-				return fmt.Errorf("--us is required")
-			}
 			if dir == "" {
 				return fmt.Errorf("--dir is required")
 			}
@@ -37,7 +34,8 @@ func webdataCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			exp := dataexport.NewDataExport(us, re)
+			log.Printf("read %d games\n", len(games))
+			exp := dataexport.NewDataExport(re)
 			dp, err := exp.Read(games)
 			if err != nil {
 				return err
@@ -51,7 +49,6 @@ func webdataCommand() *cobra.Command {
 	flags := c.Flags()
 	re.registerFlags(flags)
 	flags.StringVar(&id, "id", "", "The export ID")
-	flags.StringVar(&us, "us", "", "The us team")
 	flags.StringVarP(&dir, "dir", "d", "", "Write web data to `dir`")
 	flags.StringSliceVar(&gameDirs, "games", nil, "Read games from dir")
 	return c

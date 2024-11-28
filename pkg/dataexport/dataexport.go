@@ -13,13 +13,11 @@ import (
 )
 
 type DataExport struct {
-	us string
 	re stats.RunExpectancy
 }
 
-func NewDataExport(us string, re stats.RunExpectancy) *DataExport {
+func NewDataExport(re stats.RunExpectancy) *DataExport {
 	exp := &DataExport{
-		us: us,
 		re: re,
 	}
 	return exp
