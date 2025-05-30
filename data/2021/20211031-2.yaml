@@ -63,8 +63,8 @@ homeplays:
   - 25,BX,S8/G64.B-1
   - 44,C,SB2
   - 44,CX,S8/P8S.B-2;2-3
-  - 00,FX,HP.B-1
-  - 9,X,HP.B-1;1-2;2-3;3-H
+  - 00,FH,HP.B-1
+  - 9,H,HP.B-1;1-2;2-3;3-H
   - 42,BBFX,S8/L8.B-1;1-2;2-H;3-H
   - 3,BBX,S8/P4D.B-1;1-2;2-H
   - pitcher,bj00

@@ -30,9 +30,9 @@ visitorplays:
   - bj00,X,T9/L9.B-3;3-H
   - ms11,X,6/P6D
   - inn,5,2
-  - le13,X,HP
+  - le13,H,HP
   - ss16,FBCFFFFBBB,W.B-1;1-2
-  - mf17,X,HP.B-1;1-2;2-3
+  - mf17,H,HP.B-1;1-2;2-3
   - aw6,BBFBFB,W.B-1;1-2;2-3;3-H
   - cm22,BCCX,S3/G3.B-1;1-2;2-3;3-H
   - mj18,BFCBFBFX,S7/L7.B-1;1-2;2-3;3-H

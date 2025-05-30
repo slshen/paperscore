@@ -29,7 +29,7 @@ visitorplays:
   - le13,FBX,13/G1,Lana bats out of order by umpire ruling
   - ss16,BX,DGR/F7
   - kn21,B,WP.2-3
-  - kn21,BSFBX,HP
+  - kn21,BSFBH,HP
   - rv10,CFX,8/F8/SF.3-H
   - as7,FFX,3/P3
   - inn,4,2
@@ -37,7 +37,7 @@ visitorplays:
   - aw6,CX,S2/B.B-1
   - cm22,CX,53/G.1-2
   - kg2,CCX,S8/L8.B-1;2-H
-  - ms11,X,HP.B-1;1-2
+  - ms11,H,HP.B-1;1-2
   - bj00,X,D8/F89.B-2;1-H;2-H
   - mj18,CFFX,9/F9
   - inn,5,5

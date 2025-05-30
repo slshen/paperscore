@@ -14,7 +14,7 @@ league: PGF
 visitorplays:
   - pitcher,11
   - mf17,X,13/G
-  - aw6,X,HP.B-1
+  - aw6,H,HP.B-1
   - cm22,CCBX,FC6/G6.B-1;1X2(64)
   - kg2,BCB,PB.1-2
   - kg2,BCBBX,53/G

@@ -38,29 +38,53 @@ type Property struct {
 }
 
 type Event struct {
-	Pos         Position
-	Alternative *Alternative    `parser:"'alt' @@ (NL|EOF)"`
-	Pitcher     string          `parser:"| ('pitcher'|'pitching') @Token (NL|EOF)"`
-	RAdjRunner  Numbers         `parser:"| 'radj' @Token"`
-	RAdjBase    string          `parser:"      @Token (NL|EOF)"`
-	Score       string          `parser:"| 'score' @Token (NL|EOF)"`
-	Final       string          `parser:"| 'final' @Token (NL|EOF)"`
-	Sub         *LineupChange   `parser:"| @@"`
-	Play        *ActualPlay     `parser:"| @@"`
-	Afters      []*LineupChange `parser:"   @@*"`
-	Comment     string          `parser:"   @Comment? (NL|EOF)"`
-	Empty       bool            `parser:"| @NL"`
+	Pos             Position
+	Alternative     *Alternative      `parser:"'alt' @@ (NL|EOF)"`
+	Pitcher         string            `parser:"| ('pitcher'|'pitching') @Token"`
+	ReplacedPitcher *string           `parser:" ( 'for' @Token )? (NL|EOF)"`
+	RAdjRunner      Numbers           `parser:"| 'radj' @Token"`
+	RAdjBase        string            `parser:"      @Token (NL|EOF)"`
+	Score           string            `parser:"| 'score' @Token (NL|EOF)"`
+	Final           string            `parser:"| 'final' @Token (NL|EOF)"`
+	Play            *ActualPlay       `parser:"| @@"`
+	Comment         string            `parser:"   @Comment? (NL|EOF)"`
+	Empty           bool              `parser:"| @NL"`
+	Defense         []*PlayerPosition `parser:"| 'defense' @@* (NL|EOF)"`
+	Sub             *Sub              `parser:"| @@ (NL|EOF)"`
+	DefenseSub      *DefenseSub       `parser:"| @@ (NL|EOF)"`
+	PlayerName      *PlayerName       `parser:"| @@ (NL|EOF)"`
 }
 
-type LineupChange struct {
-	CourtesyRunner *string `parser:"'cr' @Token"`
-	Conference     *bool   `parser:"| @'conf'"`
-	SubEnter       string  `parser:"| 'sub' @Token"`
-	SubExit        string  `parser:"|     'for' @Token"`
-	HSubEnter      string  `parser:"| 'hsub' @Token"`
-	HSubExit       string  `parser:"      'for' @Token (NL|EOF)"`
-	VSubEnter      string  `parser:"| 'vsub' @Token"`
-	VSubExit       string  `parser:"      'for' @Token (NL|EOF)"`
+type PlayerPosition struct {
+	Player   string `parser:"@Token"`
+	Position string `parser:" 'at' @Token"`
+}
+
+type Sub struct {
+	Enter string `parser:"'sub' @Token"`
+	Exit  string `parser:"      'for' @Token"`
+}
+
+type DefenseSub struct {
+	Enter string `parser:"'dsub' @Token"`
+	Exit  string `parser:"      'for' @Token"`
+}
+
+type AfterPlayChange struct {
+	CourtesyRunner    *string     `parser:"'cr' @Token"`
+	CourtesyRunnerFor *string     `parser:" ('for' @Token)?"`
+	Conference        *bool       `parser:"| @'conf'"`
+	Sub               *Sub        `parser:"| @@"`
+	DefenseSub        *DefenseSub `parser:"| @@"`
+}
+
+type PlayerName struct {
+	Player string   `parser:"'name' @Token"`
+	Names  []string `parser:"@Token+"`
+}
+
+func (pn PlayerName) GetName() string {
+	return strings.Join(pn.Names, " ")
 }
 
 type Play interface {
@@ -71,12 +95,13 @@ type Play interface {
 
 type ActualPlay struct {
 	Pos                      Position
-	ContinuedPlateAppearance bool     `parser:"((@'...')"`
-	PlateAppearance          Numbers  `parser:" | (@PA"`
-	Batter                   string   `parser:"    @Token))"`
-	PitchSequence            string   `parser:" @Token"`
-	Code                     string   `parser:" @Token"`
-	Advances                 []string `parser:" @Advance*"`
+	ContinuedPlateAppearance bool               `parser:"((@'...')"`
+	PlateAppearance          Numbers            `parser:" | (@PA"`
+	Batter                   string             `parser:"    @Token))"`
+	PitchSequence            string             `parser:" @Token"`
+	Code                     string             `parser:" @Token"`
+	Advances                 []string           `parser:" @Advance*"`
+	Afters                   []*AfterPlayChange `parser:"   @@*"`
 }
 
 var _ Play = (*ActualPlay)(nil)
@@ -84,7 +109,8 @@ var _ Play = (*ActualPlay)(nil)
 type Alternative struct {
 	Pos      Position
 	Code     string   `parser:"@Token"`
-	Advances []string `parser:"@Advance*"`
+	Advances []string `parser:" @Advance*"`
+	Credit   []string `parser:" ('credit' @Token*)?"`
 	Comment  string   `parser:"  @Comment?"`
 }
 
@@ -108,15 +134,23 @@ func (f *File) Parse(r io.Reader) error {
 	return nil
 }
 
-func (p *ActualPlay) normalize() {
+var validPitches = ".?XHSFLMCB"
+
+func (p *ActualPlay) Validate() error {
 	if p == nil {
-		return
+		return nil
 	}
 	for i, adv := range p.Advances {
 		p.Advances[i] = strings.ToUpper(adv)
 	}
 	p.Code = strings.ToUpper(p.Code)
 	p.PitchSequence = strings.ToUpper(p.PitchSequence)
+	for _, pitch := range p.PitchSequence {
+		if !strings.ContainsRune(validPitches, pitch) {
+			return fmt.Errorf("invalid pitch %c in %s", pitch, p.PitchSequence)
+		}
+	}
+	return nil
 }
 
 func (a *Alternative) normalize() {
@@ -139,8 +173,15 @@ func (f *File) Validate() error {
 	for _, te := range f.TeamEvents {
 		for _, event := range te.Events {
 			// make codes upper code
-			event.Play.normalize()
+			if err := event.Play.Validate(); err != nil {
+				return fmt.Errorf("%s: %w", event.Pos, err)
+			}
 			event.Alternative.normalize()
+			for _, pp := range event.Defense {
+				if err := pp.Validate(); err != nil {
+					return fmt.Errorf("%s: %w", event.Pos, err)
+				}
+			}
 		}
 		switch te.HomeOrVisitor {
 		case "homeplays":
@@ -220,28 +261,56 @@ func (f *File) writeEvents(w io.Writer, name string, events []*Event) {
 				fmt.Fprintf(w, "  ... ")
 			}
 			fmt.Fprintf(w, "%s ", play.PitchSequence)
-			f.writeCodeAdvancesComment(w, play.Code, play.Advances, event.Afters, event.Comment)
+			f.writeCodeAdvances(w, play.Code, play.Advances)
+			f.writeAFters(w, play.Afters)
+			f.writeComment(w, event.Comment)
+			fmt.Fprintln(w)
 		case event.Alternative != nil:
 			alt := event.Alternative
 			fmt.Fprintf(w, "  alt ")
-			f.writeCodeAdvancesComment(w, alt.Code, alt.Advances, nil, alt.Comment)
+			f.writeCodeAdvances(w, alt.Code, alt.Advances)
+			if len(alt.Credit) > 0 {
+				fmt.Fprint(w, " credit")
+				for _, player := range alt.Credit {
+					fmt.Fprintf(w, " %s", player)
+				}
+			}
+			f.writeComment(w, alt.Comment)
+			fmt.Fprintln(w)
 		case event.Pitcher != "":
-			fmt.Fprintf(w, "pitching %s\n", event.Pitcher)
+			fmt.Fprintf(w, "pitching %s", event.Pitcher)
+			if event.ReplacedPitcher != nil {
+				fmt.Fprintf(w, " for %s", *event.ReplacedPitcher)
+			}
+			fmt.Fprintln(w)
 		case event.RAdjBase != "":
 			fmt.Fprintf(w, "radj %s %s\n", event.RAdjRunner, event.RAdjBase)
 		case event.Score != "":
 			fmt.Fprintf(w, "score %s\n", event.Score)
 		case event.Final != "":
 			fmt.Fprintf(w, "final %s\n", event.Final)
+		case event.Sub != nil:
+			fmt.Fprintf(w, "sub %s for %s\n", event.Sub.Enter, event.Sub.Exit)
+		case event.DefenseSub != nil:
+			fmt.Fprintf(w, "dsub %s for %s\n", event.DefenseSub.Enter, event.DefenseSub.Exit)
+		case len(event.Defense) > 0:
+			fmt.Fprintf(w, "defense")
+			for _, pp := range event.Defense {
+				fmt.Fprintf(w, " %s at %s", pp.Player, pp.Position)
+			}
+			fmt.Fprintln(w)
 		}
 	}
 }
 
-func (f *File) writeCodeAdvancesComment(w io.Writer, code string, advances []string, afters []*LineupChange, comment string) {
+func (f *File) writeCodeAdvances(w io.Writer, code string, advances []string) {
 	fmt.Fprintf(w, "%s", code)
 	for _, adv := range advances {
 		fmt.Fprintf(w, " %s", adv)
 	}
+}
+
+func (f *File) writeAFters(w io.Writer, afters []*AfterPlayChange) {
 	for _, aft := range afters {
 		if aft.Conference != nil {
 			fmt.Fprint(w, " conf")
@@ -249,11 +318,19 @@ func (f *File) writeCodeAdvancesComment(w io.Writer, code string, advances []str
 		if aft.CourtesyRunner != nil {
 			fmt.Fprintf(w, " cr %s", *aft.CourtesyRunner)
 		}
+		if aft.Sub != nil {
+			fmt.Fprintf(w, " sub %s for %s", aft.Sub.Enter, aft.Sub.Exit)
+		}
+		if aft.DefenseSub != nil {
+			fmt.Fprintf(w, " dsub %s for %s", aft.DefenseSub.Enter, aft.DefenseSub.Exit)
+		}
 	}
+}
+
+func (f *File) writeComment(w io.Writer, comment string) {
 	if comment != "" {
 		fmt.Fprintf(w, " : %s", comment)
 	}
-	fmt.Fprintln(w)
 }
 
 const GameDateFormat = "1/2/2006"
@@ -296,4 +373,15 @@ func (a *Alternative) GetAdvances() []string {
 
 func (a *Alternative) GetComment() string {
 	return a.Comment
+}
+
+func (pp PlayerPosition) Validate() error {
+	if len(pp.Position) != 1 && pp.Position[0] < '1' || pp.Position[0] > '9' {
+		return fmt.Errorf("player position should be 1-9")
+	}
+	return nil
+}
+
+func (pp PlayerPosition) PositionNumber() int {
+	return int(pp.Position[0] - '0')
 }

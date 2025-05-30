@@ -53,7 +53,7 @@ func (gen *Generator) Generate(w io.Writer) error {
 		line := &strings.Builder{}
 		if batterPlay := batterPlayDescription(state); batterPlay != "" {
 			batter := battingTeam.GetPlayer(state.Batter)
-			fmt.Fprintf(line, "%s %s %s", batter.NameOrNumber(), countDescription(state.Pitches), batterPlay)
+			fmt.Fprintf(line, "%s%s %s", batter.NameOrNumber(), countDescription(state.Pitches), batterPlay)
 		} else if runnerPlay := runningPlayDescription(battingTeam, state, gen.lastState); runnerPlay != "" {
 			fmt.Fprint(line, runnerPlay)
 		}
@@ -140,10 +140,13 @@ func (gen *Generator) Generate(w io.Writer) error {
 
 func countDescription(pitches game.Pitches) string {
 	if pitches == "X" {
-		return "on the first pitch"
+		return " on the first pitch"
 	}
-	count, _, _ := pitches.Count()
-	return fmt.Sprintf("with the count %s", count)
+	ok, count, _, _ := pitches.Count()
+	if ok {
+		return fmt.Sprintf(" with the count %s", count)
+	}
+	return ""
 }
 
 func positionName(fielder int) string {

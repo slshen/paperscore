@@ -23,6 +23,21 @@ func (lineup *Lineup) BattingTable() *dataframe.Data {
 		dataframe.Rename("Walks", "BB"),
 	)
 	idx := dat.GetIndex()
+	names := idx.GetColumn("#")
+	dat.RApply(func(row int) {
+		// Shorten "Babe Ruth" to "B Ruth"
+		name := names.GetString(row)
+		if strings.ContainsRune(name, ' ') {
+			parts := strings.Split(name, " ")
+			for i, part := range parts[0 : len(parts)-1] {
+				if len(part) > 2 {
+					// unless it's a very short name
+					parts[i] = part[0:1]
+				}
+			}
+			names.GetStrings()[row] = strings.Join(parts, " ")
+		}
+	})
 	idx.GetColumn("AB").Summary = dataframe.Sum
 	idx.GetColumn("H").Summary = dataframe.Sum
 	idx.GetColumn("K").Summary = dataframe.Sum

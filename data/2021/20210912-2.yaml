@@ -18,12 +18,12 @@ visitorplays:
   - aw6,X,D7/G56.B-2;1-3
   - mj18,CBCX,S7/G56.BX2(714);2-H;3-H
   - ms11,BFX,63/G
-  - kg2,BX,HP
+  - kg2,BH,HP
   - bj00,CFBX,S9/F89S.B-1;1-3
   - cm22,BB,SB2
   - cm22,BBCFFFS,K
   - inn,2,2
-  - rv10,X,HP
+  - rv10,H,HP
   - ss16,BX,S8/L8.B-1;1-2
   - pitcher,13
   - mf17,CX,S1/G3/B/SH.B-3(E1/TH);1-H;2-H,chaos!
@@ -33,7 +33,7 @@ visitorplays:
   - ms11,BCX,D7/L87.B-2;2-H;3-H
   - kg2,BCX,63/G.2-3
   - bj00,BBX,S8/G56.3-H;B-3(E7)
-  - cm22,X,HP.B-1
+  - cm22,H,HP.B-1
   - rv10,B,SB2
   - rv10,BBCFFX,43/G
   - inn,3,7

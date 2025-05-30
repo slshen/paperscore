@@ -34,13 +34,15 @@ func TestParser(t *testing.T) {
 			assert.Equal("routine ground ball", event.Alternative.Comment)
 		}
 		event = events[8]
-		if assert.Len(event.Afters, 1) && assert.NotNil(event.Afters[0].Conference) {
-			assert.True(*event.Afters[0].Conference)
+		if assert.Len(event.Play.Afters, 1) && assert.NotNil(event.Play.Afters[0].Conference) {
+			assert.True(*event.Play.Afters[0].Conference)
 		}
 		event = events[3]
-		assert.Equal("9", *event.Afters[0].CourtesyRunner)
-		event = events[20]
-		assert.Equal("3", event.Sub.VSubEnter)
-		assert.Equal("2", event.Sub.VSubExit)
+		assert.Equal("9", *event.Play.Afters[0].CourtesyRunner)
+		event = events[19]
+		if assert.Len(event.Play.Afters, 1) {
+			assert.Equal("3", event.Play.Afters[0].Sub.Enter)
+			assert.Equal("2", event.Play.Afters[0].Sub.Exit)
+		}
 	}
 }

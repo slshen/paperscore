@@ -17,6 +17,7 @@ type TeamID string
 type Team struct {
 	ID      TeamID
 	Name    string `yaml:"name"`
+	Us      bool   `yaml:"us"`
 	Players map[PlayerID]*Player
 
 	playerIDs map[string]PlayerID
@@ -60,10 +61,6 @@ func GetTeam(dir, name, id string) (*Team, error) {
 	return team, nil
 }
 
-func (team *Team) IsUs(us string) bool {
-	return strings.HasPrefix(strings.ToLower((team.Name)), us)
-}
-
 func (team *Team) readFile(dir, id string) error {
 	path := filepath.Join(dir, fmt.Sprintf("%s.yaml", id))
 	dat, err := os.ReadFile(path)
@@ -76,7 +73,7 @@ func (team *Team) readFile(dir, id string) error {
 	for playerID, player := range team.Players {
 		player.PlayerID = playerID
 		if player.Number == "" {
-			player.Number = getDefaultPlayerNumber(playerID)
+			player.Number = team.getDefaultPlayerNumber(playerID)
 		}
 	}
 	return nil
@@ -92,11 +89,12 @@ func (team *Team) GetPlayer(id PlayerID) *Player {
 	player := &Player{
 		PlayerID: id,
 		Name:     string(id),
-		Number:   getDefaultPlayerNumber(id),
+		Number:   team.getDefaultPlayerNumber(id),
 	}
 	if player.Name == player.Number {
 		player.Name = ""
 	}
+	team.Players[id] = player
 	return player
 }
 
@@ -117,8 +115,12 @@ func (team *Team) parsePlayerID(s string) PlayerID {
 	return PlayerID(s)
 }
 
-func getDefaultPlayerNumber(player PlayerID) string {
-	return playerNumberRegexp.FindString(string(player))
+func (team *Team) getDefaultPlayerNumber(player PlayerID) string {
+	n := playerNumberRegexp.FindString(string(player))
+	if n != "" {
+		return n
+	}
+	return fmt.Sprintf("00%d", len(team.Players)+1)
 }
 
 func (player *Player) NameOrNumber() string {
@@ -129,4 +131,21 @@ func (player *Player) NameOrNumber() string {
 		return fmt.Sprintf("#%s", player.Number)
 	}
 	return "?"
+}
+
+func (player *Player) UnmarshalYAML(value *yaml.Node) error {
+	switch value.Kind {
+	case yaml.ScalarNode:
+		player.Name = value.Value
+		return nil
+	case yaml.MappingNode:
+		var v any
+		if err := value.Decode(&v); err != nil {
+			return err
+		}
+		player.Name = v.(map[string]any)["name"].(string)
+		return nil
+	default:
+		return fmt.Errorf("cannot unmarshal player")
+	}
 }

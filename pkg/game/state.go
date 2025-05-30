@@ -21,19 +21,19 @@ const (
 
 type State struct {
 	Pos          FileLocation `yaml:",flow"`
+	BattingTeam  *Team        `yaml:"-"`
+	FieldingTeam *Team        `yaml:"-"`
 	InningNumber int
 	Half
 	Outs    int
 	Score   int
 	Pitcher PlayerID
 	PlateAppearance
-	// Fielders       []int      `yaml:",flow,omitempty"`
-
-	Runners [3]PlayerID `yaml:",omitempty,flow"`
-	// Runners        []PlayerID `yaml:",flow"`
-	Comment        string `yaml:",omitempty"`
-	LastState      *State `yaml:"-"`
-	AlternativeFor *State `yaml:"-"`
+	Defense        [9]PlayerID `yaml:",flow,omitempty"`
+	Runners        [3]PlayerID `yaml:",omitempty,flow"`
+	Comment        string      `yaml:",omitempty"`
+	LastState      *State      `yaml:"-"`
+	AlternativeFor *State      `yaml:"-"`
 }
 
 type PlateAppearance struct {
@@ -85,6 +85,11 @@ func (state *State) IsAB() bool {
 			state.Modifiers.Contains(SacrificeFly, SacrificeHit))
 }
 
+func (state *State) Copy() *State {
+	s := *state
+	return &s
+}
+
 func (pa *PlateAppearance) GetPlayAdvancesCode() string {
 	s := &strings.Builder{}
 	fmt.Fprintf(s, "%s", pa.PlayCode)
@@ -98,8 +103,4 @@ var playerIDRegexp = regexp.MustCompile(`^[a-z]*\d+$`)
 
 func IsPlayerID(s string) bool {
 	return playerIDRegexp.MatchString(s)
-}
-
-func (id PlayerID) IsUs() bool {
-	return len(id) > 0 && !(id[0] >= '0' && id[0] <= '9')
 }
