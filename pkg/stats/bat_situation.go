@@ -2,6 +2,7 @@ package stats
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/slshen/paperscore/pkg/dataframe"
 	"github.com/slshen/paperscore/pkg/game"
@@ -37,14 +38,14 @@ func NewBattingByCount() *BattingCountSituations {
 func (bc *BattingCountSituations) Read(g *game.Game) {
 	states := g.GetStates()
 	if bc.Us != "" {
-		if g.Home.IsUs(bc.Us) {
+		if strings.HasPrefix(g.Home.Name, bc.Us) {
 			states = g.GetHomeStates()
 		} else {
 			states = g.GetVisitorStates()
 		}
 	}
 	if bc.NotUs != "" {
-		if !g.Home.IsUs(bc.NotUs) {
+		if !strings.HasPrefix(g.Home.Name, bc.NotUs) {
 			states = g.GetHomeStates()
 		} else {
 			states = g.GetVisitorStates()
@@ -61,9 +62,11 @@ func (bc *BattingCountSituations) Read(g *game.Game) {
 
 func (bc *BattingCountSituations) recordDirect(state *game.State) {
 	if state.Complete {
-		_, balls, strikes := state.Pitches[0 : len(state.Pitches)-1].Count()
-		sit := bc.sits[strikes*4+balls]
-		sit.Record(state)
+		known, _, balls, strikes := state.Pitches[0 : len(state.Pitches)-1].Count()
+		if known {
+			sit := bc.sits[strikes*4+balls]
+			sit.Record(state)
+		}
 	}
 }
 
@@ -71,7 +74,10 @@ func (bc *BattingCountSituations) recordPassingThrough(state *game.State) {
 	if state.Complete {
 		sits := map[string]*CountSituation{}
 		for i := 0; i < len(state.Pitches); i++ {
-			count, balls, strikes := state.Pitches[0:i].Count()
+			known, count, balls, strikes := state.Pitches[0:i].Count()
+			if !known {
+				continue
+			}
 			if balls < 4 && strikes < 3 && sits[count] == nil {
 				sit := bc.sits[strikes*4+balls]
 				sits[count] = sit

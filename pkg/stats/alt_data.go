@@ -62,7 +62,7 @@ func (alt *AltData) Record(gameID string, state *game.State) float64 {
 	alt.play.AppendString(state.AlternativeFor.GetPlayAdvancesCode())
 	alt.alt.AppendString(state.GetPlayAdvancesCode())
 	price := originalChange - change
-	if state.Batter.IsUs() {
+	if state.BattingTeam.Us {
 		price = -price
 	}
 	alt.cost.AppendFloat(price)

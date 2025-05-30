@@ -30,12 +30,15 @@ func newGameMachine(battingTeam, fieldingTeam *Team) *gameMachine {
 func (m *gameMachine) newState(pos lexer.Position, lastState *State) *State {
 	state := &State{
 		Pos:          FileLocation{Filename: pos.Filename, Line: pos.Line},
+		BattingTeam:  m.battingTeam,
+		FieldingTeam: m.fieldingTeam,
 		InningNumber: lastState.InningNumber,
 		Outs:         lastState.Outs,
 		Half:         lastState.Half,
 		Score:        lastState.Score,
 		Pitcher:      m.pitcher,
 		Runners:      [3]PlayerID{},
+		Defense:      lastState.Defense,
 		LastState:    lastState,
 	}
 	if state.Outs == 3 {
@@ -53,6 +56,8 @@ func (m *gameMachine) handleAlternative(alt *gamefile.Alternative, lastState *St
 		// we don't have the real real last state (which the last play
 		// of the last inning), so we'll just fake one here
 		realLastState = &State{
+			BattingTeam:  m.battingTeam,
+			FieldingTeam: m.fieldingTeam,
 			InningNumber: lastState.InningNumber - 1,
 			Outs:         3,
 			Half:         lastState.Half,
@@ -86,6 +91,28 @@ func (m *gameMachine) handleActualPlay(play *gamefile.ActualPlay, lastState *Sta
 		return nil, NewError("no batter for %s", play.GetPos(), play.GetCode())
 	}
 	err := m.handlePlay(play, state)
+	for _, after := range play.Afters {
+		// handle subs for runners on base
+		var runnerEnter, runnerExit PlayerID
+		if after.CourtesyRunner != nil {
+			runnerEnter = m.battingTeam.parsePlayerID(*after.CourtesyRunner)
+			if after.CourtesyRunnerFor == nil {
+				runnerExit = state.Batter
+			} else {
+				runnerExit = m.battingTeam.parsePlayerID(*after.CourtesyRunnerFor)
+			}
+		}
+		if after.Sub != nil {
+			runnerEnter = m.battingTeam.parsePlayerID(after.Sub.Enter)
+			runnerExit = m.battingTeam.parsePlayerID(after.Sub.Exit)
+		}
+		for i := range state.Runners {
+			if state.Runners[i] == runnerExit {
+				state.Runners[i] = runnerEnter
+				break
+			}
+		}
+	}
 	return state, err
 }
 
@@ -112,8 +139,8 @@ func (m *gameMachine) handlePlay(play gamefile.Play, state *State) error {
 	if state.Complete {
 		// verify that we've struck out with 3 strikes, or walked with 4 balls
 		// or that we put the ball in play without walking or striking out
-		_, balls, strikes := state.Pitches.Count()
-		if state.Play.IsBallInPlay() {
+		known, _, balls, strikes := state.Pitches.Count()
+		if known && state.Play.IsBallInPlay() {
 			if strikes > 2 {
 				return NewError("cannot put ball in play with %d strikes (%s)", state.Pos, strikes, play.GetCode())
 			}
@@ -121,8 +148,8 @@ func (m *gameMachine) handlePlay(play gamefile.Play, state *State) error {
 				return NewError("cannot put ball in play with %d balls (%s)", state.Pos, balls, play.GetCode())
 			}
 		}
-		if state.Play.IsStrikeOut() {
-			if state.Pitches[len(state.Pitches)-1] == 'X' {
+		if known && state.Play.IsStrikeOut() {
+			if state.Pitches.Last() == 'X' {
 				return NewError("strike out pitch sequence should not end in X", state.Pos)
 			}
 			if strikes != 3 {
@@ -132,8 +159,8 @@ func (m *gameMachine) handlePlay(play gamefile.Play, state *State) error {
 				return NewError("cannot strike out with more than 3 balls", state.Pos)
 			}
 		}
-		if state.Play.IsWalk() {
-			if state.Pitches[len(state.Pitches)-1] == 'X' {
+		if known && state.Play.IsWalk() {
+			if state.Pitches.Last() == 'X' {
 				return NewError("walk pitch sequence should not end in X", state.Pos)
 			}
 			if strikes > 2 {
@@ -143,7 +170,7 @@ func (m *gameMachine) handlePlay(play gamefile.Play, state *State) error {
 				return NewError("must walk with 4 balls", state.Pos)
 			}
 		}
-		if !strings.HasSuffix(string(state.Pitches), "X") &&
+		if known && state.Pitches.Last() != 'X' &&
 			state.Play.IsBallInPlay() {
 			// fix up pitches
 			state.Pitches += "X"
@@ -166,6 +193,31 @@ func (m *gameMachine) parseAdvances(play gamefile.Play, state *State) error {
 func (m *gameMachine) handleSpecialEvent(event *gamefile.Event, state *State) (*State, error) {
 	if event.Pitcher != "" {
 		m.pitcher = m.fieldingTeam.parsePlayerID(event.Pitcher)
+	}
+	if event.PlayerName != nil {
+		playerID := m.battingTeam.parsePlayerID(event.PlayerName.Player)
+		player := m.battingTeam.GetPlayer(playerID)
+		player.Name = event.PlayerName.GetName()
+	}
+	if len(event.Defense) > 0 {
+		state = state.Copy()
+		for _, pp := range event.Defense {
+			state.Defense[pp.PositionNumber()-1] = m.fieldingTeam.parsePlayerID(pp.Player)
+		}
+		return state, nil
+	}
+	if event.DefenseSub != nil {
+		enter := m.fieldingTeam.parsePlayerID(event.DefenseSub.Enter)
+		exit := m.fieldingTeam.parsePlayerID(event.DefenseSub.Exit)
+		for _, pp := range event.Defense {
+			player := m.fieldingTeam.parsePlayerID(pp.Player)
+			if player == exit {
+				state = state.Copy()
+				state.Defense[pp.PositionNumber()-1] = enter
+				return state, nil
+			}
+		}
+		return nil, NewError("cannot sub %s for %s because %s is not in the field", event.Pos, enter, exit, exit)
 	}
 	if event.Score != "" {
 		if state.Outs != 3 {
@@ -196,6 +248,8 @@ func (m *gameMachine) handleSpecialEvent(event *gamefile.Event, state *State) (*
 			return nil, NewError("radj must be at the inning start", event.Pos)
 		}
 		lastState := &State{
+			BattingTeam:  m.battingTeam,
+			FieldingTeam: m.fieldingTeam,
 			InningNumber: state.InningNumber + 1,
 			Half:         state.Half,
 			Outs:         0,
@@ -420,6 +474,12 @@ func (m *gameMachine) handlePlayCode(play gamefile.Play, state *State) error {
 	case pp.playIs("HP"):
 		state.Play = Play{
 			Type: HitByPitch,
+		}
+		if actualPlay, ok := play.(*gamefile.ActualPlay); ok {
+			if !strings.HasSuffix(actualPlay.PitchSequence, "H") {
+				return NewError("HP pitch sequence %s should end with H", play.GetPos(),
+					actualPlay.PitchSequence)
+			}
 		}
 		m.impliedAdvance(play, state, "B-1")
 		state.Complete = true

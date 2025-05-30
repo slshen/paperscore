@@ -201,7 +201,7 @@ func (g *Game) GetVisitorStates() []*State {
 
 func (g *Game) generateStates() (errs error) {
 	var err error
-	g.visitorStates, err = g.runPlays(g.Visitor, g.Home, Top,
+	g.visitorStates, err = g.runEvents(g.Visitor, g.Home, Top,
 		g.File.VisitorEvents)
 	if err != nil {
 		errs = multierror.Append(errs, err)
@@ -209,7 +209,7 @@ func (g *Game) generateStates() (errs error) {
 	if len(g.visitorStates) > 0 {
 		g.Final.Visitor = g.visitorStates[len(g.visitorStates)-1].Score
 	}
-	g.homeStates, err = g.runPlays(g.Home, g.Visitor, Bottom,
+	g.homeStates, err = g.runEvents(g.Home, g.Visitor, Bottom,
 		g.File.HomeEvents)
 	if err != nil {
 		errs = multierror.Append(errs, err)
@@ -246,7 +246,7 @@ func (g *Game) generateStates() (errs error) {
 	return
 }
 
-func (g *Game) runPlays(battingTeam, fieldingTeam *Team, half Half, events []*gamefile.Event) (states []*State, errs error) {
+func (g *Game) runEvents(battingTeam, fieldingTeam *Team, half Half, events []*gamefile.Event) (states []*State, errs error) {
 	if events == nil {
 		return
 	}
@@ -271,18 +271,6 @@ func (g *Game) runPlays(battingTeam, fieldingTeam *Team, half Half, events []*ga
 				errs = multierror.Append(errs, err)
 			}
 			if state != nil {
-				for _, after := range event.Afters {
-					if after.CourtesyRunner != nil {
-						// assume courtesy runner is for batter
-						cr := m.battingTeam.parsePlayerID(*after.CourtesyRunner)
-						for i := range state.Runners {
-							if state.Runners[i] == state.Batter {
-								state.Runners[i] = cr
-								break
-							}
-						}
-					}
-				}
 				state.Comment = event.Comment
 				states = append(states, state)
 				lastState = state
@@ -320,13 +308,6 @@ func (g *Game) GetAlternativeState(state *State) *State {
 
 func (g *Game) GetDate() time.Time {
 	return g.date
-}
-
-func (g *Game) GetUsAndThem(us string) (*Team, *Team) {
-	if g.Home.IsUs(us) {
-		return g.Visitor, g.Home
-	}
-	return g.Visitor, g.Home
 }
 
 func (g *Game) GetTournament() string {

@@ -1,4 +1,4 @@
-* Implment sub, hsub, vsub
+* Implement sub, hsub, vsub
 
 * Verify stats for games in tests
 

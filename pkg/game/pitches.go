@@ -13,14 +13,33 @@ func (ps Pitches) CountUp(codes ...rune) (count int) {
 	return
 }
 
-func (ps Pitches) Last() string {
-	if l := len(ps); l > 0 {
-		return string(ps[l-1])
+func (ps Pitches) Last() rune {
+	if ps.IsUnknown() {
+		return '?'
 	}
-	return ""
+	if l := len(ps); l > 0 {
+		return rune(ps[l-1])
+	}
+	return 0
 }
 
-func (ps Pitches) Count() (string, int, int) {
+func (ps Pitches) IsUnknown() bool {
+	if len(ps) == 0 {
+		return false
+	}
+	for _, p := range ps {
+		if p != '?' && p != '.' {
+			return false
+		}
+	}
+	return true
+}
+
+func (ps Pitches) Count() (bool, string, int, int) {
+	if ps.IsUnknown() {
+		// unrecorded
+		return false, "?", 0, 0
+	}
 	balls := ps.CountUp('B')
 	strikes := 0
 	for _, p := range ps {
@@ -30,5 +49,5 @@ func (ps Pitches) Count() (string, int, int) {
 			strikes++
 		}
 	}
-	return fmt.Sprintf("%d-%d", balls, strikes), balls, strikes
+	return true, fmt.Sprintf("%d-%d", balls, strikes), balls, strikes
 }

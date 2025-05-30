@@ -73,7 +73,7 @@ func New() *UI {
 		0, 1, false).
 		AddItem(ui.messages, 6, 0, false).
 		AddItem(tview.NewFlex().
-			AddItem(tview.NewTextView().SetText("Quit:^Q Save:^S Choose:^L Swap:^R Box:^Z"), 0, 4, false).
+			AddItem(tview.NewTextView().SetText("Quit:^C Save:^S Choose:^L Swap:^R Box:^Z"), 0, 4, false).
 			AddItem(ui.status, 0, 1, false),
 			1, 0, false)
 	ui.root.AddAndSwitchToPage("main", flex, true)
@@ -296,6 +296,7 @@ func (ui *UI) inputHandler(event *tcell.EventKey) *tcell.EventKey {
 	case tcell.KeyCtrlQ:
 		ui.app.Stop()
 	case tcell.KeyCtrlC:
+		ui.app.Stop()
 		return nil
 	case tcell.KeyCtrlS:
 		if ui.dialog == nil {
@@ -477,7 +478,7 @@ func (ui *UI) showBox() {
 	_ = box.Render(&s)
 	flex := tview.NewFlex().SetDirection(tview.FlexRow)
 	flex.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		if event.Key() == tcell.KeyCtrlQ {
+		if event.Key() == tcell.KeyCtrlC {
 			ui.closeDialog()
 			return nil
 		}
@@ -486,7 +487,7 @@ func (ui *UI) showBox() {
 	view := tview.NewTextView().SetText(s.String())
 	view.SetBorder(true)
 	flex.AddItem(view, 0, 1, true).
-		AddItem(tview.NewTextView().SetText("Close:^Q"), 1, 0, false)
+		AddItem(tview.NewTextView().SetText("Close:^C"), 1, 0, false)
 	ui.showDialog(flex)
 }
 

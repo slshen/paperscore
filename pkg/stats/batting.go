@@ -102,7 +102,7 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 		}
 		if state.IsStrikeOut() {
 			b.StrikeOuts++
-			if state.Pitches.Last() == "C" {
+			if state.Pitches.Last() == 'C' {
 				b.StrikeOutsLooking++
 			}
 		}
@@ -142,22 +142,29 @@ func (b *Batting) Record(state *game.State) (teamLOB int) {
 			}
 		}
 		lastPitch := state.Pitches.Last()
-		if state.Play.Type == game.StrikeOut && (lastPitch == "L" || lastPitch == "M") {
+		if state.Play.Type == game.StrikeOut && (lastPitch == 'L' || lastPitch == 'M') {
 			b.BuntOuts++
 		}
-		if lastPitch == "X" {
+		if lastPitch == 'X' {
 			b.Strikes++
 			b.Swings++
 		}
 	}
 	if state.Complete || state.Incomplete {
-		b.PitchesSeen += len(state.Pitches)
-		b.Strikes += state.Pitches.CountUp('C', 'S', 'F', 'M', 'L', 'T')
-		b.Swings += state.Pitches.CountUp('S', 'F', 'M', 'T')
-		b.Misses += state.Pitches.CountUp('S', 'M', 'T')
-		b.CalledStrikes += state.Pitches.CountUp('C')
-		b.MissedBunts += state.Pitches.CountUp('M')
-		b.FoulBunts += state.Pitches.CountUp('L')
+		known, _, balls, strikes := state.Pitches.Count()
+		if known {
+			b.PitchesSeen += balls + strikes
+			b.Strikes += strikes
+			b.Swings += state.Pitches.CountUp('S', 'F', 'M', 'T')
+			b.Misses += state.Pitches.CountUp('S', 'M', 'T')
+			b.CalledStrikes += state.Pitches.CountUp('C')
+			b.MissedBunts += state.Pitches.CountUp('M')
+			b.FoulBunts += state.Pitches.CountUp('L')
+			if state.Pitches.Last() == 'X' {
+				b.PitchesSeen++
+				b.Swings++
+			}
+		}
 	}
 	return
 }

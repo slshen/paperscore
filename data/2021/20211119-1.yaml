@@ -34,8 +34,8 @@ visitorplays:
   - le13,BBBB,W.B-1
   - rv10,X,S8/G56.B-1;1-2
   - ss16,CBSX,1/P1/IF
-  - kn21,CBX,HP.B-1;1-2;2-3
-  - as7,X,HP.B-1;1-2;2-3;3-H
+  - kn21,CBH,HP.B-1;1-2;2-3
+  - as7,H,HP.B-1;1-2;2-3;3-H
   - mf17,BBBB,W.B-1;1-2;2-3;3-H
   - aw6,BX,FC5.B-1;1-2;2-3;3XH(52)
   - cm22,CBBCFC,K

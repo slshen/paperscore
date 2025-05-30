@@ -23,10 +23,11 @@ func TestPitches(t *testing.T) {
 		{"MCL", 0, 3, "0-3"},
 	} {
 		ps := Pitches(tc.in)
-		count, balls, strikes := ps.Count()
+		known, count, balls, strikes := ps.Count()
+		assert.True(known)
 		assert.Equal(tc.count, count)
 		assert.Equal(tc.b, balls)
 		assert.Equal(tc.s, strikes)
 	}
-	assert.Equal("X", Pitches("CX").Last())
+	assert.Equal('X', Pitches("CX").Last())
 }

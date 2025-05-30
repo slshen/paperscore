@@ -48,8 +48,8 @@ func NewBoxScore(g *game.Game, re stats.RunExpectancy) (*BoxScore, error) {
 	boxscore := &BoxScore{
 		Game:          g,
 		Stats:         gs,
-		HomeLineup:    &Lineup{gs.TeamStats[g.Home.Name]},
-		VisitorLineup: &Lineup{gs.TeamStats[g.Visitor.Name]},
+		HomeLineup:    &Lineup{gs.GetStats(g.Home)},
+		VisitorLineup: &Lineup{gs.GetStats(g.Visitor)},
 	}
 	if err := boxscore.run(); err != nil {
 		return nil, err

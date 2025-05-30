@@ -6,6 +6,7 @@ import (
 )
 
 func Wrap(s string, width int) string {
+	//nolint:gosec
 	return wordwrap.WrapString(s, uint(width))
 }
 

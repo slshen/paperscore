@@ -51,17 +51,21 @@ func (p *Pitching) Record(state *game.State) {
 		p.StolenBases++
 	}
 	if state.Complete || state.Outs == 3 {
-		p.Pitches += len(state.Pitches)
-		p.Strikes += state.Pitches.CountUp('S', 'C', 'F', 'L', 'M')
-		p.Balls += state.Pitches.CountUp('B')
-		p.Swings += state.Pitches.CountUp('S', 'F', 'M')
-		p.Misses += state.Pitches.CountUp('S', 'M')
-		if state.Pitches.Last() == "X" {
-			if state.Play.Type == game.HitByPitch {
+		known, _, balls, strikes := state.Pitches.Count()
+		if known {
+			p.Pitches += balls + strikes
+			p.Strikes += strikes
+			p.Balls += balls
+			p.Swings += state.Pitches.CountUp('S', 'F', 'M')
+			p.Misses += state.Pitches.CountUp('S', 'M')
+			last := state.Pitches.Last()
+			if last == 'H' {
 				p.Balls++
-			} else {
+			}
+			if last == 'X' {
 				p.Strikes++
 				p.Swings++
+				p.Pitches++
 			}
 		}
 		if state.Play.IsHit() {
@@ -94,7 +98,7 @@ func (p *Pitching) Record(state *game.State) {
 		}
 		if state.IsStrikeOut() {
 			p.StrikeOuts++
-			if state.Pitches.Last() == "C" {
+			if state.Pitches.Last() == 'C' {
 				p.StrikeOutsLooking++
 			}
 		}

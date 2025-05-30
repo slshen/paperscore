@@ -63,7 +63,7 @@ homeplays:
   - inn,2,0
   - 13,FX,S7/G5.B-1
   - 12,X,FC1/B.B-1;1-2,should have thrown 1
-  - 22,CBX,HP.B-1;1-2;2-3
+  - 22,CBH,HP.B-1;1-2;2-3
   - 8,FX,4/P4
   - 00,SCBBS,K
   - 20,SSS,K
@@ -76,13 +76,13 @@ homeplays:
   - 23,BBBCB,W.B-1
   - 27,BS,SB3.1-2
   - 27,BSCX,8/F8/SF.2-3;3-H
-  - 11,X,HP
+  - 11,H,HP
   - 17,CB,SB2.1-2;3-H
   - 17,CBSX,S9/L9.B-1;2-H
   - 13,CX,E7/F7.B-1;1-2
   - 12,B,WP.2-3;1-2
   - 12,BCX,E5/G5/TH.B-1;2-3;3-H
-  - 22,X,HP.B-1;1-2
+  - 22,H,HP.B-1;1-2
   - 8,B,CSH(15).3-H(E1/TH);1-2;2-3
   - 8,BBCCBC,K
   - inn,4,5
