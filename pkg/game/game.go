@@ -187,6 +187,14 @@ func NewGame(gf *gamefile.File) (*Game, error) {
 	return g, errs
 }
 
+func (g *Game) GetPlayer(playerID PlayerID) *Player {
+	p := g.Home.Players[playerID]
+	if p == nil {
+		p = g.Visitor.Players[playerID]
+	}
+	return p
+}
+
 func (g *Game) GetStates() []*State {
 	return g.states
 }
@@ -318,11 +326,4 @@ func (g *Game) GetTournament() string {
 		return g.League
 	}
 	return "Other"
-}
-
-func (g *Game) GetSeason(us string) string {
-	if g.Season != "" {
-		return g.Season
-	}
-	return ""
 }

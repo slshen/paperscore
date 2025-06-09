@@ -48,8 +48,8 @@ func NewBoxScore(g *game.Game, re stats.RunExpectancy) (*BoxScore, error) {
 	boxscore := &BoxScore{
 		Game:          g,
 		Stats:         gs,
-		HomeLineup:    &Lineup{gs.GetStats(g.Home)},
-		VisitorLineup: &Lineup{gs.GetStats(g.Visitor)},
+		HomeLineup:    newLineup(gs.GetStats(g.Home)),
+		VisitorLineup: newLineup(gs.GetStats(g.Visitor)),
 	}
 	if err := boxscore.run(); err != nil {
 		return nil, err
@@ -94,11 +94,9 @@ func (box *BoxScore) InningScoreTable() *dataframe.Data {
 	tab := &dataframe.Data{
 		Columns: []*dataframe.Column{
 			{
-				Name:   fmt.Sprintf("%s #%s", box.Game.Date, box.Game.Number),
-				Format: "%-20s",
 				Values: []string{
-					firstWord(box.Game.Visitor.Name, 20),
-					firstWord(box.Game.Home.Name, 20),
+					box.Game.Visitor.ShortName,
+					box.Game.Home.ShortName,
 				},
 			},
 		},
@@ -139,10 +137,44 @@ func (box *BoxScore) InningScoreTable() *dataframe.Data {
 func (box *BoxScore) AltPlays() *dataframe.Data {
 	dat := box.Stats.GetAltData()
 	dat = dat.Select(
-		dataframe.Col("In"),
+		dataframe.DeriveStrings("Inn", func(idx *dataframe.Index, i int) string {
+			inn := idx.GetInt(i, "I")
+			half := idx.GetString(i, "H")
+			o := idx.GetInt(i, "O")
+			return fmt.Sprintf("%c%d.%d", half[0], inn, o)
+		}).WithFormat("%4s"),
 		dataframe.Rename("Reality", "Play").WithFormat("%-30s"),
-		dataframe.Col("RCost"), dataframe.Col("Comment"))
+		dataframe.Col("RCost"),
+		dataframe.Col("Comment"),
+		dataframe.DeriveStrings("Players", func(idx *dataframe.Index, i int) string {
+			credit := idx.GetString(i, "Credit")
+			if credit == "" {
+				return ""
+			}
+			s := &strings.Builder{}
+			for p := range strings.FieldsSeq(credit) {
+				player := box.Game.GetPlayer(game.PlayerID(p))
+				if s.Len() > 0 {
+					s.WriteString(", ")
+				}
+				s.WriteString(player.GetShortName())
+			}
+			return s.String()
+		}),
+	)
 	dat.Name = "ALT"
+	return dat
+}
+
+func (box *BoxScore) AltPlaysPerPlayer() *dataframe.Data {
+	dat := box.Stats.GetPerPlayerAltData()
+	dat.Name = "ALT CREDIT"
+	idx := dat.GetIndex()
+	idx.GetColumn("Player").Format = "%-20s"
+	dat.RApply(func(row int) {
+		player := box.Game.GetPlayer(game.PlayerID(idx.GetString(row, "Player")))
+		idx.GetColumn("Player").GetStrings()[row] = player.GetShortName()
+	})
 	return dat
 }
 

@@ -113,7 +113,7 @@ func (dp *DataPackage) Write(dir string) error {
 }
 
 func (dp *DataPackage) writeJSON(path string, val interface{}) error {
-	if err := os.MkdirAll(filepath.Dir(path), 0777); err != nil {
+	if err := os.MkdirAll(filepath.Dir(path), 0750); err != nil {
 		return err
 	}
 	f, err := os.Create(path)
@@ -129,7 +129,7 @@ func (dp *DataPackage) writeJSON(path string, val interface{}) error {
 
 func (dp *DataPackage) writeContent(dir string, r Resource) error {
 	path := filepath.Join(dir, r.GetPath())
-	if err := os.MkdirAll(filepath.Dir(path), 0777); err != nil {
+	if err := os.MkdirAll(filepath.Dir(path), 0750); err != nil {
 		return err
 	}
 	f, err := os.Create(filepath.Join(dir, r.GetPath()))

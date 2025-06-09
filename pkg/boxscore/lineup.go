@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/slshen/paperscore/pkg/dataframe"
+	"github.com/slshen/paperscore/pkg/game"
 	"github.com/slshen/paperscore/pkg/stats"
 	"github.com/slshen/paperscore/pkg/text"
 )
@@ -13,8 +14,42 @@ type Lineup struct {
 	*stats.TeamStats
 }
 
-func (lineup *Lineup) BattingTable() *dataframe.Data {
-	dat := lineup.GetBattingData().Select(
+func newLineup(ts *stats.TeamStats) *Lineup {
+	return &Lineup{
+		TeamStats: ts,
+	}
+}
+
+func (lineup *Lineup) haveDefensivePositions() bool {
+	for _, positions := range lineup.PositionsByPlayer {
+		for _, p := range positions {
+			if p != 1 {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (lineup *Lineup) PlayerTable() *dataframe.Data {
+	batting := lineup.GetBattingData()
+	selection := []dataframe.Selection{}
+	// if we have any defensive lineup data available other than pitchers, include "F" column
+	if lineup.haveDefensivePositions() {
+		selection = append(selection,
+			dataframe.DeriveStrings("F", func(idx *dataframe.Index, i int) string {
+				positions := lineup.PositionsByPlayer[game.PlayerID(idx.GetString(i, "PlayerID"))]
+				s := &strings.Builder{}
+				for _, pos := range positions {
+					if s.Len() > 0 {
+						s.WriteRune(' ')
+					}
+					s.WriteString(game.FielderNames[pos-1])
+				}
+				return s.String()
+			}).WithFormat("%-5s"))
+	}
+	selection = append(selection,
 		dataframe.Rename("Name", "#").WithFormat("%-14s"),
 		dataframe.Col("AB"),
 		dataframe.Rename("Hits", "H"),
@@ -22,20 +57,14 @@ func (lineup *Lineup) BattingTable() *dataframe.Data {
 		dataframe.Rename("StrikeOuts", "K"),
 		dataframe.Rename("Walks", "BB"),
 	)
+	dat := batting.Select(selection...)
 	idx := dat.GetIndex()
 	names := idx.GetColumn("#")
 	dat.RApply(func(row int) {
 		// Shorten "Babe Ruth" to "B Ruth"
 		name := names.GetString(row)
 		if strings.ContainsRune(name, ' ') {
-			parts := strings.Split(name, " ")
-			for i, part := range parts[0 : len(parts)-1] {
-				if len(part) > 2 {
-					// unless it's a very short name
-					parts[i] = part[0:1]
-				}
-			}
-			names.GetStrings()[row] = strings.Join(parts, " ")
+			names.GetStrings()[row] = text.NameShorten(name)
 		}
 	})
 	idx.GetColumn("AB").Summary = dataframe.Sum
@@ -66,6 +95,21 @@ func (lineup *Lineup) ErrorsList() string {
 	for _, f := range lineup.FieldingByPosition {
 		if f.Errors > 0 {
 			fmt.Fprintf(s, " E%d:%d", f.Position, f.Errors)
+		}
+	}
+	if len(lineup.ErrorsByPlayer) > 0 {
+		fmt.Fprintln(s)
+		s.WriteString("Errors - ")
+		comma := false
+		for playerID, n := range lineup.ErrorsByPlayer {
+			if comma {
+				s.WriteString(", ")
+			}
+			comma = true
+			s.WriteString(text.NameShorten(lineup.Team.Players[playerID].NameOrNumber()))
+			if n > 1 {
+				fmt.Fprintf(s, "(%d)", n)
+			}
 		}
 	}
 	return s.String()

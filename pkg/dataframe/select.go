@@ -34,6 +34,7 @@ func (dat *Data) Add(sels ...Selection) {
 	}
 }
 
+// Adds an existing column to the new frame
 func Col(name string) Selection {
 	return func(i *Index) *Column {
 		return i.GetColumn(name)

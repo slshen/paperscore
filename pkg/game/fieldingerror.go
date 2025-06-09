@@ -12,6 +12,11 @@ type FieldingError struct {
 	Modifiers
 }
 
+var FielderNames = []string{
+	"P", "C", "1B", "2B", "3B", "SS",
+	"LF", "CF", "RF",
+}
+
 var NoError = FieldingError{}
 
 func parseFieldingError(play gamefile.Play, s string) (FieldingError, error) {

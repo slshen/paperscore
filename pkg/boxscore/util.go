@@ -9,29 +9,6 @@ import (
 	"github.com/slshen/paperscore/pkg/text"
 )
 
-func firstWord(s string, w int) string {
-	out := &strings.Builder{}
-	for s != "" {
-		space := strings.IndexRune(s, ' ')
-		if space > 0 {
-			if out.Len()+space < w {
-				if out.Len() > 0 {
-					out.WriteRune(' ')
-				}
-				out.WriteString(s[0:space])
-				s = s[space+1:]
-				continue
-			}
-		}
-		if out.Len()+len(s) < w {
-			out.WriteString(s)
-		}
-		break
-	}
-
-	return out.String()
-}
-
 func paste(c1, c2 string, sepWidth, leftLen int) string {
 	switch {
 	case leftLen > 0:

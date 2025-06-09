@@ -201,7 +201,7 @@ func (dat *Data) RowCount() int {
 func (dat *Data) RSort(less func(r1 int, r2 int) bool) *Data {
 	rc := dat.RowCount()
 	rowNumbers := make([]int, rc)
-	for i := 0; i < rc; i++ {
+	for i := range rc {
 		rowNumbers[i] = i
 	}
 	sort.Slice(rowNumbers, func(i, j int) bool {
@@ -224,19 +224,19 @@ func (dat *Data) RSort(less func(r1 int, r2 int) bool) *Data {
 		switch scol.GetType() {
 		case Int:
 			values := make([]int, scol.Len())
-			for row := 0; row < scol.Len(); row++ {
+			for row := range scol.Len() {
 				values[row] = scol.GetInt(rowNumbers[row])
 			}
 			rcol.Values = values
 		case Float:
 			values := make([]float64, scol.Len())
-			for row := 0; row < scol.Len(); row++ {
+			for row := range scol.Len() {
 				values[row] = scol.GetFloat(rowNumbers[row])
 			}
 			rcol.Values = values
 		case String:
 			values := make([]string, scol.Len())
-			for row := 0; row < scol.Len(); row++ {
+			for row := range scol.Len() {
 				values[row] = scol.GetString(rowNumbers[row])
 			}
 			rcol.Values = values

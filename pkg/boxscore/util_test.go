@@ -14,8 +14,3 @@ world`, "xxxxxx", 4, 0)
 world
 `, s)
 }
-
-func TestFirstWord(t *testing.T) {
-	assert := assert.New(t)
-	assert.Equal("Athletics Mercado", firstWord("Athletics Mercado Walling", 20))
-}

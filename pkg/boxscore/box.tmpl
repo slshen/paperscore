@@ -1,11 +1,12 @@
 {{.Game.Visitor.Name}} at {{.Game.Home.Name}} {{.Game.Date}} game {{.Game.Number}}
 
 {{.InningScoreTable}}
-{{paste .VisitorLineup.BattingTable.String .HomeLineup.BattingTable.String 1 44}}
+{{paste .VisitorLineup.PlayerTable.String .HomeLineup.PlayerTable.String 1 44}}
 {{paste (execute "batting.tmpl" .VisitorLineup) (execute "batting.tmpl" .HomeLineup) 1 44}}
 {{- paste .VisitorLineup.PitchingTable.String .HomeLineup.PitchingTable.String 1 -44}}
 {{paste (execute "pitching.tmpl" .VisitorLineup) (execute "pitching.tmpl" .HomeLineup) 1 44}}
 {{.AltPlays}}
+{{.AltPlaysPerPlayer}}
 {{if (not (or .IncludePlays .IncludeScoringPlays))}}
 {{- range .Comments}}{{.Half}} {{ordinal .Inning}}, {{.Outs}} Outs - {{.Text}}
 {{end}}{{end}}
