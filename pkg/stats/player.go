@@ -3,6 +3,7 @@ package stats
 import "github.com/slshen/paperscore/pkg/game"
 
 type PlayerData struct {
+	PlayerID        string
 	Name            string
 	Team            string
 	Number          string
@@ -13,6 +14,7 @@ type PlayerData struct {
 
 func NewPlayerData(team string, player *game.Player) PlayerData {
 	return PlayerData{
+		PlayerID:        string(player.PlayerID),
 		Name:            player.NameOrNumber(),
 		Team:            team,
 		Number:          player.Number,

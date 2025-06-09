@@ -414,7 +414,7 @@ func (ui *UI) save() {
 			ui.messages.SetText(msg)
 		} else {
 			_, _ = f.WriteString(text)
-			f.Close()
+			_ = f.Close()
 			if err := os.Rename(f.Name(), ui.path); err != nil {
 				ui.messages.SetText(fmt.Sprintf("could not save %s [yellow:red]%s", ui.path, err.Error()))
 			} else {

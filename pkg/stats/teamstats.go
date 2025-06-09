@@ -179,11 +179,16 @@ func (stats *TeamStats) RecordFielding(g *game.Game, state *game.State) {
 	pitching := stats.GetPitching(state.Pitcher)
 	pitching.Record(state)
 	pitching.GameAppearances[g.ID] = true
+	for i, player := range state.Defense {
+		if player != "" {
+			stats.recordFielder(i+1, player)
+		}
+	}
 	switch state.Play.Type {
 	case game.ReachedOnError:
 		fallthrough
 	case game.CatcherInterference:
-		stats.recordError(state.Play.FieldingError)
+		stats.recordError(state, state.Play.FieldingError)
 	case game.WalkPickedOff:
 		fallthrough
 	case game.PickedOff:
@@ -194,14 +199,14 @@ func (stats *TeamStats) RecordFielding(g *game.Game, state *game.State) {
 		fallthrough
 	case game.StrikeOutPickedOff:
 		if state.NotOutOnPlay && state.Play.FieldingError.IsFieldingError() {
-			stats.recordError(state.Play.FieldingError)
+			stats.recordError(state, state.Play.FieldingError)
 		}
 	case game.FoulFlyError:
-		stats.recordError(state.Play.FieldingError)
+		stats.recordError(state, state.Play.FieldingError)
 	}
 	for _, adv := range state.Advances {
 		if adv.IsFieldingError() {
-			stats.recordError(adv.FieldingError)
+			stats.recordError(state, adv.FieldingError)
 		}
 	}
 }

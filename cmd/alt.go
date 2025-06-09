@@ -36,6 +36,10 @@ func altCommand() *cobra.Command {
 				alt.Name = fmt.Sprintf("%s game %s %s at %s Alt Plays", g.Date, g.Number, g.Visitor.Name, g.Home.Name)
 				alt.RemoveColumn("Game")
 				fmt.Println(alt)
+				pp := gs.GetPerPlayerAltData()
+				if pp.RowCount() > 0 {
+					fmt.Println(pp)
+				}
 			}
 			return nil
 		},

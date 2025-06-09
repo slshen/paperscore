@@ -3,28 +3,32 @@ package game
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
 	"unicode"
 
+	"github.com/slshen/paperscore/pkg/text"
 	"gopkg.in/yaml.v3"
 )
 
 type TeamID string
 
 type Team struct {
-	ID      TeamID
-	Name    string `yaml:"name"`
-	Us      bool   `yaml:"us"`
-	Players map[PlayerID]*Player
+	ID        TeamID
+	Name      string `yaml:"name"`
+	ShortName string `yaml:"short_name"`
+	Us        bool   `yaml:"us"`
+	Players   map[PlayerID]*Player
 
 	playerIDs map[string]PlayerID
 }
 
 type Player struct {
 	PlayerID `yaml:"-"`
+	Team     *Team `yaml:"-"`
 	Name     string
 	Number   string
 	Inactive bool
@@ -48,7 +52,8 @@ func GetTeam(dir, name, id string) (*Team, error) {
 		for i := 0; i < 3; i++ {
 			err := team.readFile(dir, id)
 			if err == nil {
-				return team, nil
+				log.Default().Printf("Loaded team %s from %s", id, dir)
+				goto done
 			}
 			if errors.Is(err, os.ErrNotExist) {
 				dir = filepath.Clean(filepath.Join(dir, ".."))
@@ -57,6 +62,10 @@ func GetTeam(dir, name, id string) (*Team, error) {
 			}
 		}
 		return team, fmt.Errorf("cannot find team file for %s", id)
+	}
+done:
+	if team.ShortName == "" {
+		team.ShortName = text.Initialize(team.Name)
 	}
 	return team, nil
 }
@@ -71,6 +80,7 @@ func (team *Team) readFile(dir, id string) error {
 		return err
 	}
 	for playerID, player := range team.Players {
+		player.Team = team
 		player.PlayerID = playerID
 		if player.Number == "" {
 			player.Number = team.getDefaultPlayerNumber(playerID)
@@ -88,6 +98,7 @@ func (team *Team) GetPlayer(id PlayerID) *Player {
 	}
 	player := &Player{
 		PlayerID: id,
+		Team:     team,
 		Name:     string(id),
 		Number:   team.getDefaultPlayerNumber(id),
 	}
@@ -121,6 +132,10 @@ func (team *Team) getDefaultPlayerNumber(player PlayerID) string {
 		return n
 	}
 	return fmt.Sprintf("00%d", len(team.Players)+1)
+}
+
+func (player *Player) GetShortName() string {
+	return text.NameShorten(player.NameOrNumber())
 }
 
 func (player *Player) NameOrNumber() string {

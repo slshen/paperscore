@@ -29,11 +29,12 @@ type State struct {
 	Score   int
 	Pitcher PlayerID
 	PlateAppearance
-	Defense        [9]PlayerID `yaml:",flow,omitempty"`
-	Runners        [3]PlayerID `yaml:",omitempty,flow"`
-	Comment        string      `yaml:",omitempty"`
-	LastState      *State      `yaml:"-"`
-	AlternativeFor *State      `yaml:"-"`
+	Defense            [9]PlayerID `yaml:",flow,omitempty"`
+	Runners            [3]PlayerID `yaml:",omitempty,flow"`
+	Comment            string      `yaml:",omitempty"`
+	LastState          *State      `yaml:"-"`
+	AlternativeFor     *State      `yaml:"-"`
+	AlternativeCredits []*Player
 }
 
 type PlateAppearance struct {

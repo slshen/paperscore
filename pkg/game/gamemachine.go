@@ -70,6 +70,16 @@ func (m *gameMachine) handleAlternative(alt *gamefile.Alternative, lastState *St
 	state.Batter = lastState.Batter
 	state.Pitches = lastState.Pitches
 	state.AlternativeFor = lastState
+	for _, p := range alt.Credit {
+		player := m.battingTeam.Players[m.battingTeam.parsePlayerID(p)]
+		if player == nil {
+			player = m.fieldingTeam.Players[m.fieldingTeam.parsePlayerID(p)]
+		}
+		if player == nil {
+			return nil, NewError("no player %s for alt credit on either team", alt.Pos, p)
+		}
+		state.AlternativeCredits = append(state.AlternativeCredits, player)
+	}
 	err := m.handlePlay(alt, state)
 	return state, err
 }
@@ -193,6 +203,7 @@ func (m *gameMachine) parseAdvances(play gamefile.Play, state *State) error {
 func (m *gameMachine) handleSpecialEvent(event *gamefile.Event, state *State) (*State, error) {
 	if event.Pitcher != "" {
 		m.pitcher = m.fieldingTeam.parsePlayerID(event.Pitcher)
+		state.Defense[0] = m.pitcher
 	}
 	if event.PlayerName != nil {
 		playerID := m.battingTeam.parsePlayerID(event.PlayerName.Player)
@@ -203,6 +214,9 @@ func (m *gameMachine) handleSpecialEvent(event *gamefile.Event, state *State) (*
 		state = state.Copy()
 		for _, pp := range event.Defense {
 			state.Defense[pp.PositionNumber()-1] = m.fieldingTeam.parsePlayerID(pp.Player)
+			if pp.PositionNumber() == 1 {
+				m.pitcher = state.Defense[0]
+			}
 		}
 		return state, nil
 	}

@@ -6,10 +6,12 @@
 
 * Verify batting order
 
-* Record defensive positions
+~~* Record defensive positions~~
 
 * Count hard hit balls (foul or in-play)
 
 * Implement "final" and "err" specials.  Remove final score.
 
 * Upload game logs.  Add per-game RE24.
+
+* Record DP, FLEX and pinch runners somehow

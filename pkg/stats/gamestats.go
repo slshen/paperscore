@@ -98,6 +98,10 @@ func (gs *GameStats) GetAltData() *dataframe.Data {
 	return gs.alt.GetData()
 }
 
+func (gs *GameStats) GetPerPlayerAltData() *dataframe.Data {
+	return gs.alt.GetPerPlayerData()
+}
+
 func (gs *GameStats) getBattingData(includeInactiveBatters bool) *dataframe.Data {
 	var dat *dataframe.Data
 	for _, stats := range gs.TeamStats {
